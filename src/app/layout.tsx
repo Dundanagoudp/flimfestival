@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
+import { ToastProvider } from "@/components/ui/custom-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 const dmSerifDisplay = DM_Serif_Display({ 
@@ -25,7 +26,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} ${dmSerifDisplay.variable}`}>
-          {children}
+          <ToastProvider>
+            {children}
+          </ToastProvider>
       </body>
     </html>
   );
