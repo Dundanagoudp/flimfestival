@@ -4,7 +4,7 @@ import apiClient from "../apiClient"
 // Get all Users
 export async function getAllUsers(): Promise<ApiResponse<User[]>> {
   try {
-    const response = await apiClient.get("/onboarding/getUsers")
+    const response = await apiClient.get("/auth/getUsers")
     return {
       success: true,
       data: response.data,
@@ -21,7 +21,7 @@ export async function getAllUsers(): Promise<ApiResponse<User[]>> {
 // Add User
 export async function addUser(data: CreateUserData): Promise<ApiResponse<User>> {
   try {
-    const response = await apiClient.post("/onboarding/addUser", data)
+    const response = await apiClient.post("/auth/addUser", data)
     return {
       success: true,
       data: response.data,
@@ -38,7 +38,7 @@ export async function addUser(data: CreateUserData): Promise<ApiResponse<User>> 
 // Delete User
 export async function deleteUser(userId: string): Promise<ApiResponse<any>> {
   try {
-    const response = await apiClient.delete(`/onboarding/deleteUser/${userId}`)
+    const response = await apiClient.delete(`/auth/deleteUser/${userId}`)
     return {
       success: true,
       data: response.data,
@@ -55,7 +55,7 @@ export async function deleteUser(userId: string): Promise<ApiResponse<any>> {
 // Edit User
 export async function editUser(userId: string, data: EditUserData): Promise<ApiResponse<User>> {
   try {
-    const response = await apiClient.put(`/onboarding/editUser/${userId}`, data)
+    const response = await apiClient.put(`/auth/editUser/${userId}`, data)
     return {
       success: true,
       data: response.data.user,
@@ -72,7 +72,7 @@ export async function editUser(userId: string, data: EditUserData): Promise<ApiR
 // Get current user profile
 export async function getMyProfile(): Promise<ApiResponse<User>> {
   try {
-    const response = await apiClient.get("/onboarding/getMyProfile")
+    const response = await apiClient.get("/auth/getMyProfile")
     return {
       success: true,
       data: response.data.user,
@@ -86,3 +86,19 @@ export async function getMyProfile(): Promise<ApiResponse<User>> {
   }
 }
 
+// logout user
+export async function logoutUser(data: any): Promise<ApiResponse<any>> {
+  try {
+    const response = await apiClient.post("/auth/logout", data)
+    return {
+      success: true,
+      data: response.data,
+      message: "User logged out successfully",
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || "Failed to logout user",
+    }
+  }
+}

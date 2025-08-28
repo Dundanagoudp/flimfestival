@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback } from "react";
 
 // Toast types
-export type ToastType = "success" | "error" | "warning";
+export type ToastType = "success" | "error" | "warning" | "info";
 
 interface Toast {
   id: number;
@@ -25,21 +25,23 @@ export const useToast = () => {
 
 const icons: Record<ToastType, React.ReactNode> = {
   success: (
-    <svg className="text-green-600 w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12l2 2l4-4" />
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
     </svg>
   ),
   error: (
-    <svg className="text-red-600 w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 9l-6 6m0-6l6 6" />
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
     </svg>
   ),
   warning: (
-    <svg className="text-yellow-600 w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01" />
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01" />
+    </svg>
+  ),
+  info: (
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01" />
     </svg>
   ),
 };
@@ -48,6 +50,14 @@ const barColors: Record<ToastType, string> = {
   success: "bg-green-500",
   error: "bg-red-500",
   warning: "bg-yellow-500",
+  info: "bg-blue-500",
+};
+
+const iconStyles: Record<ToastType, { container: string; icon: string }> = {
+  success: { container: "bg-green-100 text-green-700", icon: "text-green-700" },
+  error: { container: "bg-red-100 text-red-700", icon: "text-red-700" },
+  warning: { container: "bg-yellow-100 text-yellow-700", icon: "text-yellow-700" },
+  info: { container: "bg-blue-100 text-blue-700", icon: "text-blue-700" },
 };
 
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
@@ -71,9 +81,12 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className="bg-white shadow-lg rounded-md p-4 min-w-[300px] max-w-xs border relative animate-fade-in"
-            style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}
+            role="status"
+            aria-live="polite"
+            className="relative bg-white/95 backdrop-blur-sm shadow-xl rounded-md px-4 py-3 min-w-[300px] max-w-sm border animate-slide-in"
+            style={{ boxShadow: "0 10px 24px rgba(0,0,0,0.12)" }}
           >
+            <div className={`absolute left-0 top-0 h-full w-1 rounded-l-md ${barColors[toast.type]}`}></div>
             <button
               className="absolute top-2 right-2 text-gray-400 hover:text-gray-700"
               onClick={() => removeToast(toast.id)}
@@ -81,9 +94,11 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
             >
               ×
             </button>
-            <div className="flex items-center gap-3">
-              {icons[toast.type]}
-              <span className="font-medium text-gray-800">{toast.message}</span>
+            <div className="flex items-center gap-3 pl-2 pr-6">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ring-1 ring-black/5 ${iconStyles[toast.type].container}`}>
+                <span className={iconStyles[toast.type].icon}>{icons[toast.type]}</span>
+              </div>
+              <span className="font-semibold text-gray-900 tracking-tight">{toast.message}</span>
             </div>
             <div className={`h-1 mt-3 rounded ${barColors[toast.type]} animate-toast-bar`}></div>
           </div>
@@ -98,12 +113,12 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
         .animate-toast-bar {
           animation: toast-bar 2.8s linear forwards;
         }
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
+        @keyframes slide-in {
+          from { opacity: 0; transform: translateX(12px); }
+          to { opacity: 1; transform: translateX(0); }
         }
-        .animate-fade-in {
-          animation: fade-in 0.2s ease;
+        .animate-slide-in {
+          animation: slide-in 0.18s ease-out;
         }
       `}</style>
     </ToastContext.Provider>
