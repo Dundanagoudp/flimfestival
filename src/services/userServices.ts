@@ -86,3 +86,19 @@ export async function getMyProfile(): Promise<ApiResponse<User>> {
   }
 }
 
+// logout user
+export async function logoutUser(data: any): Promise<ApiResponse<any>> {
+  try {
+    const response = await apiClient.post("/auth/logout", data)
+    return {
+      success: true,
+      data: response.data,
+      message: "User logged out successfully",
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || "Failed to logout user",
+    }
+  }
+}
