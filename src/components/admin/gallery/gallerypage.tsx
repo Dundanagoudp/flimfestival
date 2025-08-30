@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import useSWR, { mutate } from "swr"
-import { Pencil, Trash2, Images, AlertCircle } from "lucide-react"
+import { Pencil, Trash2, Images, AlertCircle, Plus, Calendar, FileImage, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,18 +11,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
+import { useRouter } from "next/navigation"
 // import { useToast } from "@/hooks/use-toast"
-import { getAllYears, getAllGalleryByYear, deleteYear, bulkDeleteImages, deleteImage } from "@/services/galleryServices"
+import { getAllYears, getAllGalleryByYear, deleteYear, bulkDeleteImages } from "@/services/galleryServices"
 import type { GalleryImage, GalleryYear, GetAllGalleryResponse } from "@/types/galleryTypes"
 import AddYearModal from "@/components/admin/gallery/modules/popups/addyearpopup"
 import UpdateYearModal from "@/components/admin/gallery/modules/popups/updateyear"
 import ConfirmDeleteModal from "@/components/admin/gallery/modules/popups/confirm-delete-modal"
-import UploadImages from "@/components/admin/gallery/modules/uploadImages"
+import ImageModal from "@/components/admin/gallery/modules/popups/image-modal"
 import ImageCard from "@/components/admin/gallery/modules/image-card"
 
 export default function GalleryPage() {
 //   const { toast } = useToast()
+  const router = useRouter()
   const [error, setError] = React.useState<string | null>(null)
+  const [selectedImage, setSelectedImage] = React.useState<GalleryImage | null>(null)
+  const [showImageModal, setShowImageModal] = React.useState(false)
   
   const { data: years, isLoading: yearsLoading, error: yearsError } = useSWR<GalleryYear[]>(
     "years", 
@@ -100,7 +104,7 @@ export default function GalleryPage() {
       await mutate(["images", selectedYearId])
       setError(null)
     } catch (err) {
-      console.error("Error refreshing images:", err)
+      console.error("Error fetching images:", err)
       setError("Failed to refresh images")
     }
   }
@@ -139,22 +143,13 @@ export default function GalleryPage() {
     }
   }
 
-  const handleSingleDelete = async (id: string) => {
-    try {
-      await deleteImage(id)
-    //   toast({ title: "Image deleted" })
-      await refreshImages()
-      setSelected((prev) => {
-        const n = new Set(prev)
-        n.delete(id)
-        return n
-      })
-      setError(null)
-    } catch (e: any) {
-      console.error("Error deleting image:", e)
-      setError(e?.message || "Failed to delete image")
-    //   toast({ title: "Delete failed", description: e?.response?.data?.message ?? e?.message, variant: "destructive" })
-    }
+  const openImageModal = (image: GalleryImage) => {
+    setSelectedImage(image)
+    setShowImageModal(true)
+  }
+
+  const goToUploadPage = () => {
+    router.push('/admin/gallery/add')
   }
 
   // Show error if there's one
@@ -182,9 +177,13 @@ export default function GalleryPage() {
       <header className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-pretty text-2xl font-semibold">Gallery</h1>
-          <p className="text-muted-foreground">View, upload, select, and delete images by year.</p>
+          <p className="text-muted-foreground">View, manage, and organize images by year.</p>
         </div>
         <div className="flex items-center gap-2">
+          <Button onClick={goToUploadPage} className="flex items-center gap-2">
+            <Upload className="mr-2 h-4 w-4" />
+            Upload Images
+          </Button>
           <AddYearModal onCreated={refreshYears} />
           {year ? (
             <>
@@ -202,7 +201,10 @@ export default function GalleryPage() {
       <section className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Total Years</CardTitle>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              Total Years
+            </CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-semibold">
             {yearsLoading ? "..." : years?.length ?? 0}
@@ -210,7 +212,10 @@ export default function GalleryPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Total Images</CardTitle>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Images className="h-4 w-4" />
+              Total Images
+            </CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-semibold">
             {imagesLoading ? "..." : images?.length ?? 0}
@@ -218,7 +223,10 @@ export default function GalleryPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Latest Year</CardTitle>
+            <CardTitle className="text-base flex items-center gap-2">
+              <FileImage className="h-4 w-4" />
+              Latest Year
+            </CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-semibold">
             {yearsLoading ? "..." : years?.length ? Math.max(...years.map((y) => y.value)) : "-"}
@@ -226,7 +234,10 @@ export default function GalleryPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Selected</CardTitle>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Checkbox className="h-4 w-4" />
+              Selected
+            </CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-semibold">{selected.size}</CardContent>
         </Card>
@@ -234,7 +245,7 @@ export default function GalleryPage() {
 
       <section className="rounded-lg border p-4">
         <h2 className="mb-3 text-lg font-semibold">Filters & Controls</h2>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2">
           <div className="grid gap-2">
             <Label htmlFor="search">Search</Label>
             <Input id="search" placeholder="Search by year label..." />
@@ -253,13 +264,6 @@ export default function GalleryPage() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
-          <div className="grid items-end">
-            {year ? (
-              <UploadImages yearId={year._id} onDone={refreshImages} />
-            ) : (
-              <div className="text-sm text-muted-foreground">Create a year first.</div>
-            )}
           </div>
         </div>
 
@@ -288,28 +292,33 @@ export default function GalleryPage() {
             ) : null}
           </h3>
           <div className="hidden sm:block">
-            {year ? <UploadImages yearId={year._id} onDone={refreshImages} /> : null}
+            {year && (
+              <Button onClick={goToUploadPage} variant="outline" size="sm">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Images
+              </Button>
+            )}
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
           {imagesLoading ? (
             Array.from({ length: 6 }).map((_, i) => <Card key={i} className="h-40 animate-pulse bg-muted/40" />)
-          ) : images && images.length ? (
+          ) : images && images.length > 0 ? (
             images.map((img) => (
               <ImageCard
                 key={img._id}
                 item={img}
                 checked={selected.has(img._id)}
                 onCheckedChange={toggleCheck}
-                onDelete={handleSingleDelete}
+                onImageClick={openImageModal}
               />
             ))
           ) : (
             <Card className="col-span-full">
               <CardContent className="flex items-center gap-3 p-6 text-muted-foreground">
                 <Images className="h-5 w-5" />
-                <span>No images yet for this year. Use Upload to add images.</span>
+                <span>No images yet for this year. Use Upload Images to add images.</span>
               </CardContent>
             </Card>
           )}
@@ -323,6 +332,14 @@ export default function GalleryPage() {
         onConfirm={handleDeleteYear}
         title="Delete this year?"
         description="This will remove the year. Images may also be removed by your API. Proceed?"
+      />
+      
+      {/* Image Modal */}
+      <ImageModal
+        image={selectedImage}
+        open={showImageModal}
+        onOpenChange={setShowImageModal}
+        yearValue={year?.value}
       />
     </main>
   )

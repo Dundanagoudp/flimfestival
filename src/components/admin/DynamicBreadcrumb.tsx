@@ -13,20 +13,24 @@ import {
 export function DynamicBreadcrumb() {
   const pathname = usePathname();
   const segments = pathname.replace(/^\/+/g, '').split('/');
-  if (segments[0] !== 'admin' || segments[1] !== 'dashboard') return null;
+  
+  // Only show breadcrumb for admin routes
+  if (segments[0] !== 'admin') return null;
+  
   // Hide dynamic ID-like segments from breadcrumb (e.g., numeric IDs, 24-char hex IDs)
   const isIdLike = (seg: string) => /^(?:[0-9]+|[0-9a-fA-F]{24})$/.test(seg);
 
-  const meaningfulSegments = segments.slice(2).filter((seg) => !isIdLike(seg));
+  const meaningfulSegments = segments.slice(1).filter((seg) => !isIdLike(seg));
 
   const items = [
     { label: 'Admin Panel', href: '/admin/dashboard' },
     ...meaningfulSegments.map((seg, idx) => {
       const label = seg.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-      const href = '/admin/dashboard/' + meaningfulSegments.slice(0, idx + 1).join('/');
+      const href = '/admin/' + meaningfulSegments.slice(0, idx + 1).join('/');
       return { label, href };
     })
   ];
+
   return (
     <Breadcrumb>
       <BreadcrumbList>
