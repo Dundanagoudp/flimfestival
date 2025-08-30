@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, DM_Serif_Display } from "next/font/google";
+import { Inter, DM_Serif_Display, Montserrat } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/custom-toast";
 
@@ -8,6 +8,10 @@ const dmSerifDisplay = DM_Serif_Display({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-dm-serif-display"
+});
+const montserrat = Montserrat({ 
+  subsets: ["latin"],
+  variable: "--font-montserrat"
 });
 
 export const metadata: Metadata = {
@@ -25,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} ${dmSerifDisplay.variable}`}>
+      <body className={`${inter.className} ${dmSerifDisplay.variable} ${montserrat.variable}`}>
           <ToastProvider>
             {children}
           </ToastProvider>
