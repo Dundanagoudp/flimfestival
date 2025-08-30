@@ -9,6 +9,7 @@ import { loginUser } from "@/services/authService"
 import Cookies from "js-cookie"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/custom-toast"
+import { useAuth } from "@/context/auth-context"
 
 export function LoginForm({
   className,
@@ -17,6 +18,7 @@ export function LoginForm({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
   const { showToast } = useToast()
+  const { login } = useAuth()
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -32,7 +34,15 @@ export function LoginForm({
     try {
       setIsSubmitting(true)
       const res = await loginUser({ email, password })
+      
+      // Store token and user role in cookies
       Cookies.set("token", res.token, { sameSite: "lax" })
+      if (res.data?.user?.role) {
+        Cookies.set("userRole", res.data.user.role, { sameSite: "lax" })
+        // Update auth context
+        login(res.data.user.role)
+      }
+      
       showToast(res.message || "Login successful", "success")
       router.replace("/admin/dashboard")
     } catch (error: any) {

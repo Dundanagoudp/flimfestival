@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 import { Inter, DM_Serif_Display, Montserrat } from "next/font/google";
-import "./globals.css";
-import { ToastProvider } from "@/components/ui/custom-toast";
-import { AuthProvider } from "@/context/auth-context";
 
 const inter = Inter({ subsets: ["latin"] });
 const dmSerifDisplay = DM_Serif_Display({ 
@@ -16,27 +13,21 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Arunachal Film Festival",
-  description: "Arunachal Film Festival",
+  title: "Arunachal Film Festival - Admin",
+  description: "Admin Panel for Arunachal Film Festival",
   icons: {
     icon: "/logofavicon.jpg",
   },
 };
 
-export default function RootLayout({
+export default function AdminRootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} ${dmSerifDisplay.variable} ${montserrat.variable}`}>
-        <AuthProvider>
-          <ToastProvider>
-            {children}
-          </ToastProvider>
-        </AuthProvider>
-      </body>
-    </html>
+    <div className={`${inter.className} ${dmSerifDisplay.variable} ${montserrat.variable}`}>
+      {children}
+    </div>
   );
 }

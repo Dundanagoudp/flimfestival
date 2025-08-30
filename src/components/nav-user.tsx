@@ -1,9 +1,8 @@
 "use client"
 
 import {
-
   ChevronsUpDown,
-
+  LogOut,
 } from "lucide-react"
 
 import {
@@ -14,6 +13,7 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -22,6 +22,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useAuth } from "@/context/auth-context"
 
 export function NavUser({
   user,
@@ -33,6 +34,11 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const { logout } = useAuth()
+
+  const handleLogout = () => {
+    logout()
+  }
 
   return (
     <SidebarMenu>
@@ -60,7 +66,10 @@ export function NavUser({
             align="end"
             sideOffset={4}
           >
-           
+            <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Log out</span>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
