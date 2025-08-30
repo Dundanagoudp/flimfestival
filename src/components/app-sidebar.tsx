@@ -65,6 +65,22 @@ const adminData = {
     ]
   }, 
     {
+    title: "Gallery",
+    url: "/admin/gallery",
+    icon: Clapperboard,
+    items: [
+      {
+        title: "All Galleries",
+        url: "/admin/gallery",
+      },
+      {
+        title: "Add Gallery",
+        url: "/admin/gallery/add",
+      }
+    ]
+    
+  },
+    {
       title: "Events",
       url: "/admin/events",
       icon: Calendar,
