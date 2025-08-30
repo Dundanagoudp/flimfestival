@@ -14,8 +14,10 @@ import { Badge } from "@/components/ui/badge"
 import { getAllYears, getAllGalleryByYear, deleteImage } from "@/services/galleryServices"
 import { addImages } from "@/services/galleryServices"
 import type { GalleryYear, GalleryImage } from "@/types/galleryTypes"
+import { useToast } from "@/components/ui/custom-toast"
 
 export default function ImageUploadPage() {
+  const { showToast } = useToast()
   const [selectedYearId, setSelectedYearId] = React.useState<string | null>(null)
   const [files, setFiles] = React.useState<FileList | null>(null)
   const [loading, setLoading] = React.useState(false)
@@ -104,7 +106,7 @@ export default function ImageUploadPage() {
       setError(null)
       setSuccess(null)
       await addImages(selectedYearId, Array.from(files))
-      setSuccess(`Successfully uploaded ${files.length} image(s) to ${selectedYear?.value || 'selected year'}`)
+      showToast(`Successfully uploaded ${files.length} image(s) to ${selectedYear?.value || 'selected year'}`, "success")
       setFiles(null)
       // Reset file input
       const fileInput = document.getElementById('file-input') as HTMLInputElement
@@ -114,6 +116,7 @@ export default function ImageUploadPage() {
     } catch (e: any) {
       console.error("Error uploading images:", e)
       setError(e?.message || "Failed to upload images")
+      showToast(e?.message || "Failed to upload images", "error")
     } finally {
       setLoading(false)
     }
@@ -133,12 +136,13 @@ export default function ImageUploadPage() {
   const handleDeleteImage = async (imageId: string) => {
     try {
       await deleteImage(imageId)
-      setSuccess("Image deleted successfully")
+      showToast("Image deleted successfully", "success")
       // Refresh images
       window.location.reload()
     } catch (e: any) {
       console.error("Error deleting image:", e)
       setError(e?.message || "Failed to delete image")
+      showToast(e?.message || "Failed to delete image", "error")
     }
   }
 
@@ -157,9 +161,9 @@ export default function ImageUploadPage() {
               <p className="font-medium text-destructive">Error</p>
               <p className="text-sm text-destructive/80">Failed to load years</p>
             </div>
-            <DynamicButton variant="outline" onClick={() => window.location.reload()}>
-              Retry
-            </DynamicButton>
+                         <DynamicButton variant="outline" onClick={(e) => window.location.reload()}>
+               Retry
+             </DynamicButton>
           </CardContent>
         </Card>
       </main>
@@ -270,7 +274,7 @@ export default function ImageUploadPage() {
           {/* Upload Button */}
           <div className="flex items-center gap-3">
             <DynamicButton 
-              onClick={onUpload} 
+              onClick={(e) => onUpload()} 
               disabled={loading || !files?.length || !selectedYearId}
               className="min-w-[140px]"
               size="lg"
@@ -289,9 +293,9 @@ export default function ImageUploadPage() {
             </DynamicButton>
             
             {(error || success) && (
-              <DynamicButton variant="outline" onClick={clearMessages}>
-                Clear
-              </DynamicButton>
+                           <DynamicButton variant="outline" onClick={(e) => clearMessages()}>
+               Clear
+             </DynamicButton>
             )}
           </div>
         </CardContent>
@@ -323,7 +327,7 @@ export default function ImageUploadPage() {
                          src={image.photo}
                          alt={`Gallery image ${image._id}`}
                          className="w-full h-32 object-cover"
-                         onClick={() => openImageModal(image)}
+                         onClick={(e) => openImageModal(image)}
                        />
                        <div className="p-2">
                          <p className="text-xs text-muted-foreground truncate">
@@ -338,16 +342,16 @@ export default function ImageUploadPage() {
                     <DynamicButton
                       size="sm"
                       variant="secondary"
-                      onClick={() => openImageModal(image)}
-                      className="h-8 w-8 p-0"
+                                             onClick={(e) => openImageModal(image)}
+                       className="h-8 w-8 p-0"
                     >
                       <Eye className="h-4 w-4" />
                     </DynamicButton>
                     <DynamicButton
                       size="sm"
                       variant="destructive"
-                      onClick={() => handleDeleteImage(image._id)}
-                      className="h-8 w-8 p-0"
+                                             onClick={(e) => handleDeleteImage(image._id)}
+                       className="h-8 w-8 p-0"
                     >
                       <Trash2 className="h-4 w-4" />
                     </DynamicButton>
@@ -383,9 +387,9 @@ export default function ImageUploadPage() {
           <div className="bg-background rounded-lg max-w-4xl max-h-[90vh] overflow-auto">
             <div className="p-4 border-b flex items-center justify-between">
               <h3 className="text-lg font-semibold">Image Details</h3>
-              <DynamicButton variant="outline" size="sm" onClick={() => setShowImageModal(false)}>
-                Close
-              </DynamicButton>
+                             <DynamicButton variant="outline" size="sm" onClick={(e) => setShowImageModal(false)}>
+                 Close
+               </DynamicButton>
             </div>
             <div className="p-4">
                              <img
@@ -397,12 +401,12 @@ export default function ImageUploadPage() {
                  <p><strong>Year:</strong> {selectedYear?.value}</p>
                  <div className="flex items-center gap-2">
                    <DynamicButton 
-                     onClick={() => {
-                       const link = document.createElement('a')
-                       link.href = selectedImage.photo
-                       link.download = `image-${selectedImage._id.slice(-6)}.jpg`
-                       link.click()
-                     }}
+                                           onClick={(e) => {
+                        const link = document.createElement('a')
+                        link.href = selectedImage.photo
+                        link.download = `image-${selectedImage._id.slice(-6)}.jpg`
+                        link.click()
+                      }}
                      className="flex items-center gap-2"
                    >
                      <Download className="h-4 w-4" />

@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { DynamicButton } from "@/components/common"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-// import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/components/ui/custom-toast"
 import { updateYear } from "@/services/galleryServices"
 import type { GalleryYear } from "@/types/galleryTypes"
 
@@ -17,11 +17,11 @@ type Props = {
 }
 
 export default function UpdateYearModal({ year, open, onOpenChange, onUpdated }: Props) {
+  const { showToast } = useToast()
+  const [error, setError] = React.useState<string | null>(null)
   const [value, setValue] = React.useState<number | "">(year?.value ?? "")
   const [name, setName] = React.useState<string>(year?.name ?? "")
   const [loading, setLoading] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null)
-//   const { toast } = useToast()
 
   React.useEffect(() => {
     setValue(year?.value ?? "")
@@ -51,18 +51,14 @@ export default function UpdateYearModal({ year, open, onOpenChange, onUpdated }:
     try {
       setLoading(true)
       await updateYear(year._id, { value: Number(value), name: name.trim() })
-     
+      showToast("Year updated successfully", "success")
       onOpenChange(false)
       setError(null)
       onUpdated?.()
     } catch (e: any) {
       console.error("Error updating year:", e)
       setError(e?.message || "Failed to update year")
-    //   toast({
-    //     title: "Failed to update",
-    //     description: e?.response?.data?.message ?? e?.message,
-    //     variant: "destructive",
-    //   })
+      showToast(e?.message || "Failed to update year", "error")
     } finally {
       setLoading(false)
     }
@@ -111,9 +107,9 @@ export default function UpdateYearModal({ year, open, onOpenChange, onUpdated }:
             />
           </div>
           <DialogFooter>
-            <DynamicButton type="button" variant="secondary" onClick={() => handleOpenChange(false)}>
-              Cancel
-            </DynamicButton>
+                         <DynamicButton type="button" variant="secondary" onClick={(e) => handleOpenChange(false)}>
+               Cancel
+             </DynamicButton>
             <DynamicButton type="submit" disabled={loading}>
               {loading ? "Saving..." : "Save"}
             </DynamicButton>

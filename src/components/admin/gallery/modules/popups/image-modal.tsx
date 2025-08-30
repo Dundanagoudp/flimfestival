@@ -30,7 +30,7 @@ export default function ImageModal({ image, open, onOpenChange, yearValue }: Pro
           <DynamicButton 
             variant="outline" 
             size="sm" 
-            onClick={() => onOpenChange(false)}
+            onClick={(e) => onOpenChange(false)}
             className="hover:bg-gray-100"
           >
             <X className="h-4 w-4" />
@@ -69,7 +69,7 @@ export default function ImageModal({ image, open, onOpenChange, yearValue }: Pro
               <div className="bg-blue-50 p-4 rounded-lg">
                 <h4 className="font-medium text-blue-900 mb-3">Download Image</h4>
                 <DynamicButton 
-                  onClick={handleDownload}
+                  onClick={(e) => handleDownload()}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   <Download className="mr-2 h-4 w-4" />

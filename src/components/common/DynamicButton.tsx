@@ -14,7 +14,7 @@ interface DynamicButtonProps {
   size?: "default" | "sm" | "lg" | "icon"
   fullWidth?: boolean
   disabled?: boolean
-  onClick?: () => void | Promise<void>
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void | Promise<void>
   children: React.ReactNode
   className?: string
   type?: "button" | "submit" | "reset"
@@ -36,13 +36,13 @@ export default function DynamicButton({
 }: DynamicButtonProps) {
   const [isLoading, setIsLoading] = React.useState(false)
 
-  const handleClick = async () => {
+  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     if (loading || isLoading || disabled) return
 
     if (onClick) {
       try {
         setIsLoading(true)
-        await onClick()
+        await onClick(e)
       } catch (error) {
         console.error("Button click error:", error)
       } finally {

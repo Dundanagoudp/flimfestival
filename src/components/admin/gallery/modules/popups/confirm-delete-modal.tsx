@@ -43,10 +43,10 @@ export default function ConfirmDeleteModal({
         </DialogHeader>
         <p className="text-sm text-muted-foreground">{description}</p>
         <DialogFooter>
-          <DynamicButton variant="secondary" onClick={() => onOpenChange(false)}>
-            Cancel
-          </DynamicButton>
-          <DynamicButton variant={danger ? "destructive" : "default"} onClick={handle} disabled={loading}>
+                     <DynamicButton variant="secondary" onClick={(e) => onOpenChange(false)}>
+             Cancel
+           </DynamicButton>
+          <DynamicButton variant={danger ? "destructive" : "default"} onClick={(e) => handle()} disabled={loading}>
             {loading ? "Working..." : confirmText}
           </DynamicButton>
         </DialogFooter>
