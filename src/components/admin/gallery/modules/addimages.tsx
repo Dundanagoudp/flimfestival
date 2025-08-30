@@ -3,7 +3,8 @@
 import * as React from "react"
 import useSWR from "swr"
 import { Upload, Images, AlertCircle, CheckCircle, Eye, Trash2, Plus, Calendar, FileImage, Download } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { DynamicButton } from "@/components/common"
+import DynamicPagination from "@/components/common/DynamicPagination"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -46,6 +47,23 @@ export default function ImageUploadPage() {
   )
 
   const images = yearData?.images || []
+
+  // pagination
+  const [currentPage, setCurrentPage] = React.useState(1)
+  const imagesPerPage = 24
+  const totalPages = Math.ceil((images?.length || 0) / imagesPerPage)
+  
+  // Reset to first page when year changes
+  React.useEffect(() => {
+    setCurrentPage(1)
+  }, [selectedYearId])
+  
+  // Get paginated images
+  const paginatedImages = React.useMemo(() => {
+    const startIndex = (currentPage - 1) * imagesPerPage
+    const endIndex = startIndex + imagesPerPage
+    return images.slice(startIndex, endIndex)
+  }, [images, currentPage, imagesPerPage])
 
   React.useEffect(() => {
     if (years?.length && !selectedYearId) {
@@ -139,9 +157,9 @@ export default function ImageUploadPage() {
               <p className="font-medium text-destructive">Error</p>
               <p className="text-sm text-destructive/80">Failed to load years</p>
             </div>
-            <Button variant="outline" onClick={() => window.location.reload()}>
+            <DynamicButton variant="outline" onClick={() => window.location.reload()}>
               Retry
-            </Button>
+            </DynamicButton>
           </CardContent>
         </Card>
       </main>
@@ -251,7 +269,7 @@ export default function ImageUploadPage() {
 
           {/* Upload Button */}
           <div className="flex items-center gap-3">
-            <Button 
+            <DynamicButton 
               onClick={onUpload} 
               disabled={loading || !files?.length || !selectedYearId}
               className="min-w-[140px]"
@@ -268,12 +286,12 @@ export default function ImageUploadPage() {
                   Upload Images
                 </>
               )}
-            </Button>
+            </DynamicButton>
             
             {(error || success) && (
-              <Button variant="outline" onClick={clearMessages}>
+              <DynamicButton variant="outline" onClick={clearMessages}>
                 Clear
-              </Button>
+              </DynamicButton>
             )}
           </div>
         </CardContent>
@@ -295,9 +313,9 @@ export default function ImageUploadPage() {
                 <Card key={i} className="h-32 animate-pulse bg-muted/40" />
               ))}
             </div>
-          ) : images && images.length > 0 ? (
+          ) : paginatedImages && paginatedImages.length > 0 ? (
             <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
-              {images.map((image) => (
+              {paginatedImages.map((image) => (
                 <div key={image._id} className="group relative">
                   <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer">
                     <CardContent className="p-0">
@@ -317,22 +335,22 @@ export default function ImageUploadPage() {
                   
                   {/* Hover Actions */}
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
-                    <Button
+                    <DynamicButton
                       size="sm"
                       variant="secondary"
                       onClick={() => openImageModal(image)}
                       className="h-8 w-8 p-0"
                     >
                       <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button
+                    </DynamicButton>
+                    <DynamicButton
                       size="sm"
                       variant="destructive"
                       onClick={() => handleDeleteImage(image._id)}
                       className="h-8 w-8 p-0"
                     >
                       <Trash2 className="h-4 w-4" />
-                    </Button>
+                    </DynamicButton>
                   </div>
                 </div>
               ))}
@@ -344,6 +362,18 @@ export default function ImageUploadPage() {
               <p className="text-sm text-muted-foreground">Upload some images to get started!</p>
             </div>
           )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-6">
+              <DynamicPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                maxVisiblePages={7}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -353,9 +383,9 @@ export default function ImageUploadPage() {
           <div className="bg-background rounded-lg max-w-4xl max-h-[90vh] overflow-auto">
             <div className="p-4 border-b flex items-center justify-between">
               <h3 className="text-lg font-semibold">Image Details</h3>
-              <Button variant="outline" size="sm" onClick={() => setShowImageModal(false)}>
+              <DynamicButton variant="outline" size="sm" onClick={() => setShowImageModal(false)}>
                 Close
-              </Button>
+              </DynamicButton>
             </div>
             <div className="p-4">
                              <img
@@ -366,7 +396,7 @@ export default function ImageUploadPage() {
                <div className="mt-4 space-y-2">
                  <p><strong>Year:</strong> {selectedYear?.value}</p>
                  <div className="flex items-center gap-2">
-                   <Button 
+                   <DynamicButton 
                      onClick={() => {
                        const link = document.createElement('a')
                        link.href = selectedImage.photo
@@ -377,7 +407,7 @@ export default function ImageUploadPage() {
                    >
                      <Download className="h-4 w-4" />
                      Download Image
-                   </Button>
+                   </DynamicButton>
                  </div>
                </div>
             </div>

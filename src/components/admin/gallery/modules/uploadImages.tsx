@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { addImages } from "@/services/galleryServices"
-import { Button } from "@/components/ui/button"
+import { DynamicButton } from "@/components/common"
 import { Input } from "@/components/ui/input"
 // import { useToast } from "@/hooks/use-toast"
 
@@ -74,9 +74,9 @@ export default function UploadImages({ yearId, onDone }: Props) {
           onChange={handleFileChange}
           className="max-w-xs"
         />
-        <Button onClick={onUpload} disabled={loading || !files?.length}>
+        <DynamicButton onClick={onUpload} disabled={loading || !files?.length}>
           {loading ? "Uploading..." : "Upload"}
-        </Button>
+        </DynamicButton>
       </div>
       {files && (
         <div className="text-xs text-muted-foreground">

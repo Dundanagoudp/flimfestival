@@ -3,7 +3,7 @@
 import * as React from "react"
 import useSWR, { mutate } from "swr"
 import { Pencil, Trash2, Images, AlertCircle, Plus, Calendar, FileImage, Upload } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { DynamicButton } from "@/components/common"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -20,6 +20,7 @@ import UpdateYearModal from "@/components/admin/gallery/modules/popups/updateyea
 import ConfirmDeleteModal from "@/components/admin/gallery/modules/popups/confirm-delete-modal"
 import ImageModal from "@/components/admin/gallery/modules/popups/image-modal"
 import ImageCard from "@/components/admin/gallery/modules/image-card"
+import DynamicPagination from "@/components/common/DynamicPagination"
 
 export default function GalleryPage() {
 //   const { toast } = useToast()
@@ -82,6 +83,23 @@ export default function GalleryPage() {
     if (!images) return
     setSelected(v ? new Set(images.map((i) => i._id)) : new Set())
   }
+
+  // pagination
+  const [currentPage, setCurrentPage] = React.useState(1)
+  const imagesPerPage = 20
+  const totalPages = Math.ceil((images?.length || 0) / imagesPerPage)
+  
+  // Reset to first page when year changes
+  React.useEffect(() => {
+    setCurrentPage(1)
+  }, [selectedYearId])
+  
+  // Get paginated images
+  const paginatedImages = React.useMemo(() => {
+    const startIndex = (currentPage - 1) * imagesPerPage
+    const endIndex = startIndex + imagesPerPage
+    return images.slice(startIndex, endIndex)
+  }, [images, currentPage, imagesPerPage])
 
   // modals
   const [updateOpen, setUpdateOpen] = React.useState(false)
@@ -163,9 +181,9 @@ export default function GalleryPage() {
               <p className="font-medium text-destructive">Error</p>
               <p className="text-sm text-destructive/80">{error}</p>
             </div>
-            <Button variant="outline" onClick={() => window.location.reload()}>
+            <DynamicButton variant="outline" onClick={() => window.location.reload()}>
               Retry
-            </Button>
+            </DynamicButton>
           </CardContent>
         </Card>
       </main>
@@ -180,19 +198,19 @@ export default function GalleryPage() {
           <p className="text-muted-foreground">View, manage, and organize images by year.</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={goToUploadPage} className="flex items-center gap-2">
+          <DynamicButton onClick={goToUploadPage} className="flex items-center gap-2">
             <Upload className="mr-2 h-4 w-4" />
             Upload Images
-          </Button>
+          </DynamicButton>
           <AddYearModal onCreated={refreshYears} />
           {year ? (
             <>
-              <Button size="sm" variant="outline" onClick={() => setUpdateOpen(true)}>
+              <DynamicButton size="sm" variant="outline" onClick={() => setUpdateOpen(true)}>
                 <Pencil className="mr-2 h-4 w-4" /> Edit Year
-              </Button>
-              <Button size="sm" variant="destructive" onClick={() => setDeleteOpen(true)}>
+              </DynamicButton>
+              <DynamicButton size="sm" variant="destructive" onClick={() => setDeleteOpen(true)}>
                 <Trash2 className="mr-2 h-4 w-4" /> Delete Year
-              </Button>
+              </DynamicButton>
             </>
           ) : null}
         </div>
@@ -276,9 +294,9 @@ export default function GalleryPage() {
             <Badge variant="secondary">{selected.size} selected</Badge>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="destructive" size="sm" disabled={!selected.size} onClick={handleBulkDelete}>
+            <DynamicButton variant="destructive" size="sm" disabled={!selected.size} onClick={handleBulkDelete}>
               <Trash2 className="mr-2 h-4 w-4" /> Delete Selected
-            </Button>
+            </DynamicButton>
           </div>
         </div>
       </section>
@@ -293,10 +311,10 @@ export default function GalleryPage() {
           </h3>
           <div className="hidden sm:block">
             {year && (
-              <Button onClick={goToUploadPage} variant="outline" size="sm">
+              <DynamicButton onClick={goToUploadPage} variant="outline" size="sm">
                 <Plus className="mr-2 h-4 w-4" />
                 Add Images
-              </Button>
+              </DynamicButton>
             )}
           </div>
         </div>
@@ -304,8 +322,8 @@ export default function GalleryPage() {
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
           {imagesLoading ? (
             Array.from({ length: 6 }).map((_, i) => <Card key={i} className="h-40 animate-pulse bg-muted/40" />)
-          ) : images && images.length > 0 ? (
-            images.map((img) => (
+          ) : paginatedImages && paginatedImages.length > 0 ? (
+            paginatedImages.map((img) => (
               <ImageCard
                 key={img._id}
                 item={img}
@@ -323,6 +341,18 @@ export default function GalleryPage() {
             </Card>
           )}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-6">
+            <DynamicPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              maxVisiblePages={7}
+            />
+          </div>
+        )}
       </section>
 
       <UpdateYearModal year={year} open={updateOpen} onOpenChange={setUpdateOpen} onUpdated={refreshYears} />

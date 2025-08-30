@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+import { DynamicButton } from "@/components/common"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 // import { useToast } from "@/components/ui/use-toast"
@@ -72,7 +72,7 @@ export default function AddYearModal({ onCreated, trigger }: Props) {
         <DialogTrigger asChild>{trigger}</DialogTrigger>
       ) : (
         <DialogTrigger asChild>
-          <Button size="sm">Add Year</Button>
+          <DynamicButton size="sm">Add Year</DynamicButton>
         </DialogTrigger>
       )}
       <DialogContent className="sm:max-w-md">
@@ -109,12 +109,12 @@ export default function AddYearModal({ onCreated, trigger }: Props) {
             />
           </div>
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => handleOpenChange(false)}>
+            <DynamicButton type="button" variant="secondary" onClick={() => handleOpenChange(false)}>
               Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
+            </DynamicButton>
+            <DynamicButton type="submit" disabled={loading}>
               {loading ? "Creating..." : "Create"}
-            </Button>
+            </DynamicButton>
           </DialogFooter>
         </form>
       </DialogContent>

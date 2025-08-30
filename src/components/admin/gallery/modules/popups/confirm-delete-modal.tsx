@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+import { DynamicButton } from "@/components/common"
 
 type Props = {
   title?: string
@@ -43,12 +43,12 @@ export default function ConfirmDeleteModal({
         </DialogHeader>
         <p className="text-sm text-muted-foreground">{description}</p>
         <DialogFooter>
-          <Button variant="secondary" onClick={() => onOpenChange(false)}>
+          <DynamicButton variant="secondary" onClick={() => onOpenChange(false)}>
             Cancel
-          </Button>
-          <Button variant={danger ? "destructive" : "default"} onClick={handle} disabled={loading}>
+          </DynamicButton>
+          <DynamicButton variant={danger ? "destructive" : "default"} onClick={handle} disabled={loading}>
             {loading ? "Working..." : confirmText}
-          </Button>
+          </DynamicButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

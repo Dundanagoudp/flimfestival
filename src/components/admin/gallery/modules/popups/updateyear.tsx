@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+import { DynamicButton } from "@/components/common"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 // import { useToast } from "@/hooks/use-toast"
@@ -111,12 +111,12 @@ export default function UpdateYearModal({ year, open, onOpenChange, onUpdated }:
             />
           </div>
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => handleOpenChange(false)}>
+            <DynamicButton type="button" variant="secondary" onClick={() => handleOpenChange(false)}>
               Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
+            </DynamicButton>
+            <DynamicButton type="submit" disabled={loading}>
               {loading ? "Saving..." : "Save"}
-            </Button>
+            </DynamicButton>
           </DialogFooter>
         </form>
       </DialogContent>
