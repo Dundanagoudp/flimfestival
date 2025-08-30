@@ -8,6 +8,7 @@ export async function loginUser(data: LoginRequest): Promise<LoginResponse> {
   return response.data;
 } 
 
-export async function logoutUser(data:LogoutResponse): Promise<void> {
-  await apiClient.post("/auth/logout");
+export async function logoutUser(): Promise<LogoutResponse> {
+  const response = await apiClient.post("/auth/logout");
+  return response.data;
 }

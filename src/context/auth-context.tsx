@@ -3,6 +3,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCookie, setCookie, deleteCookie } from "@/lib/cookies";
+import { logoutUser } from "@/services/authService";
+import Cookies from "js-cookie";
 
 type AuthContextType = {
   userRole: string | null;
@@ -58,13 +60,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUserRole(role);
   };
 
-  const logout = () => {
-    deleteCookie("userRole");
-    setUserRole(null);
-    // Call your API logout endpoint
-    fetch("/api/auth/logout", { credentials: "include" })
-      .then(() => router.push("/login"))
-      .catch(console.error);
+  const logout = async () => {
+    try {
+      // Call the logout API
+      await logoutUser();
+      
+      // Clear all auth cookies
+      deleteCookie("userRole");
+      Cookies.remove("token");
+      
+      setUserRole(null);
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Even if API call fails, clear local state
+      deleteCookie("userRole");
+      Cookies.remove("token");
+      setUserRole(null);
+      router.push("/login");
+    }
   };
 
   return (
