@@ -63,11 +63,15 @@ const iconStyles: Record<ToastType, { container: string; icon: string }> = {
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const showToast = useCallback((message: string, type: ToastType) => {
-    const id = Date.now() + Math.random();
-    setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 3000);
+    setToasts((prev) => {
+      // Remove any existing toast of the same type
+      const filtered = prev.filter((t) => t.type !== type);
+      const id = Date.now() + Math.random();
+      setTimeout(() => {
+        setToasts((current) => current.filter((t) => t.id !== id));
+      }, 3000);
+      return [...filtered, { id, message, type }];
+    });
   }, []);
 
   const removeToast = (id: number) => {

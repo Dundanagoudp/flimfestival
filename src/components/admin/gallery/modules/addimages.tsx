@@ -3,7 +3,8 @@
 import * as React from "react"
 import useSWR from "swr"
 import { Upload, Images, AlertCircle, CheckCircle, Eye, Trash2, Plus, Calendar, FileImage, Download } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { DynamicButton } from "@/components/common"
+import DynamicPagination from "@/components/common/DynamicPagination"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,8 +14,10 @@ import { Badge } from "@/components/ui/badge"
 import { getAllYears, getAllGalleryByYear, deleteImage } from "@/services/galleryServices"
 import { addImages } from "@/services/galleryServices"
 import type { GalleryYear, GalleryImage } from "@/types/galleryTypes"
+import { useToast } from "@/components/ui/custom-toast"
 
 export default function ImageUploadPage() {
+  const { showToast } = useToast()
   const [selectedYearId, setSelectedYearId] = React.useState<string | null>(null)
   const [files, setFiles] = React.useState<FileList | null>(null)
   const [loading, setLoading] = React.useState(false)
@@ -46,6 +49,23 @@ export default function ImageUploadPage() {
   )
 
   const images = yearData?.images || []
+
+  // pagination
+  const [currentPage, setCurrentPage] = React.useState(1)
+  const imagesPerPage = 24
+  const totalPages = Math.ceil((images?.length || 0) / imagesPerPage)
+  
+  // Reset to first page when year changes
+  React.useEffect(() => {
+    setCurrentPage(1)
+  }, [selectedYearId])
+  
+  // Get paginated images
+  const paginatedImages = React.useMemo(() => {
+    const startIndex = (currentPage - 1) * imagesPerPage
+    const endIndex = startIndex + imagesPerPage
+    return images.slice(startIndex, endIndex)
+  }, [images, currentPage, imagesPerPage])
 
   React.useEffect(() => {
     if (years?.length && !selectedYearId) {
@@ -86,7 +106,7 @@ export default function ImageUploadPage() {
       setError(null)
       setSuccess(null)
       await addImages(selectedYearId, Array.from(files))
-      setSuccess(`Successfully uploaded ${files.length} image(s) to ${selectedYear?.value || 'selected year'}`)
+      showToast(`Successfully uploaded ${files.length} image(s) to ${selectedYear?.value || 'selected year'}`, "success")
       setFiles(null)
       // Reset file input
       const fileInput = document.getElementById('file-input') as HTMLInputElement
@@ -96,6 +116,7 @@ export default function ImageUploadPage() {
     } catch (e: any) {
       console.error("Error uploading images:", e)
       setError(e?.message || "Failed to upload images")
+      showToast(e?.message || "Failed to upload images", "error")
     } finally {
       setLoading(false)
     }
@@ -115,12 +136,13 @@ export default function ImageUploadPage() {
   const handleDeleteImage = async (imageId: string) => {
     try {
       await deleteImage(imageId)
-      setSuccess("Image deleted successfully")
+      showToast("Image deleted successfully", "success")
       // Refresh images
       window.location.reload()
     } catch (e: any) {
       console.error("Error deleting image:", e)
       setError(e?.message || "Failed to delete image")
+      showToast(e?.message || "Failed to delete image", "error")
     }
   }
 
@@ -139,9 +161,9 @@ export default function ImageUploadPage() {
               <p className="font-medium text-destructive">Error</p>
               <p className="text-sm text-destructive/80">Failed to load years</p>
             </div>
-            <Button variant="outline" onClick={() => window.location.reload()}>
-              Retry
-            </Button>
+                         <DynamicButton variant="outline" onClick={(e) => window.location.reload()}>
+               Retry
+             </DynamicButton>
           </CardContent>
         </Card>
       </main>
@@ -251,8 +273,8 @@ export default function ImageUploadPage() {
 
           {/* Upload Button */}
           <div className="flex items-center gap-3">
-            <Button 
-              onClick={onUpload} 
+            <DynamicButton 
+              onClick={(e) => onUpload()} 
               disabled={loading || !files?.length || !selectedYearId}
               className="min-w-[140px]"
               size="lg"
@@ -268,12 +290,12 @@ export default function ImageUploadPage() {
                   Upload Images
                 </>
               )}
-            </Button>
+            </DynamicButton>
             
             {(error || success) && (
-              <Button variant="outline" onClick={clearMessages}>
-                Clear
-              </Button>
+                           <DynamicButton variant="outline" onClick={(e) => clearMessages()}>
+               Clear
+             </DynamicButton>
             )}
           </div>
         </CardContent>
@@ -295,9 +317,9 @@ export default function ImageUploadPage() {
                 <Card key={i} className="h-32 animate-pulse bg-muted/40" />
               ))}
             </div>
-          ) : images && images.length > 0 ? (
+          ) : paginatedImages && paginatedImages.length > 0 ? (
             <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
-              {images.map((image) => (
+              {paginatedImages.map((image) => (
                 <div key={image._id} className="group relative">
                   <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer">
                     <CardContent className="p-0">
@@ -305,7 +327,7 @@ export default function ImageUploadPage() {
                          src={image.photo}
                          alt={`Gallery image ${image._id}`}
                          className="w-full h-32 object-cover"
-                         onClick={() => openImageModal(image)}
+                         onClick={(e) => openImageModal(image)}
                        />
                        <div className="p-2">
                          <p className="text-xs text-muted-foreground truncate">
@@ -317,22 +339,22 @@ export default function ImageUploadPage() {
                   
                   {/* Hover Actions */}
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
-                    <Button
+                    <DynamicButton
                       size="sm"
                       variant="secondary"
-                      onClick={() => openImageModal(image)}
-                      className="h-8 w-8 p-0"
+                                             onClick={(e) => openImageModal(image)}
+                       className="h-8 w-8 p-0"
                     >
                       <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button
+                    </DynamicButton>
+                    <DynamicButton
                       size="sm"
                       variant="destructive"
-                      onClick={() => handleDeleteImage(image._id)}
-                      className="h-8 w-8 p-0"
+                                             onClick={(e) => handleDeleteImage(image._id)}
+                       className="h-8 w-8 p-0"
                     >
                       <Trash2 className="h-4 w-4" />
-                    </Button>
+                    </DynamicButton>
                   </div>
                 </div>
               ))}
@@ -344,6 +366,18 @@ export default function ImageUploadPage() {
               <p className="text-sm text-muted-foreground">Upload some images to get started!</p>
             </div>
           )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-6">
+              <DynamicPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                maxVisiblePages={7}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -353,9 +387,9 @@ export default function ImageUploadPage() {
           <div className="bg-background rounded-lg max-w-4xl max-h-[90vh] overflow-auto">
             <div className="p-4 border-b flex items-center justify-between">
               <h3 className="text-lg font-semibold">Image Details</h3>
-              <Button variant="outline" size="sm" onClick={() => setShowImageModal(false)}>
-                Close
-              </Button>
+                             <DynamicButton variant="outline" size="sm" onClick={(e) => setShowImageModal(false)}>
+                 Close
+               </DynamicButton>
             </div>
             <div className="p-4">
                              <img
@@ -366,18 +400,18 @@ export default function ImageUploadPage() {
                <div className="mt-4 space-y-2">
                  <p><strong>Year:</strong> {selectedYear?.value}</p>
                  <div className="flex items-center gap-2">
-                   <Button 
-                     onClick={() => {
-                       const link = document.createElement('a')
-                       link.href = selectedImage.photo
-                       link.download = `image-${selectedImage._id.slice(-6)}.jpg`
-                       link.click()
-                     }}
+                   <DynamicButton 
+                                           onClick={(e) => {
+                        const link = document.createElement('a')
+                        link.href = selectedImage.photo
+                        link.download = `image-${selectedImage._id.slice(-6)}.jpg`
+                        link.click()
+                      }}
                      className="flex items-center gap-2"
                    >
                      <Download className="h-4 w-4" />
                      Download Image
-                   </Button>
+                   </DynamicButton>
                  </div>
                </div>
             </div>

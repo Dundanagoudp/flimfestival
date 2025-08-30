@@ -2,10 +2,10 @@
 
 import * as React from "react"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+import { DynamicButton } from "@/components/common"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-// import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/custom-toast"
 import { createYear } from "@/services/galleryServices"
 
 type Props = {
@@ -14,12 +14,12 @@ type Props = {
 }
 
 export default function AddYearModal({ onCreated, trigger }: Props) {
+  const { showToast } = useToast()
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState<number | "">("")
   const [name, setName] = React.useState("")
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
-//   const { toast } = useToast()
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,7 +38,7 @@ export default function AddYearModal({ onCreated, trigger }: Props) {
     try {
       setLoading(true)
       await createYear({ value: Number(value), name: name.trim() })
-    //   toast({ title: "Year created" })
+      showToast("Year created successfully", "success")
       setOpen(false)
       setValue("")
       setName("")
@@ -47,11 +47,7 @@ export default function AddYearModal({ onCreated, trigger }: Props) {
     } catch (e: any) {
       console.error("Error creating year:", e)
       setError(e?.message || "Failed to create year")
-    //   toast({
-    //     title: "Failed to create",
-    //     description: e?.response?.data?.message ?? e?.message,
-    //     variant: "destructive",
-    //   })
+      showToast(e?.message || "Failed to create year", "error")
     } finally {
       setLoading(false)
     }
@@ -72,7 +68,7 @@ export default function AddYearModal({ onCreated, trigger }: Props) {
         <DialogTrigger asChild>{trigger}</DialogTrigger>
       ) : (
         <DialogTrigger asChild>
-          <Button size="sm">Add Year</Button>
+          <DynamicButton size="sm">Add Year</DynamicButton>
         </DialogTrigger>
       )}
       <DialogContent className="sm:max-w-md">
@@ -109,12 +105,12 @@ export default function AddYearModal({ onCreated, trigger }: Props) {
             />
           </div>
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => handleOpenChange(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
+                         <DynamicButton type="button" variant="secondary" onClick={(e) => handleOpenChange(false)}>
+               Cancel
+             </DynamicButton>
+            <DynamicButton type="submit" disabled={loading}>
               {loading ? "Creating..." : "Create"}
-            </Button>
+            </DynamicButton>
           </DialogFooter>
         </form>
       </DialogContent>

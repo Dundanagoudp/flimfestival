@@ -2,9 +2,9 @@
 
 import * as React from "react"
 import { addImages } from "@/services/galleryServices"
-import { Button } from "@/components/ui/button"
+import { DynamicButton } from "@/components/common"
 import { Input } from "@/components/ui/input"
-// import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/components/ui/custom-toast"
 
 type Props = {
   yearId: string
@@ -12,10 +12,10 @@ type Props = {
 }
 
 export default function UploadImages({ yearId, onDone }: Props) {
+  const { showToast } = useToast()
   const [files, setFiles] = React.useState<FileList | null>(null)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
-//   const { toast } = useToast()
 
   const onUpload = async () => {
     if (!files?.length) {
@@ -42,13 +42,13 @@ export default function UploadImages({ yearId, onDone }: Props) {
       setLoading(true)
       setError(null)
       await addImages(yearId, Array.from(files))
-    //   toast({ title: "Images uploaded" })
+      showToast("Images uploaded successfully", "success")
       setFiles(null)
       onDone?.()
     } catch (e: any) {
       console.error("Error uploading images:", e)
       setError(e?.message || "Failed to upload images")
-    //   toast({ title: "Upload failed", description: e?.response?.data?.message ?? e?.message, variant: "destructive" })
+      showToast(e?.message || "Failed to upload images", "error")
     } finally {
       setLoading(false)
     }
@@ -74,9 +74,9 @@ export default function UploadImages({ yearId, onDone }: Props) {
           onChange={handleFileChange}
           className="max-w-xs"
         />
-        <Button onClick={onUpload} disabled={loading || !files?.length}>
-          {loading ? "Uploading..." : "Upload"}
-        </Button>
+                 <DynamicButton onClick={(e) => onUpload()} disabled={loading || !files?.length}>
+           {loading ? "Uploading..." : "Upload"}
+         </DynamicButton>
       </div>
       {files && (
         <div className="text-xs text-muted-foreground">

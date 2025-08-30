@@ -3,7 +3,7 @@
 import * as React from "react"
 import useSWR, { mutate } from "swr"
 import { Pencil, Trash2, Images, AlertCircle, Plus, Calendar, FileImage, Upload } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { DynamicButton } from "@/components/common"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
 import { useRouter } from "next/navigation"
-// import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/components/ui/custom-toast"
 import { getAllYears, getAllGalleryByYear, deleteYear, bulkDeleteImages } from "@/services/galleryServices"
 import type { GalleryImage, GalleryYear, GetAllGalleryResponse } from "@/types/galleryTypes"
 import AddYearModal from "@/components/admin/gallery/modules/popups/addyearpopup"
@@ -20,9 +20,10 @@ import UpdateYearModal from "@/components/admin/gallery/modules/popups/updateyea
 import ConfirmDeleteModal from "@/components/admin/gallery/modules/popups/confirm-delete-modal"
 import ImageModal from "@/components/admin/gallery/modules/popups/image-modal"
 import ImageCard from "@/components/admin/gallery/modules/image-card"
+import DynamicPagination from "@/components/common/DynamicPagination"
 
 export default function GalleryPage() {
-//   const { toast } = useToast()
+  const { showToast } = useToast()
   const router = useRouter()
   const [error, setError] = React.useState<string | null>(null)
   const [selectedImage, setSelectedImage] = React.useState<GalleryImage | null>(null)
@@ -81,7 +82,29 @@ export default function GalleryPage() {
   const toggleAll = (v: boolean) => {
     if (!images) return
     setSelected(v ? new Set(images.map((i) => i._id)) : new Set())
+    if (v && images.length > 0) {
+      showToast(`Selected all ${images.length} images`, "info")
+    } else if (!v) {
+      showToast("Cleared all selections", "info")
+    }
   }
+
+  // pagination
+  const [currentPage, setCurrentPage] = React.useState(1)
+  const imagesPerPage = 20
+  const totalPages = Math.ceil((images?.length || 0) / imagesPerPage)
+  
+  // Reset to first page when year changes
+  React.useEffect(() => {
+    setCurrentPage(1)
+  }, [selectedYearId])
+  
+  // Get paginated images
+  const paginatedImages = React.useMemo(() => {
+    const startIndex = (currentPage - 1) * imagesPerPage
+    const endIndex = startIndex + imagesPerPage
+    return images.slice(startIndex, endIndex)
+  }, [images, currentPage, imagesPerPage])
 
   // modals
   const [updateOpen, setUpdateOpen] = React.useState(false)
@@ -92,9 +115,11 @@ export default function GalleryPage() {
     try {
       await mutate("years")
       setError(null)
+      showToast("Years refreshed successfully", "success")
     } catch (err) {
       console.error("Error refreshing years:", err)
       setError("Failed to refresh years")
+      showToast("Failed to refresh years", "error")
     }
   }
   
@@ -103,9 +128,11 @@ export default function GalleryPage() {
     try {
       await mutate(["images", selectedYearId])
       setError(null)
+      showToast("Images refreshed successfully", "success")
     } catch (err) {
       console.error("Error fetching images:", err)
       setError("Failed to refresh images")
+      showToast("Failed to refresh images", "error")
     }
   }
 
@@ -113,14 +140,14 @@ export default function GalleryPage() {
     if (!selectedYearId) return
     try {
       await deleteYear(selectedYearId)
-    //   toast({ title: "Year deleted" })
+      showToast("Year deleted successfully", "success")
       await refreshYears()
       setSelectedYearId(null)
       setError(null)
     } catch (e: any) {
       console.error("Error deleting year:", e)
       setError(e?.message || "Failed to delete year")
-    //   toast({ title: "Delete failed", description: e?.response?.data?.message ?? e?.message, variant: "destructive" })
+      showToast(e?.message || "Failed to delete year", "error")
     }
   }
 
@@ -128,18 +155,14 @@ export default function GalleryPage() {
     if (!selected.size) return
     try {
       await bulkDeleteImages(Array.from(selected))
-    //   toast({ title: "Deleted selected images" })
+      showToast(`Deleted ${selected.size} selected images`, "success")
       await refreshImages()
       setSelected(new Set())
       setError(null)
     } catch (e: any) {
       console.error("Error bulk deleting images:", e)
       setError(e?.message || "Failed to delete images")
-    //   toast({
-    //     title: "Bulk delete failed",
-    //     description: e?.response?.data?.message ?? e?.message,
-    //     variant: "destructive",
-    //   })
+      showToast(e?.message || "Failed to delete images", "error")
     }
   }
 
@@ -163,9 +186,9 @@ export default function GalleryPage() {
               <p className="font-medium text-destructive">Error</p>
               <p className="text-sm text-destructive/80">{error}</p>
             </div>
-            <Button variant="outline" onClick={() => window.location.reload()}>
-              Retry
-            </Button>
+                         <DynamicButton variant="outline" onClick={(e) => window.location.reload()}>
+               Retry
+             </DynamicButton>
           </CardContent>
         </Card>
       </main>
@@ -180,19 +203,19 @@ export default function GalleryPage() {
           <p className="text-muted-foreground">View, manage, and organize images by year.</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={goToUploadPage} className="flex items-center gap-2">
-            <Upload className="mr-2 h-4 w-4" />
-            Upload Images
-          </Button>
+                     <DynamicButton onClick={(e) => goToUploadPage()} className="flex items-center gap-2">
+             <Upload className="mr-2 h-4 w-4" />
+             Upload Images
+           </DynamicButton>
           <AddYearModal onCreated={refreshYears} />
           {year ? (
             <>
-              <Button size="sm" variant="outline" onClick={() => setUpdateOpen(true)}>
-                <Pencil className="mr-2 h-4 w-4" /> Edit Year
-              </Button>
-              <Button size="sm" variant="destructive" onClick={() => setDeleteOpen(true)}>
-                <Trash2 className="mr-2 h-4 w-4" /> Delete Year
-              </Button>
+                             <DynamicButton size="sm" variant="outline" onClick={(e) => setUpdateOpen(true)}>
+                 <Pencil className="mr-2 h-4 w-4" /> Edit Year
+               </DynamicButton>
+               <DynamicButton size="sm" variant="destructive" onClick={(e) => setDeleteOpen(true)}>
+                 <Trash2 className="mr-2 h-4 w-4" /> Delete Year
+               </DynamicButton>
             </>
           ) : null}
         </div>
@@ -276,9 +299,9 @@ export default function GalleryPage() {
             <Badge variant="secondary">{selected.size} selected</Badge>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="destructive" size="sm" disabled={!selected.size} onClick={handleBulkDelete}>
-              <Trash2 className="mr-2 h-4 w-4" /> Delete Selected
-            </Button>
+                         <DynamicButton variant="destructive" size="sm" disabled={!selected.size} onClick={(e) => handleBulkDelete()}>
+               <Trash2 className="mr-2 h-4 w-4" /> Delete Selected
+             </DynamicButton>
           </div>
         </div>
       </section>
@@ -293,10 +316,10 @@ export default function GalleryPage() {
           </h3>
           <div className="hidden sm:block">
             {year && (
-              <Button onClick={goToUploadPage} variant="outline" size="sm">
-                <Plus className="mr-2 h-4 w-4" />
-                Add Images
-              </Button>
+                             <DynamicButton onClick={(e) => goToUploadPage()} variant="outline" size="sm">
+                 <Plus className="mr-2 h-4 w-4" />
+                 Add Images
+               </DynamicButton>
             )}
           </div>
         </div>
@@ -304,8 +327,8 @@ export default function GalleryPage() {
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
           {imagesLoading ? (
             Array.from({ length: 6 }).map((_, i) => <Card key={i} className="h-40 animate-pulse bg-muted/40" />)
-          ) : images && images.length > 0 ? (
-            images.map((img) => (
+          ) : paginatedImages && paginatedImages.length > 0 ? (
+            paginatedImages.map((img) => (
               <ImageCard
                 key={img._id}
                 item={img}
@@ -323,6 +346,18 @@ export default function GalleryPage() {
             </Card>
           )}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-6">
+            <DynamicPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              maxVisiblePages={7}
+            />
+          </div>
+        )}
       </section>
 
       <UpdateYearModal year={year} open={updateOpen} onOpenChange={setUpdateOpen} onUpdated={refreshYears} />
