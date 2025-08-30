@@ -1,0 +1,329 @@
+"use client"
+
+import * as React from "react"
+import useSWR, { mutate } from "swr"
+import { Pencil, Trash2, Images, AlertCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Separator } from "@/components/ui/separator"
+// import { useToast } from "@/hooks/use-toast"
+import { getAllYears, getAllGalleryByYear, deleteYear, bulkDeleteImages, deleteImage } from "@/services/galleryServices"
+import type { GalleryImage, GalleryYear, GetAllGalleryResponse } from "@/types/galleryTypes"
+import AddYearModal from "@/components/admin/gallery/modules/popups/addyearpopup"
+import UpdateYearModal from "@/components/admin/gallery/modules/popups/updateyear"
+import ConfirmDeleteModal from "@/components/admin/gallery/modules/popups/confirm-delete-modal"
+import UploadImages from "@/components/admin/gallery/modules/uploadImages"
+import ImageCard from "@/components/admin/gallery/modules/image-card"
+
+export default function GalleryPage() {
+//   const { toast } = useToast()
+  const [error, setError] = React.useState<string | null>(null)
+  
+  const { data: years, isLoading: yearsLoading, error: yearsError } = useSWR<GalleryYear[]>(
+    "years", 
+    () => getAllYears(),
+    {
+      onError: (err) => {
+        console.error("Error fetching years:", err)
+        setError("Failed to load years")
+      }
+    }
+  )
+  
+  const [selectedYearId, setSelectedYearId] = React.useState<string | null>(null)
+
+  React.useEffect(() => {
+    if (years?.length && !selectedYearId) {
+      setSelectedYearId(years[0]._id)
+    }
+  }, [years, selectedYearId])
+
+  const { data: yearData, isLoading: imagesLoading, error: imagesError } = useSWR<GetAllGalleryResponse>(
+    selectedYearId ? ["images", selectedYearId] : null,
+    () => getAllGalleryByYear(selectedYearId as string),
+    {
+      onError: (err) => {
+        console.error("Error fetching images:", err)
+        setError("Failed to load images")
+      }
+    }
+  )
+
+  // Extract images from the year data
+  const images = yearData?.images || []
+
+  // Clear error when data loads successfully
+  React.useEffect(() => {
+    if (years && !yearsError) setError(null)
+    if (yearData && !imagesError) setError(null)
+  }, [years, yearsError, yearData, imagesError])
+
+  // selection
+  const [selected, setSelected] = React.useState<Set<string>>(new Set())
+  React.useEffect(() => setSelected(new Set()), [selectedYearId])
+  const toggleCheck = (id: string, v: boolean) => {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      v ? next.add(id) : next.delete(id)
+      return next
+    })
+  }
+  const allChecked = images && images.length > 0 && selected.size === images.length
+  const toggleAll = (v: boolean) => {
+    if (!images) return
+    setSelected(v ? new Set(images.map((i) => i._id)) : new Set())
+  }
+
+  // modals
+  const [updateOpen, setUpdateOpen] = React.useState(false)
+  const [deleteOpen, setDeleteOpen] = React.useState(false)
+  const year = years?.find((y) => y._id === selectedYearId) ?? null
+
+  const refreshYears = async () => {
+    try {
+      await mutate("years")
+      setError(null)
+    } catch (err) {
+      console.error("Error refreshing years:", err)
+      setError("Failed to refresh years")
+    }
+  }
+  
+  const refreshImages = async () => {
+    if (!selectedYearId) return
+    try {
+      await mutate(["images", selectedYearId])
+      setError(null)
+    } catch (err) {
+      console.error("Error refreshing images:", err)
+      setError("Failed to refresh images")
+    }
+  }
+
+  const handleDeleteYear = async () => {
+    if (!selectedYearId) return
+    try {
+      await deleteYear(selectedYearId)
+    //   toast({ title: "Year deleted" })
+      await refreshYears()
+      setSelectedYearId(null)
+      setError(null)
+    } catch (e: any) {
+      console.error("Error deleting year:", e)
+      setError(e?.message || "Failed to delete year")
+    //   toast({ title: "Delete failed", description: e?.response?.data?.message ?? e?.message, variant: "destructive" })
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (!selected.size) return
+    try {
+      await bulkDeleteImages(Array.from(selected))
+    //   toast({ title: "Deleted selected images" })
+      await refreshImages()
+      setSelected(new Set())
+      setError(null)
+    } catch (e: any) {
+      console.error("Error bulk deleting images:", e)
+      setError(e?.message || "Failed to delete images")
+    //   toast({
+    //     title: "Bulk delete failed",
+    //     description: e?.response?.data?.message ?? e?.message,
+    //     variant: "destructive",
+    //   })
+    }
+  }
+
+  const handleSingleDelete = async (id: string) => {
+    try {
+      await deleteImage(id)
+    //   toast({ title: "Image deleted" })
+      await refreshImages()
+      setSelected((prev) => {
+        const n = new Set(prev)
+        n.delete(id)
+        return n
+      })
+      setError(null)
+    } catch (e: any) {
+      console.error("Error deleting image:", e)
+      setError(e?.message || "Failed to delete image")
+    //   toast({ title: "Delete failed", description: e?.response?.data?.message ?? e?.message, variant: "destructive" })
+    }
+  }
+
+  // Show error if there's one
+  if (error) {
+    return (
+      <main className="container mx-auto max-w-10xl space-y-6 p-4">
+        <Card className="border-destructive bg-destructive/10">
+          <CardContent className="flex items-center gap-3 p-6">
+            <AlertCircle className="h-5 w-5 text-destructive" />
+            <div className="flex-1">
+              <p className="font-medium text-destructive">Error</p>
+              <p className="text-sm text-destructive/80">{error}</p>
+            </div>
+            <Button variant="outline" onClick={() => window.location.reload()}>
+              Retry
+            </Button>
+          </CardContent>
+        </Card>
+      </main>
+    )
+  }
+
+  return (
+    <main className="container mx-auto max-w-10xl space-y-6 p-4">
+      <header className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+        <div>
+          <h1 className="text-pretty text-2xl font-semibold">Gallery</h1>
+          <p className="text-muted-foreground">View, upload, select, and delete images by year.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <AddYearModal onCreated={refreshYears} />
+          {year ? (
+            <>
+              <Button size="sm" variant="outline" onClick={() => setUpdateOpen(true)}>
+                <Pencil className="mr-2 h-4 w-4" /> Edit Year
+              </Button>
+              <Button size="sm" variant="destructive" onClick={() => setDeleteOpen(true)}>
+                <Trash2 className="mr-2 h-4 w-4" /> Delete Year
+              </Button>
+            </>
+          ) : null}
+        </div>
+      </header>
+
+      <section className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Total Years</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">
+            {yearsLoading ? "..." : years?.length ?? 0}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Total Images</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">
+            {imagesLoading ? "..." : images?.length ?? 0}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Latest Year</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">
+            {yearsLoading ? "..." : years?.length ? Math.max(...years.map((y) => y.value)) : "-"}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Selected</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">{selected.size}</CardContent>
+        </Card>
+      </section>
+
+      <section className="rounded-lg border p-4">
+        <h2 className="mb-3 text-lg font-semibold">Filters & Controls</h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-2">
+            <Label htmlFor="search">Search</Label>
+            <Input id="search" placeholder="Search by year label..." />
+          </div>
+          <div className="grid gap-2">
+            <Label>Year</Label>
+            <Select value={selectedYearId ?? undefined} onValueChange={(v) => setSelectedYearId(v)}>
+              <SelectTrigger>
+                <SelectValue placeholder={yearsLoading ? "Loading..." : "Select year"} />
+              </SelectTrigger>
+              <SelectContent>
+                {years?.map((y) => (
+                  <SelectItem key={y._id} value={y._id}>
+                    {y.value} {y.name ? `— ${y.name}` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid items-end">
+            {year ? (
+              <UploadImages yearId={year._id} onDone={refreshImages} />
+            ) : (
+              <div className="text-sm text-muted-foreground">Create a year first.</div>
+            )}
+          </div>
+        </div>
+
+        <Separator className="my-4" />
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Checkbox checked={!!allChecked} onCheckedChange={(v) => toggleAll(Boolean(v))} id="select-all" />
+            <Label htmlFor="select-all">Select All ({images?.length ?? 0})</Label>
+            <Badge variant="secondary">{selected.size} selected</Badge>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="destructive" size="sm" disabled={!selected.size} onClick={handleBulkDelete}>
+              <Trash2 className="mr-2 h-4 w-4" /> Delete Selected
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-semibold">
+            {year ? `Year ${year.value}` : "No year selected"}{" "}
+            {images ? (
+              <span className="ml-2 align-middle text-sm text-muted-foreground">{images.length} images</span>
+            ) : null}
+          </h3>
+          <div className="hidden sm:block">
+            {year ? <UploadImages yearId={year._id} onDone={refreshImages} /> : null}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+          {imagesLoading ? (
+            Array.from({ length: 6 }).map((_, i) => <Card key={i} className="h-40 animate-pulse bg-muted/40" />)
+          ) : images && images.length ? (
+            images.map((img) => (
+              <ImageCard
+                key={img._id}
+                item={img}
+                checked={selected.has(img._id)}
+                onCheckedChange={toggleCheck}
+                onDelete={handleSingleDelete}
+              />
+            ))
+          ) : (
+            <Card className="col-span-full">
+              <CardContent className="flex items-center gap-3 p-6 text-muted-foreground">
+                <Images className="h-5 w-5" />
+                <span>No images yet for this year. Use Upload to add images.</span>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </section>
+
+      <UpdateYearModal year={year} open={updateOpen} onOpenChange={setUpdateOpen} onUpdated={refreshYears} />
+      <ConfirmDeleteModal
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onConfirm={handleDeleteYear}
+        title="Delete this year?"
+        description="This will remove the year. Images may also be removed by your API. Proceed?"
+      />
+    </main>
+  )
+}
