@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
-import { Inter, DM_Serif_Display } from "next/font/google";
+import { Inter, DM_Serif_Display, Montserrat } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
 const dmSerifDisplay = DM_Serif_Display({ 
   weight: "400",
   subsets: ["latin"],
   variable: "--font-dm-serif-display"
+});
+const montserrat = Montserrat({ 
+  subsets: ["latin"],
+  variable: "--font-montserrat"
 });
 
 export const metadata: Metadata = {
@@ -22,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`${inter.className} ${dmSerifDisplay.variable}`}>
+    <div className={`${inter.className} ${dmSerifDisplay.variable} ${montserrat.variable}`}>
       {children}
     </div>
   );
