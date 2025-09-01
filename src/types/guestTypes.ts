@@ -1,8 +1,8 @@
 // Types for Guest/Year API
-
 export interface Year {
   _id: string
   value: number
+  name?: string // Added based on API response
   active: boolean
   createdAt: string
   updatedAt: string
@@ -13,8 +13,6 @@ export interface Guest {
   _id: string
   name: string
   role: string
-  // The API sometimes returns the Year as an ObjectId string (on create),
-  // and sometimes as the numeric year (on GET by id/yearwise).
   year: string | number
   age: number
   description: string
@@ -23,9 +21,7 @@ export interface Guest {
   updatedAt?: string
   __v?: number
 }
-
 // Responses
-
 export interface MessageResponse {
   message: string
 }
@@ -51,6 +47,7 @@ export type GuestsYearwiseResponse = GuestsYearwiseItem[] // GET /guest/guests-y
 
 export interface CreateOrUpdateYearInput {
   value: number
+  name?: string // Added based on API response structure
 }
 
 export interface AddGuestInput {

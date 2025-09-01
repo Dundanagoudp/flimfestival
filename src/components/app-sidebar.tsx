@@ -7,8 +7,8 @@ import {
   Award,
   Home,
   FileText,
+  Images,
 } from "lucide-react"
-
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
@@ -64,10 +64,20 @@ const adminData = {
       },
     ]
   }, 
+  {
+    title: "Guests",
+    url: "/admin/guests",
+    icon: Clapperboard,
+    items: [
+      {
+        title: "All Guests",
+        url: "/admin/guests",}
+    ]
+  },
     {
     title: "Gallery",
     url: "/admin/gallery",
-    icon: Clapperboard,
+    icon: Images ,
     items: [
       {
         title: "All Galleries",
@@ -78,7 +88,6 @@ const adminData = {
         url: "/admin/gallery/add",
       }
     ]
-    
   },
     {
       title: "Events",
