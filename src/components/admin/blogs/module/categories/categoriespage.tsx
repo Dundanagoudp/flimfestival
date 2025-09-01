@@ -11,6 +11,7 @@ import { Plus, Edit, Trash2, Loader2, Calendar, Hash, RefreshCw } from "lucide-r
 import { AddCategoryDialog } from "@/components/admin/blogs/module/popups/add-category-dialog"
 import { EditCategoryDialog } from "@/components/admin/blogs/module/popups/edit-category-dialog"
 import { DeleteCategoryDialog } from "@/components/admin/blogs/module/popups/delete-category-dialog"
+import DynamicButton from "@/components/common/DynamicButton"
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<BlogCategory[]>([])
@@ -97,14 +98,19 @@ export default function CategoriesPage() {
                 <CardDescription>Manage your blog categories</CardDescription>
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => fetchCategories(true)} disabled={refreshing}>
-                  {refreshing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                <DynamicButton 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => fetchCategories(true)} 
+                  loading={refreshing}
+                  loadingText="Refreshing..."
+                  icon={<RefreshCw className="h-4 w-4" />}
+                >
                   Refresh
-                </Button>
-                <Button onClick={handleAddCategory} size="sm">
-                  <Plus className="h-4 w-4 mr-2" />
+                </DynamicButton>
+                <DynamicButton onClick={handleAddCategory} size="sm" icon={<Plus className="h-4 w-4 mr-2" />}>
                   Add Category
-                </Button>
+                </DynamicButton>
               </div>
             </div>
           </CardHeader>
@@ -114,10 +120,9 @@ export default function CategoriesPage() {
                 <Hash className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold mb-2">No categories found</h3>
                 <p className="text-muted-foreground mb-4">Get started by creating your first category</p>
-                <Button onClick={handleAddCategory}>
-                  <Plus className="h-4 w-4 mr-2" />
+                <DynamicButton onClick={handleAddCategory} icon={<Plus className="h-4 w-4 mr-2" />}>
                   Add Category
-                </Button>
+                </DynamicButton>
               </div>
             ) : (
               <>
@@ -150,17 +155,18 @@ export default function CategoriesPage() {
                           </TableCell>
                           <TableCell className="text-right">
                             <div className="flex items-center justify-end gap-2">
-                              <Button variant="outline" size="sm" onClick={() => handleEditCategory(category)}>
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button
+                              <DynamicButton variant="outline" size="sm" onClick={() => handleEditCategory(category)} icon={<Edit className="h-4 w-4" />}>
+                                Edit
+                              </DynamicButton>
+                              <DynamicButton
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleDeleteCategory(category)}
                                 className="text-destructive hover:text-destructive"
+                                icon={<Trash2 className="h-4 w-4" />}
                               >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                                Delete
+                              </DynamicButton>
                             </div>
                           </TableCell>
                         </TableRow>
@@ -189,17 +195,18 @@ export default function CategoriesPage() {
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Button variant="outline" size="sm" onClick={() => handleEditCategory(category)}>
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
+                            <DynamicButton variant="outline" size="sm" onClick={() => handleEditCategory(category)} icon={<Edit className="h-4 w-4" />}>
+                              Edit
+                            </DynamicButton>
+                            <DynamicButton
                               variant="outline"
                               size="sm"
                               onClick={() => handleDeleteCategory(category)}
                               className="text-destructive hover:text-destructive"
+                              icon={<Trash2 className="h-4 w-4" />}
                             >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                              Delete
+                            </DynamicButton>
                           </div>
                         </div>
                       </CardContent>
