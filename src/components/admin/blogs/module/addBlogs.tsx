@@ -42,11 +42,22 @@ const formSchema = z.object({
   contentType: z.enum(["blog", "link"]),
   category: z.string().min(1, "Category is required"),
   contents: z.string().optional(),
-  link: z.string().url().optional(),
+  link: z.string().optional(),
   author: z.string().min(1, "Author is required"),
   publishedDate: z.string().min(1, "Published date is required"),
-  image: z.instanceof(File).optional(),
-})
+  image: z.instanceof(File, { message: "Featured image is required" }),
+}).refine((data) => {
+  if (data.contentType === "blog") {
+    return data.contents && data.contents.trim().length > 0;
+  }
+  if (data.contentType === "link") {
+    return data.link && data.link.trim().length > 0;
+  }
+  return false;
+}, {
+  message: "Content is required for blog posts, Link URL is required for link posts",
+  path: ["contentType"]
+});
 
 type FormValues = z.infer<typeof formSchema>
 
@@ -70,9 +81,16 @@ export default function AddBlogPage() {
       author: "",
       publishedDate: new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
     },
+    mode: "onChange", // Enable real-time validation
   })
 
   const contentType = form.watch("contentType")
+
+  // Debug form state
+  useEffect(() => {
+    console.log("Form state:", form.getValues());
+    console.log("Form errors:", form.formState.errors);
+  }, [form.formState.errors]);
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -110,16 +128,8 @@ export default function AddBlogPage() {
   const onSubmit = async (values: FormValues) => {
     setIsSubmitting(true)
     try {
-      // Validate that either contents or link is provided based on contentType
-      if (values.contentType === "blog" && !values.contents) {
-        showToast("Content is required for blog posts", "error")
-        return
-      }
-      if (values.contentType === "link" && !values.link) {
-        showToast("Link URL is required for link posts", "error")
-        return
-      }
-
+      console.log("Form values:", values); // Debug log
+      
       const payload = {
         title: values.title,
         contentType: values.contentType,
@@ -128,13 +138,16 @@ export default function AddBlogPage() {
         link: values.link || "",
         author: values.author,
         publishedDate: values.publishedDate,
-        image: values.image!,
+        image: values.image,
       }
 
+      console.log("Payload being sent:", payload); // Debug log
+      
       await createBlog(payload)
       showToast("Blog created successfully!", "success")
       router.push("/admin/dashboard/blog")
     } catch (error: any) {
+      console.error("Error creating blog:", error); // Debug log
       showToast(error.message || "Failed to create blog", "error")
     } finally {
       setIsSubmitting(false)
@@ -362,6 +375,18 @@ export default function AddBlogPage() {
                   ) : (
                     "Create Blog"
                   )}
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => {
+                    const isValid = form.trigger();
+                    console.log("Form validation result:", isValid);
+                    console.log("Current form values:", form.getValues());
+                    console.log("Form errors:", form.formState.errors);
+                  }}
+                >
+                  Test Validation
                 </Button>
                 <Button 
                   type="button" 
