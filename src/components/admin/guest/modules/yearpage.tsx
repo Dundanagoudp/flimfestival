@@ -11,6 +11,7 @@ import YearModal from "@/components/admin/guest/modules/popups/year-modal"
 import { Trash2, Pencil, Plus } from "lucide-react"
 import DynamicButton from "@/components/common/DynamicButton"
 import DynamicPagination from "@/components/common/DynamicPagination"
+import { BounceLoader } from "@/components/ui/bounce-loader"
 import {
   Dialog,
   DialogContent,
@@ -85,7 +86,13 @@ export default function YearsPage() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
+            <div className="flex flex-col items-center justify-center py-16 space-y-4">
+              <BounceLoader size="lg" className="mb-2" />
+              <div className="text-center space-y-2">
+                <p className="text-lg font-medium text-foreground">Loading Years...</p>
+                <p className="text-sm text-muted-foreground">Please wait while we fetch the data</p>
+              </div>
+            </div>
           ) : years.length === 0 ? (
             <p className="text-sm text-muted-foreground">No years yet. Create the first one.</p>
           ) : (
