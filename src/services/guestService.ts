@@ -24,7 +24,7 @@ export function setAuthToken(token?: string | null) {
   }
 }
 
-const BASE = "/api/v1/guest"
+const BASE = "/guest"
 
 // Years
 
