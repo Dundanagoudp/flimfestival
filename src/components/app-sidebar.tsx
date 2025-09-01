@@ -71,7 +71,12 @@ const adminData = {
     items: [
       {
         title: "All Guests",
-        url: "/admin/guests",}
+        url: "/admin/guests",
+      },
+      {
+        title: "years",
+        url: "/admin/guests/year",
+      }
     ]
   },
     {

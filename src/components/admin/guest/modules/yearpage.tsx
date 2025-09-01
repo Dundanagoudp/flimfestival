@@ -4,13 +4,13 @@ import useSWR from "swr"
 import { useMemo, useState } from "react"
 import { getYears, deleteYear } from "@/services/guestService"
 import type { Year } from "@/types/guestTypes"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useToast } from "@/components/ui/custom-toast"
 import YearModal from "@/components/admin/guest/modules/popups/year-modal"
 import { Trash2, Pencil, Plus } from "lucide-react"
 import DynamicButton from "@/components/common/DynamicButton"
+import DynamicPagination from "@/components/common/DynamicPagination"
 import {
   Dialog,
   DialogContent,
@@ -30,6 +30,18 @@ export default function YearsPage() {
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; year: Year | null }>({ open: false, year: null })
 
   const years = useMemo(() => data ?? [], [data])
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 6
+
+  // Pagination calculations
+  const totalPages = Math.ceil(years.length / itemsPerPage)
+  const paginatedYears = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    return years.slice(startIndex, endIndex)
+  }, [years, currentPage, itemsPerPage])
 
   async function onDelete(y: Year) {
     try {
@@ -53,7 +65,7 @@ export default function YearsPage() {
   }
 
   return (
-    <main className="p-4 md:p-6 max-w-5xl mx-auto">
+    <main className="p-4 md:p-6 max-w-8xl mx-auto">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl md:text-2xl font-semibold text-pretty">Years</h1>
         <DynamicButton
@@ -79,7 +91,7 @@ export default function YearsPage() {
           ) : (
             <>
               <div className="grid gap-3 md:hidden">
-                {years.map((y) => (
+                {paginatedYears.map((y) => (
                   <div key={y._id} className="rounded-md border p-3 flex items-center justify-between">
                     <div>
                       <div className="font-medium">{y.name ? `${y.value} — ${y.name}` : y.value}</div>
@@ -123,7 +135,7 @@ export default function YearsPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {years.map((y) => (
+                    {paginatedYears.map((y) => (
                       <TableRow key={y._id}>
                         <TableCell className="font-medium">{y.value}</TableCell>
                         <TableCell>{y.name || "-"}</TableCell>
@@ -161,6 +173,20 @@ export default function YearsPage() {
         </CardContent>
       </Card>
 
+      {/* Pagination */}
+      {years.length > 0 && totalPages > 1 && (
+        <div className="mt-4">
+          <DynamicPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            totalItems={years.length}
+            itemsPerPage={itemsPerPage}
+            showItemsInfo={true}
+          />
+        </div>
+      )}
+
       <YearModal open={open} onClose={() => setOpen(false)} initial={editing} onSuccess={() => mutate()} />
 
       <Dialog open={deleteDialog.open} onOpenChange={(open: boolean) => setDeleteDialog({ open, year: deleteDialog.year })}>
@@ -172,9 +198,9 @@ export default function YearsPage() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialog({ open: false, year: null })}>
+            <DynamicButton variant="outline" onClick={() => setDeleteDialog({ open: false, year: null })}>
               Cancel
-            </Button>
+            </DynamicButton>
             <DynamicButton onClick={handleDelete} variant="destructive">
               Delete
             </DynamicButton>

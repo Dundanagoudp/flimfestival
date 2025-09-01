@@ -34,20 +34,43 @@ export default function GuestModal({ open, onClose, initial, years, onSuccess }:
   const [photoUrl, setPhotoUrl] = useState<string>("")
   const [loading, setLoading] = useState(false)
 
+  // Reset form when modal opens/closes or initial changes
   useEffect(() => {
-    setName(initial?.name || "")
-    setRole(initial?.role || "")
-    setYear(typeof initial?.year === "string" ? initial?.year : "")
-    setAge(initial?.age != null ? String(initial?.age) : "")
-    setDescription(initial?.description || "")
-    setPhotoFile(null)
-    setPhotoUrl(typeof initial?.photo === "string" ? initial?.photo : "")
-  }, [initial, open])
+    if (open) {
+      if (initial?._id) {
+        // Editing mode - populate with existing data
+        setName(initial.name || "")
+        setRole(initial.role || "")
+        
+        // Handle year properly - if it's a number, find the corresponding year ID
+        if (typeof initial.year === "number") {
+          const yearObj = years.find(y => y.value === initial.year)
+          setYear(yearObj?._id || "")
+        } else {
+          setYear(initial.year || "")
+        }
+        
+        setAge(initial.age != null ? String(initial.age) : "")
+        setDescription(initial.description || "")
+        setPhotoFile(null)
+        setPhotoUrl(typeof initial.photo === "string" ? initial.photo : "")
+      } else {
+        // Add mode - reset form
+        setName("")
+        setRole("")
+        setYear("")
+        setAge("")
+        setDescription("")
+        setPhotoFile(null)
+        setPhotoUrl("")
+      }
+    }
+  }, [initial, open, years])
 
   const canSubmit = useMemo(() => {
     if (loading) return false
     const ageNum = Number(age)
-    const requiredOk = name.trim() && role.trim() && year.trim() && !Number.isNaN(ageNum)
+    const requiredOk = name.trim() && role.trim() && year.trim() && !Number.isNaN(ageNum) && ageNum > 0
     return Boolean(requiredOk)
   }, [name, role, year, age, loading])
 
@@ -62,14 +85,28 @@ export default function GuestModal({ open, onClose, initial, years, onSuccess }:
   async function handleSubmit() {
     try {
       setLoading(true)
+      
+      // Validate required fields
+      if (!name.trim() || !role.trim() || !year.trim() || !age.trim()) {
+        showToast("Please fill in all required fields", "error")
+        return
+      }
+
+      const ageNum = Number(age)
+      if (Number.isNaN(ageNum) || ageNum <= 0) {
+        showToast("Please enter a valid age", "error")
+        return
+      }
+
       const payload = {
-        name,
-        role,
-        year,
-        age: Number(age),
-        description,
+        name: name.trim(),
+        role: role.trim(),
+        year: year.trim(),
+        age: ageNum,
+        description: description.trim(),
         photo: photoFile || photoUrl || "",
       }
+
       if (isEdit && initial?._id) {
         await updateGuest(initial._id, payload)
         showToast("Guest updated successfully", "success")
@@ -77,6 +114,7 @@ export default function GuestModal({ open, onClose, initial, years, onSuccess }:
         await addGuest(payload)
         showToast("Guest added successfully", "success")
       }
+      
       onSuccess?.()
       onClose()
     } catch (e: any) {
@@ -85,6 +123,9 @@ export default function GuestModal({ open, onClose, initial, years, onSuccess }:
       setLoading(false)
     }
   }
+
+  // Find the selected year object for display
+  const selectedYear = years.find(y => y._id === year)
 
   return (
     <Dialog open={open} onOpenChange={(o) => (!o ? onClose() : undefined)}>
@@ -95,22 +136,35 @@ export default function GuestModal({ open, onClose, initial, years, onSuccess }:
 
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+            <Label htmlFor="name">Name *</Label>
+            <Input 
+              id="name" 
+              value={name} 
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter guest name"
+              required
+            />
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="role">Role</Label>
-            <Input id="role" value={role} onChange={(e) => setRole(e.target.value)} />
+            <Label htmlFor="role">Role *</Label>
+            <Input 
+              id="role" 
+              value={role} 
+              onChange={(e) => setRole(e.target.value)}
+              placeholder="Enter guest role"
+              required
+            />
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="year">Year</Label>
+            <Label htmlFor="year">Year *</Label>
             <select
               id="year"
               className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
               value={year}
               onChange={(e) => setYear(e.target.value)}
+              required
             >
               <option value="" disabled>
                 Select year
@@ -121,23 +175,54 @@ export default function GuestModal({ open, onClose, initial, years, onSuccess }:
                 </option>
               ))}
             </select>
+            {selectedYear && (
+              <p className="text-xs text-muted-foreground">
+                Selected: {selectedYear.value} {selectedYear.name && `(${selectedYear.name})`}
+              </p>
+            )}
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="age">Age</Label>
-            <Input id="age" type="number" min={0} value={age} onChange={(e) => setAge(e.target.value)} />
+            <Label htmlFor="age">Age *</Label>
+            <Input 
+              id="age" 
+              type="number" 
+              min="1" 
+              max="120"
+              value={age} 
+              onChange={(e) => setAge(e.target.value)}
+              placeholder="Enter age"
+              required
+            />
           </div>
 
           <div className="grid gap-2">
             <Label htmlFor="description">Description</Label>
-            <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
+            <Textarea 
+              id="description" 
+              value={description} 
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Enter guest description"
+              rows={3}
+            />
           </div>
 
           <div className="grid gap-2">
             <Label htmlFor="photo">Photo</Label>
-            <Input id="photo" type="file" accept="image/*" onChange={onPickFile} />
+            <Input 
+              id="photo" 
+              type="file" 
+              accept="image/*" 
+              onChange={onPickFile}
+              placeholder="Select photo file"
+            />
             {!photoFile && photoUrl ? (
-              <p className="text-sm text-muted-foreground">Keeping existing photo URL</p>
+              <div className="text-sm text-muted-foreground">
+                <p>Current photo: {photoUrl}</p>
+                <p className="text-xs">Upload a new file to replace it</p>
+              </div>
+            ) : photoFile ? (
+              <p className="text-sm text-green-600">New photo selected: {photoFile.name}</p>
             ) : null}
           </div>
         </div>
