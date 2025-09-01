@@ -52,7 +52,7 @@ const adminData = {
     items: [
       {
         title: "All Blogs",
-        url: "/admin/blogs",
+        url: "/admin/blogs/blogs",
       },
       {
         title: "Add Blog",
@@ -71,11 +71,11 @@ const adminData = {
     items: [
       {
         title: "All Guests",
-        url: "/admin/guests",
+        url: "/admin/blogs/guests",
       },
       {
         title: "years",
-        url: "/admin/guests/year",
+        url: "/admin/blogs/guests/year",
       }
     ]
   },
@@ -86,11 +86,11 @@ const adminData = {
     items: [
       {
         title: "All Galleries",
-        url: "/admin/gallery",
+        url: "/admin/dashboard/gallery",
       },
       {
         title: "Add Gallery",
-        url: "/admin/gallery/add",
+        url: "/admin/dashboard/gallery/add",
       }
     ]
   },
