@@ -52,15 +52,15 @@ const adminData = {
     items: [
       {
         title: "All Blogs",
-        url: "/admin/blogs/blogs",
+        url: "/admin/dashboard/blogs/blogs",
       },
       {
         title: "Add Blog",
-        url: "/admin/blogs/add",
+        url: "/admin/dashboard/blogs/add",
       },
       {
         title: "Categories",
-        url: "/admin/blogs/categories",
+        url: "/admin/dashboard/blogs/categories",
       },
     ]
   }, 
@@ -71,11 +71,11 @@ const adminData = {
     items: [
       {
         title: "All Guests",
-        url: "/admin/blogs/guests",
+        url: "/admin/dashboard/blogs/guests",
       },
       {
         title: "years",
-        url: "/admin/blogs/guests/year",
+        url: "/admin/dashboard/blogs/guests/year",
       }
     ]
   },
