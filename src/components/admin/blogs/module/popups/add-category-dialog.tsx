@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/custom-toast"
 import { createCategory } from "@/services/blogsServices"
 import { Loader2 } from "lucide-react"
+import DynamicButton from "@/components/common/DynamicButton"
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -98,24 +99,21 @@ export function AddCategoryDialog({ open, onOpenChange, onSuccess }: AddCategory
               )}
             />
             <DialogFooter>
-              <Button
+              <DynamicButton
                 type="button"
                 variant="outline"
                 onClick={() => handleOpenChange(false)}
                 disabled={isSubmitting}
               >
                 Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  "Create Category"
-                )}
-              </Button>
+              </DynamicButton>
+              <DynamicButton 
+                type="submit" 
+                loading={isSubmitting}
+                loadingText="Creating..."
+              >
+                Create Category
+              </DynamicButton>
             </DialogFooter>
           </form>
         </Form>

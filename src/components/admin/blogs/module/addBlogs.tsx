@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/select"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/custom-toast"
+import DynamicButton from "@/components/common/DynamicButton"
 
 // Form validation schema
 const formSchema = z.object({
@@ -339,13 +340,13 @@ export default function AddBlogPage() {
                     accept="image/*"
                     className="hidden"
                   />
-                  <Button
+                  <DynamicButton 
                     type="button"
                     variant="outline"
                     onClick={triggerFileInput}
                   >
                     Upload Image
-                  </Button>
+                  </DynamicButton>
                   {previewImage && (
                     <div className="w-20 h-20 rounded-md overflow-hidden border">
                       <img
@@ -362,21 +363,15 @@ export default function AddBlogPage() {
               </div>
 
               <div className="flex gap-4">
-                <Button 
+                <DynamicButton 
                   type="submit" 
-                  disabled={isSubmitting} 
+                  loading={isSubmitting}
+                  loadingText="Creating..."
                   className="w-full sm:w-auto"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
-                      Creating...
-                    </>
-                  ) : (
-                    "Create Blog"
-                  )}
-                </Button>
-                <Button 
+                  Create Blog
+                </DynamicButton>
+                <DynamicButton 
                   type="button" 
                   variant="outline"
                   onClick={() => {
@@ -387,14 +382,14 @@ export default function AddBlogPage() {
                   }}
                 >
                   Test Validation
-                </Button>
-                <Button 
+                </DynamicButton>
+                <DynamicButton 
                   type="button" 
                   variant="outline"
                   onClick={() => router.push("/admin/dashboard/blog")}
                 >
                   Cancel
-                </Button>
+                </DynamicButton>
               </div>
             </form>
           </Form>

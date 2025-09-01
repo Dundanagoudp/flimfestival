@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal } from "lucide-react"
 import { DeleteBlogDialog } from "./module/popups/delete-blog-dialog"
+import DynamicButton from "@/components/common/DynamicButton"
+import DynamicPagination from "@/components/common/DynamicPagination"
 
 export default function BlogsPage() {
   const [blogs, setBlogs] = useState<BlogPost[]>([])
@@ -32,6 +34,8 @@ export default function BlogsPage() {
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage] = useState(10)
   const { showToast } = useToast()
   const router = useRouter()
 
@@ -66,6 +70,16 @@ export default function BlogsPage() {
     
     return matchesSearch && matchesType && matchesCategory
   })
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedBlogs = filteredBlogs.slice(startIndex, endIndex)
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+  }
 
   const handleDeleteClick = (blog: BlogPost) => {
     setSelectedBlog(blog)
@@ -116,10 +130,7 @@ export default function BlogsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Blog Management</h1>
-            <p className="text-muted-foreground">
-              Manage your blog posts, articles, and external links.
-            </p>
+            <h1 className="text-2xl font-bold tracking-tight">Blog Management</h1>
           </div>
           <Button asChild className="w-full sm:w-auto">
             <Link href="/admin/dashboard/blog/add">
@@ -253,106 +264,118 @@ export default function BlogsPage() {
                   )}
                 </div>
               ) : (
-                filteredBlogs.map((blog) => (
-                  <div
-                    key={blog._id}
-                    className="flex flex-col sm:flex-row items-start gap-4 p-4 border rounded-lg"
-                  >
-                    <div className="w-full sm:w-24 h-32 sm:h-16 bg-muted rounded-md overflow-hidden flex-shrink-0 mb-2 sm:mb-0">
-                      <img
-                        src={blog.imageUrl || "/placeholder.svg"}
-                        alt={blog.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 space-y-2 min-w-0">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                        <h3 className="text-lg font-semibold line-clamp-1">
-                          {blog.title}
-                        </h3>
-                        <Badge
-                          variant={
-                            blog.contentType === "blog" ? "default" : "secondary"
-                          }
-                        >
-                          <div className="flex items-center gap-1">
-                            {blog.contentType === "blog" ? (
-                              <FileText className="h-3 w-3" />
-                            ) : (
-                              <LinkIcon className="h-3 w-3" />
-                            )}
-                            {blog.contentType}
+                <>
+                  {paginatedBlogs.map((blog) => (
+                    <div
+                      key={blog._id}
+                      className="flex flex-col sm:flex-row items-start gap-4 p-4 border rounded-lg"
+                    >
+                      <div className="w-full sm:w-24 h-32 sm:h-16 bg-muted rounded-md overflow-hidden flex-shrink-0 mb-2 sm:mb-0">
+                        <img
+                          src={blog.imageUrl || "/placeholder.svg"}
+                          alt={blog.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 space-y-2 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                          <h3 className="text-lg font-semibold line-clamp-1">
+                            {blog.title}
+                          </h3>
+                          <Badge
+                            variant={
+                              blog.contentType === "blog" ? "default" : "secondary"
+                            }
+                          >
+                            <div className="flex items-center gap-1">
+                              {blog.contentType === "blog" ? (
+                                <FileText className="h-3 w-3" />
+                              ) : (
+                                <LinkIcon className="h-3 w-3" />
+                              )}
+                              {blog.contentType}
+                            </div>
+                          </Badge>
+                          <Badge variant="outline">
+                            {getCategoryName(blog.category)}
+                          </Badge>
+                        </div>
+                        {blog.contentType === "blog" && blog.contents && (
+                          <p className="text-sm text-muted-foreground line-clamp-2">
+                            {blog.contents}
+                          </p>
+                        )}
+                        {blog.contentType === "link" && blog.link && (
+                          <div className="flex items-center gap-2 text-sm text-blue-600">
+                            <ExternalLink className="h-4 w-4" />
+                            <span className="truncate">{blog.link}</span>
                           </div>
-                        </Badge>
-                        <Badge variant="outline">
-                          {getCategoryName(blog.category)}
-                        </Badge>
-                      </div>
-                      {blog.contentType === "blog" && blog.contents && (
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                          {blog.contents}
-                        </p>
-                      )}
-                      {blog.contentType === "link" && blog.link && (
-                        <div className="flex items-center gap-2 text-sm text-blue-600">
-                          <ExternalLink className="h-4 w-4" />
-                          <span className="truncate">{blog.link}</span>
-                        </div>
-                      )}
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
-                          <span>Published: {formatDate(blog.publishedDate)}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span>Author: {blog.author}</span>
+                        )}
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <Calendar className="h-4 w-4" />
+                            <span>Published: {formatDate(blog.publishedDate)}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span>Author: {blog.author}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex flex-row sm:flex-col items-center gap-2 mt-2 sm:mt-0">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            View
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => router.push(`/admin/dashboard/blog/edit/${blog._id}`)}
-                          >
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit
-                          </DropdownMenuItem>
-                          {blog.contentType === "link" && blog.link && (
-                            <DropdownMenuItem asChild>
-                              <a
-                                href={blog.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                <ExternalLink className="mr-2 h-4 w-4" />
-                                Open Link
-                              </a>
+                      <div className="flex flex-row sm:flex-col items-center gap-2 mt-2 sm:mt-0">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                              <Eye className="mr-2 h-4 w-4" />
+                              View
                             </DropdownMenuItem>
-                          )}
-                          <DropdownMenuItem 
-                            className="text-red-600" 
-                            onClick={() => handleDeleteClick(blog)}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" /> 
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                            <DropdownMenuItem
+                              onClick={() => router.push(`/admin/dashboard/blog/edit/${blog._id}`)}
+                            >
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit
+                            </DropdownMenuItem>
+                            {blog.contentType === "link" && blog.link && (
+                              <DropdownMenuItem asChild>
+                                <a
+                                  href={blog.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  <ExternalLink className="mr-2 h-4 w-4" />
+                                  Open Link
+                                </a>
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuItem 
+                              className="text-red-600" 
+                              onClick={() => handleDeleteClick(blog)}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" /> 
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
                     </div>
-                  </div>
-                ))
+                  ))}
+                  
+                  {/* Pagination */}
+                  <DynamicPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                    totalItems={filteredBlogs.length}
+                    itemsPerPage={itemsPerPage}
+                    className="mt-6"
+                  />
+                </>
               )}
             </div>
           </CardContent>

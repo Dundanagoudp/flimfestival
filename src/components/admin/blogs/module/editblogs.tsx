@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/select"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/custom-toast"
+import DynamicButton from "@/components/common/DynamicButton"
 
 // Form validation schema
 const formSchema = z.object({
@@ -198,9 +199,9 @@ export function EditBlogForm({ blogId }: EditBlogFormProps) {
         <div className="text-center">
           <h3 className="text-lg font-semibold mb-2">Blog not found</h3>
           <p className="text-muted-foreground mb-4">The blog you're looking for doesn't exist.</p>
-          <Button onClick={() => router.push("/admin/dashboard/blog")}>
+          <DynamicButton onClick={() => router.push("/admin/dashboard/blog")}>
             Back to Blogs
-          </Button>
+          </DynamicButton>
         </div>
       </div>
     )
@@ -428,13 +429,13 @@ export function EditBlogForm({ blogId }: EditBlogFormProps) {
                   accept="image/*"
                   className="hidden"
                 />
-                <Button
+                <DynamicButton 
                   type="button"
                   variant="outline"
                   onClick={triggerFileInput}
                 >
                   {previewImage || existingImage ? "Change Image" : "Upload Image"}
-                </Button>
+                </DynamicButton>
                 {(previewImage || existingImage) && (
                   <div className="w-20 h-20 rounded-md overflow-hidden border">
                     <img
@@ -445,14 +446,14 @@ export function EditBlogForm({ blogId }: EditBlogFormProps) {
                   </div>
                 )}
                 {(previewImage || existingImage) && (
-                  <Button
+                  <DynamicButton
                     type="button"
                     variant="outline"
                     size="sm"
                     onClick={handleRemoveImage}
                   >
                     Remove
-                  </Button>
+                  </DynamicButton>
                 )}
               </div>
               <p className="text-sm text-muted-foreground">
@@ -461,27 +462,21 @@ export function EditBlogForm({ blogId }: EditBlogFormProps) {
             </div>
 
             <div className="flex gap-4">
-              <Button 
+              <DynamicButton 
                 type="submit" 
-                disabled={isSubmitting} 
+                loading={isSubmitting}
+                loadingText="Updating..."
                 className="w-full sm:w-auto"
               >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
-                    Updating...
-                  </>
-                ) : (
-                  "Update Blog"
-                )}
-              </Button>
-              <Button 
+                Update Blog
+              </DynamicButton>
+              <DynamicButton 
                 type="button" 
                 variant="outline"
                 onClick={() => router.push("/admin/dashboard/blog")}
               >
                 Cancel
-              </Button>
+              </DynamicButton>
             </div>
           </form>
         </Form>

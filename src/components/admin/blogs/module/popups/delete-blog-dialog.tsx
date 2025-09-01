@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/custom-toast"
 import { deleteBlog } from "@/services/blogsServices"
 import { BlogPost } from "@/types/blogsTypes"
 import { Loader2, AlertTriangle, Trash2 } from "lucide-react"
+import DynamicButton from "@/components/common/DynamicButton"
 
 interface DeleteBlogDialogProps {
   open: boolean
@@ -81,32 +82,24 @@ export function DeleteBlogDialog({ open, onOpenChange, blog, onSuccess }: Delete
         </div>
 
         <DialogFooter>
-          <Button
+          <DynamicButton
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isDeleting}
           >
             Cancel
-          </Button>
-          <Button
+          </DynamicButton>
+          <DynamicButton
             type="button"
             variant="destructive"
+            loading={isDeleting}
+            loadingText="Deleting..."
+            icon={<Trash2 className="mr-2 h-4 w-4" />}
             onClick={handleDelete}
-            disabled={isDeleting}
           >
-            {isDeleting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Deleting...
-              </>
-            ) : (
-              <>
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete Blog
-              </>
-            )}
-          </Button>
+            Delete Blog
+          </DynamicButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/custom-toast"
 import { deleteCategory } from "@/services/blogsServices"
 import { BlogCategory } from "@/types/blogsTypes"
 import { Loader2, AlertTriangle } from "lucide-react"
+import DynamicButton from "@/components/common/DynamicButton"
 
 interface DeleteCategoryDialogProps {
   open: boolean
@@ -57,29 +58,23 @@ export function DeleteCategoryDialog({ open, onOpenChange, category, onSuccess }
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button
+          <DynamicButton
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isDeleting}
           >
             Cancel
-          </Button>
-          <Button
+          </DynamicButton>
+          <DynamicButton
             type="button"
             variant="destructive"
+            loading={isDeleting}
+            loadingText="Deleting..."
             onClick={handleDelete}
-            disabled={isDeleting}
           >
-            {isDeleting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Deleting...
-              </>
-            ) : (
-              "Delete Category"
-            )}
-          </Button>
+            Delete Category
+          </DynamicButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>
