@@ -3,6 +3,7 @@
 export interface Year {
   _id: string
   value: number
+  name?: string // Added based on API response
   active: boolean
   createdAt: string
   updatedAt: string
@@ -51,6 +52,7 @@ export type GuestsYearwiseResponse = GuestsYearwiseItem[] // GET /guest/guests-y
 
 export interface CreateOrUpdateYearInput {
   value: number
+  name?: string // Added based on API response structure
 }
 
 export interface AddGuestInput {
