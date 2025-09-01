@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/components/ui/custom-toast"
 import { deleteCategory } from "@/services/blogsServices"
 import { BlogCategory } from "@/types/blogsTypes"
 import { Loader2, AlertTriangle } from "lucide-react"
@@ -24,7 +24,7 @@ interface DeleteCategoryDialogProps {
 
 export function DeleteCategoryDialog({ open, onOpenChange, category, onSuccess }: DeleteCategoryDialogProps) {
   const [isDeleting, setIsDeleting] = useState(false)
-  const { toast } = useToast()
+  const { showToast } = useToast()
 
   const handleDelete = async () => {
     if (!category) return
@@ -32,18 +32,11 @@ export function DeleteCategoryDialog({ open, onOpenChange, category, onSuccess }
     setIsDeleting(true)
     try {
       await deleteCategory(category._id)
-      toast({
-        title: "Success",
-        description: "Category deleted successfully!",
-      })
+      showToast("Category deleted successfully!", "success")
       onSuccess()
       onOpenChange(false)
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete category",
-        variant: "destructive",
-      })
+      showToast(error.message || "Failed to delete category", "error")
     } finally {
       setIsDeleting(false)
     }

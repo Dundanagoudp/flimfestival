@@ -8,9 +8,9 @@ import { useToast } from "@/components/ui/custom-toast"
 import { BlogCategory, CreateCategoryPayload, UpdateCategoryPayload } from "@/types/blogsTypes"
 import { createCategory, getAllCategories, updateCategory, deleteCategory } from "@/services/blogsServices"
 import { Plus, Edit, Trash2, Loader2, Calendar, Hash, RefreshCw } from "lucide-react"
-import { AddCategoryDialog } from "../../popups/add-category-dialog"
-import { EditCategoryDialog } from "../../popups/edit-category-dialog"
-import { DeleteCategoryDialog } from "../../popups/delete-category-dialog"
+import { AddCategoryDialog } from "@/components/admin/blogs/module/popups/add-category-dialog"
+import { EditCategoryDialog } from "@/components/admin/blogs/module/popups/edit-category-dialog"
+import { DeleteCategoryDialog } from "@/components/admin/blogs/module/popups/delete-category-dialog"
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<BlogCategory[]>([])

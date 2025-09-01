@@ -42,7 +42,7 @@ interface AddCategoryDialogProps {
 
 export function AddCategoryDialog({ open, onOpenChange, onSuccess }: AddCategoryDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  // const { showToast: toast } = useToast()
+  const { showToast } = useToast()
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -55,19 +55,12 @@ export function AddCategoryDialog({ open, onOpenChange, onSuccess }: AddCategory
     setIsSubmitting(true)
     try {
       await createCategory(values)
-      // showToast({
-      //   title: "Success",
-      //   description: "Category created successfully!",
-      // })
+      showToast("Category created successfully!", "success")
       form.reset()
       onSuccess()
       onOpenChange(false)
     } catch (error: any) {
-      // toast({
-      //   title: "Error",
-      //   description: error.message || "Failed to create category",
-      //   variant: "destructive",
-      // })
+      showToast(error.message || "Failed to create category", "error")
     } finally {
       setIsSubmitting(false)
     }

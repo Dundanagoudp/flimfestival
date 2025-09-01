@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/components/ui/custom-toast"
 import { updateCategory } from "@/services/blogsServices"
 import { BlogCategory } from "@/types/blogsTypes"
 import { Loader2 } from "lucide-react"
@@ -44,7 +44,7 @@ interface EditCategoryDialogProps {
 
 export function EditCategoryDialog({ open, onOpenChange, category, onSuccess }: EditCategoryDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { toast } = useToast()
+  const { showToast } = useToast()
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -67,18 +67,11 @@ export function EditCategoryDialog({ open, onOpenChange, category, onSuccess }: 
     setIsSubmitting(true)
     try {
       await updateCategory(category._id, values)
-      toast({
-        title: "Success",
-        description: "Category updated successfully!",
-      })
+      showToast("Category updated successfully!", "success")
       onSuccess()
       onOpenChange(false)
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update category",
-        variant: "destructive",
-      })
+      showToast(error.message || "Failed to update category", "error")
     } finally {
       setIsSubmitting(false)
     }

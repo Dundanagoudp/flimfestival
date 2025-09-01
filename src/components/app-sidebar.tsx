@@ -52,15 +52,15 @@ const adminData = {
     items: [
       {
         title: "All Blogs",
-        url: "/admin/dashboard/blogs/blogs",
+        url: "/admin/dashboard/blog",
       },
       {
         title: "Add Blog",
-        url: "/admin/dashboard/blogs/add",
+        url: "/admin/dashboard/blog/add",
       },
       {
         title: "Categories",
-        url: "/admin/dashboard/blogs/categories",
+        url: "/admin/dashboard/blog/category",
       },
     ]
   }, 
