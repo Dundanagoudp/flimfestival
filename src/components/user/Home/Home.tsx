@@ -8,6 +8,7 @@ import Guest from './guest/Guest'
 import AwardNomination from './award/AwardNomination'
 import Gallery from './Gallery/Gallery'
 import BlogsAndMedia from './blog&media/BlogsAndMedia'
+import Footer from './footer/Footer'
 
 export default function Home() {
   return (
@@ -24,6 +25,7 @@ export default function Home() {
         <AwardNomination/>
         <Gallery/>
         <BlogsAndMedia/>
+        <Footer/>
       </div>
     </>
   )
