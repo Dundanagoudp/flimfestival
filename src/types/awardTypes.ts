@@ -8,7 +8,18 @@ export interface Award {
   rule1: string
   rule2: string
   rule3: string
+  category: AwardCategory
+  createdAt: string
+  updatedAt: string
   __v: number
+}
+
+export interface AwardCategory {
+  _id: string
+  name: string
+  createdAt?: string
+  updatedAt?: string
+  __v?: number
 }
 
 export interface CreateAwardPayload {
@@ -19,6 +30,7 @@ export interface CreateAwardPayload {
   rule1: string
   rule2: string
   rule3: string
+  category: string
 }
 
 export interface UpdateAwardPayload {
@@ -29,19 +41,22 @@ export interface UpdateAwardPayload {
   rule1?: string
   rule2?: string
   rule3?: string
+  category?: string
+}
+
+// Category Management Types
+export interface CreateCategoryPayload {
+  name: string
+}
+
+export interface UpdateCategoryPayload {
+  name: string
 }
 
 // API Response Types
 export interface AwardCreateResponse {
   _id: string
-  title: string
-  description: string
-  image: string
-  array_images: string[]
-  rule1: string
-  rule2: string
-  rule3: string
-  __v: number
+  category: AwardCategory
 }
 
 export interface GetAllAwardsResponse extends Array<Award> {}
@@ -57,6 +72,9 @@ export interface AwardUpdateResponse {
   rule1: string
   rule2: string
   rule3: string
+  category: AwardCategory
+  createdAt: string
+  updatedAt: string
   __v: number
 }
 
@@ -67,3 +85,8 @@ export interface AwardDeleteResponse {
 export interface SimpleMessageResponse {
   message: string
 }
+
+// Category API Response Types
+export interface CategoryCreateResponse extends AwardCategory {}
+
+export interface GetAllCategoriesResponse extends Array<AwardCategory> {}
