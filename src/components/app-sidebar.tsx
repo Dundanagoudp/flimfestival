@@ -52,15 +52,15 @@ const adminData = {
     items: [
       {
         title: "All Blogs",
-        url: "/admin/blogs",
+        url: "/admin/dashboard/blog",
       },
       {
         title: "Add Blog",
-        url: "/admin/blogs/add",
+        url: "/admin/dashboard/blog/add",
       },
       {
         title: "Categories",
-        url: "/admin/blogs/categories",
+        url: "/admin/dashboard/blog/category",
       },
     ]
   }, 
@@ -71,7 +71,12 @@ const adminData = {
     items: [
       {
         title: "All Guests",
-        url: "/admin/guests",}
+        url: "/admin/dashboard/blogs/guests",
+      },
+      {
+        title: "years",
+        url: "/admin/dashboard/blogs/guests/year",
+      }
     ]
   },
     {
@@ -81,11 +86,11 @@ const adminData = {
     items: [
       {
         title: "All Galleries",
-        url: "/admin/gallery",
+        url: "/admin/dashboard/gallery",
       },
       {
         title: "Add Gallery",
-        url: "/admin/gallery/add",
+        url: "/admin/dashboard/gallery/add",
       }
     ]
   },
@@ -110,20 +115,20 @@ const adminData = {
     },
     {
       title: "Awards",
-      url: "/admin/awards",
+      url: "/admin/dashboard/award",
       icon: Award,
       items: [
         {
           title: "All Awards",
-          url: "/admin/awards",
+          url: "/admin/dashboard/award",
         },
         {
           title: "Add Award",
-          url: "/admin/awards/add",
+          url: "/admin/dashboard/award/add",
         },
         {
           title: "Categories",
-          url: "/admin/awards/categories",
+          url: "/admin/dashboard/award/categories",
         },
       ],
     },

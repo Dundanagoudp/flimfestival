@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react"
 import { createYear, updateYear } from "@/services/guestService"
 import type { Year } from "@/types/guestTypes"
-import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -80,9 +79,9 @@ export default function YearModal({ open, onClose, initial, onSuccess }: Props) 
         </div>
 
         <DialogFooter className="mt-4">
-          <Button variant="outline" onClick={onClose} disabled={loading}>
+          <DynamicButton variant="outline" onClick={onClose} disabled={loading}>
             Cancel
-          </Button>
+          </DynamicButton>
           <DynamicButton 
             onClick={handleSubmit} 
             disabled={!canSubmit}
