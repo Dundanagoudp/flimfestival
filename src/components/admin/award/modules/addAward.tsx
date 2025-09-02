@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { Loader2, X } from "lucide-react"
+import { Loader2, X, Trophy } from "lucide-react"
 import { createAward, getAllAwardCategories } from "@/services/awardService"
 import { AwardCategory } from "@/types/awardTypes"
 import {
@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { useToast } from "@/components/ui/custom-toast"
 import DynamicButton from "@/components/common/DynamicButton"
 
@@ -159,12 +160,22 @@ export default function AddAwardPage() {
     <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
       <Card className="w-full">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold mb-6">
-            Create New Award
-          </CardTitle>
-          <CardDescription>
-            Add new awards with rules, descriptions, and images.
-          </CardDescription>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <CardTitle className="text-2xl font-bold">
+                Create New Award
+              </CardTitle>
+              <CardDescription>
+                Add new awards with rules, descriptions, and images.
+              </CardDescription>
+            </div>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/admin/dashboard/award/categories">
+                <Trophy className="mr-2 h-4 w-4" />
+                Manage Categories
+              </Link>
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <Form {...form}>

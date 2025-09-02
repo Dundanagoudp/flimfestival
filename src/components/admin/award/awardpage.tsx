@@ -22,6 +22,7 @@ import {
 import { MoreHorizontal } from "lucide-react"
 import DynamicButton from "@/components/common/DynamicButton"
 import DynamicPagination from "@/components/common/DynamicPagination"
+import { DeleteAwardDialog } from "./modules/popups/delete-award-dialog"
 
 export default function AwardPage() {
   const [awards, setAwards] = useState<Award[]>([])
@@ -30,6 +31,8 @@ export default function AwardPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [selectedAward, setSelectedAward] = useState<Award | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(10)
   const { showToast } = useToast()
@@ -94,18 +97,15 @@ export default function AwardPage() {
     setCurrentPage(page)
   }
 
-  const handleDelete = async (awardId: string) => {
-    if (window.confirm("Are you sure you want to delete this award?")) {
-      setDeleteLoading(awardId)
-      try {
-        await deleteAward(awardId)
-        setAwards(awards.filter(award => award._id !== awardId))
-        showToast("Award deleted successfully!", "success")
-      } catch (error: any) {
-        showToast(error.message || "Failed to delete award", "error")
-      } finally {
-        setDeleteLoading(null)
-      }
+  const handleDeleteClick = (award: Award) => {
+    setSelectedAward(award)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteSuccess = () => {
+    if (selectedAward) {
+      setAwards(awards.filter(award => award._id !== selectedAward._id))
+      setSelectedAward(null)
     }
   }
 
@@ -152,12 +152,20 @@ export default function AwardPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Award Management</h1>
         </div>
-        <Button asChild className="w-full sm:w-auto">
-          <Link href="/admin/dashboard/award/add">
-            <Plus className="mr-2 h-4 w-4" />
-            Create Award
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button asChild variant="outline">
+            <Link href="/admin/dashboard/award/categories">
+              <Trophy className="mr-2 h-4 w-4" />
+              Manage Categories
+            </Link>
+          </Button>
+          <Button asChild className="w-full sm:w-auto">
+            <Link href="/admin/dashboard/award/add">
+              <Plus className="mr-2 h-4 w-4" />
+              Create Award
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -348,18 +356,13 @@ export default function AwardPage() {
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            className="text-red-600" 
-                            onClick={() => handleDelete(award._id)}
-                            disabled={deleteLoading === award._id}
-                          >
-                            {deleteLoading === award._id ? (
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            ) : (
+                                                      <DropdownMenuItem 
+                              className="text-red-600" 
+                              onClick={() => handleDeleteClick(award)}
+                            >
                               <Trash2 className="mr-2 h-4 w-4" />
-                            )}
-                            {deleteLoading === award._id ? "Deleting..." : "Delete"}
-                          </DropdownMenuItem>
+                              Delete
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
@@ -380,6 +383,14 @@ export default function AwardPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Delete Dialog */}
+      <DeleteAwardDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        award={selectedAward}
+        onSuccess={handleDeleteSuccess}
+      />
     </div>
   )
 }

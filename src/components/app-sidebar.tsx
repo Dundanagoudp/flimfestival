@@ -115,20 +115,20 @@ const adminData = {
     },
     {
       title: "Awards",
-      url: "/admin/awards",
+      url: "/admin/dashboard/award",
       icon: Award,
       items: [
         {
           title: "All Awards",
-          url: "/admin/awards",
+          url: "/admin/dashboard/award",
         },
         {
           title: "Add Award",
-          url: "/admin/awards/add",
+          url: "/admin/dashboard/award/add",
         },
         {
           title: "Categories",
-          url: "/admin/awards/categories",
+          url: "/admin/dashboard/award/categories",
         },
       ],
     },
