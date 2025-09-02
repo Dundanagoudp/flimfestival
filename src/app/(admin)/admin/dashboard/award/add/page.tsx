@@ -1,10 +1,5 @@
-import AddAward from '@/components/admin/award/modules/addAward'
-import React from 'react'
+import AddAwardPage from "@/components/admin/award/modules/addAward"
 
-export default function page() {
-  return (
-    <div>
-     <AddAward/>   
-    </div>
-  )
+export default function AddAwardDashboardPage() {
+  return <AddAwardPage />
 }

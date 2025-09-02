@@ -8,7 +8,7 @@ export interface Award {
   rule1: string
   rule2: string
   rule3: string
-  category: AwardCategory
+  category: AwardCategory | string
   createdAt: string
   updatedAt: string
   __v: number
@@ -72,7 +72,7 @@ export interface AwardUpdateResponse {
   rule1: string
   rule2: string
   rule3: string
-  category: AwardCategory
+  category: AwardCategory | string
   createdAt: string
   updatedAt: string
   __v: number

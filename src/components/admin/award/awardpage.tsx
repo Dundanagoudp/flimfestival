@@ -42,10 +42,28 @@ export default function AwardPage() {
         getAllAwards(),
         getAllAwardCategories()
       ])
-      setAwards(awardsData)
-      setCategories(categoriesData)
+      console.log('Awards data:', awardsData)
+      console.log('Categories data:', categoriesData)
+      
+      // Ensure we have valid data
+      if (Array.isArray(awardsData)) {
+        setAwards(awardsData)
+      } else {
+        console.error('Invalid awards data:', awardsData)
+        setAwards([])
+      }
+      
+      if (Array.isArray(categoriesData)) {
+        setCategories(categoriesData)
+      } else {
+        console.error('Invalid categories data:', categoriesData)
+        setCategories([])
+      }
     } catch (error: any) {
+      console.error('Error fetching data:', error)
       showToast(error.message || "Failed to fetch data", "error")
+      setAwards([])
+      setCategories([])
     } finally {
       setLoading(false)
     }
@@ -60,7 +78,8 @@ export default function AwardPage() {
       award.description.toLowerCase().includes(searchTerm.toLowerCase())
     
     const matchesCategory = categoryFilter === "all" || 
-      (typeof award.category === 'string' ? award.category === categoryFilter : award.category._id === categoryFilter)
+      (award.category && typeof award.category === 'string' ? award.category === categoryFilter : 
+       award.category && typeof award.category === 'object' ? award.category._id === categoryFilter : false)
     
     return matchesSearch && matchesCategory
   })
@@ -90,12 +109,17 @@ export default function AwardPage() {
     }
   }
 
-  const getCategoryName = (category: string | AwardCategory) => {
+  const getCategoryName = (category: string | AwardCategory | undefined | null) => {
+    if (!category) {
+      return 'Unknown'
+    }
+    
     if (typeof category === 'string') {
       const foundCategory = categories.find(cat => cat._id === category)
       return foundCategory?.name || 'Unknown'
     }
-    return category.name
+    
+    return category.name || 'Unknown'
   }
 
   const formatDate = (dateString: string) => {
@@ -256,7 +280,7 @@ export default function AwardPage() {
               </div>
             ) : (
               <>
-                {paginatedAwards.map((award) => (
+                {paginatedAwards.filter(award => award && award._id && award.title).map((award) => (
                   <div
                     key={award._id}
                     className="flex flex-col sm:flex-row items-start gap-4 p-4 border rounded-lg"
@@ -269,14 +293,16 @@ export default function AwardPage() {
                       />
                     </div>
                     <div className="flex-1 space-y-2 min-w-0">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                        <h3 className="text-lg font-semibold line-clamp-1">
-                          {award.title}
-                        </h3>
-                        <Badge variant="outline">
-                          {getCategoryName(award.category)}
-                        </Badge>
-                      </div>
+                                              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                          <h3 className="text-lg font-semibold line-clamp-1">
+                            {award.title}
+                          </h3>
+                          {award.category && (
+                            <Badge variant="outline">
+                              {getCategoryName(award.category)}
+                            </Badge>
+                          )}
+                        </div>
                       <p className="text-sm text-muted-foreground line-clamp-2">
                         {award.description}
                       </p>

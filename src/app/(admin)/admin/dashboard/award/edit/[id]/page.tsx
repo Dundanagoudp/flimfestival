@@ -1,10 +1,5 @@
-import EditAward from '@/components/admin/award/modules/editAward'
-import React from 'react'
+import EditAwardPage from "@/components/admin/award/modules/editAward"
 
-export default function page() {
-  return (
-    <div>
-        <EditAward/>
-    </div>
-  )
+export default function EditAwardDashboardPage() {
+  return <EditAwardPage />
 }

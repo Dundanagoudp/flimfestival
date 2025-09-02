@@ -198,6 +198,10 @@ export function validateAwardData(payload: CreateAwardPayload): string[] {
     errors.push("Description is required")
   }
   
+  if (!payload.category || payload.category.trim() === "") {
+    errors.push("Category is required")
+  }
+  
   if (!payload.image) {
     errors.push("Main image is required")
   }

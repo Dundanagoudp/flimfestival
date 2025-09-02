@@ -1,10 +1,5 @@
-import Awardpage from '@/components/admin/award/awardpage'
-import React from 'react'
+import AwardPage from "@/components/admin/award/awardpage"
 
-export default function page() {
-  return (
-    <div>
-        <Awardpage/>
-    </div>
-  )
+export default function AwardDashboardPage() {
+  return <AwardPage />
 }
