@@ -16,6 +16,7 @@ import EditTimeSlotModal from "./module/popups/edit-timeslot-modal"
 import DeleteTimeSlotModal from "./module/popups/delete-timeslot-modal"
 import UpdateDayImageModal from "./module/popups/update-day-image-modal"
 import DeleteDayImageModal from "./module/popups/delete-day-image-modal"
+import ViewEventModal from "./module/popups/view-event-modal"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,6 +48,8 @@ export default function EventsMainpage() {
   const [updateImageModalOpen, setUpdateImageModalOpen] = useState(false)
   const [deleteImageModalOpen, setDeleteImageModalOpen] = useState(false)
   const [selectedDay, setSelectedDay] = useState<EventDayItem | null>(null)
+  const [viewModalOpen, setViewModalOpen] = useState(false)
+  const [viewEventId, setViewEventId] = useState<string | null>(null)
 
   useEffect(() => {
     void bootstrap()
@@ -350,10 +353,21 @@ export default function EventsMainpage() {
                     <DropdownMenuContent align="end" className="w-48">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                        <Link href={`/admin/dashboard/events/${currentEvent._id}`} className="flex items-center">
-                        <Eye className="mr-2 h-4 w-4" /> View Details
-                      </Link>
+                    <DropdownMenuItem
+                      onSelect={(e) => {
+                        e.preventDefault()
+                        console.log("Current event:", currentEvent)
+                        console.log("Selected event ID:", selectedEventId)
+                        const id = currentEvent?._id || selectedEventId || ""
+                        console.log("Using event ID:", id)
+                        if (id) {
+                          setViewEventId(id)
+                          setViewModalOpen(true)
+                        }
+                      }}
+                      className="flex items-center"
+                    >
+                      <Eye className="mr-2 h-4 w-4" /> View Details
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                         <Link href={`/admin/dashboard/events/edit/${currentEvent._id}`} className="flex items-center">
@@ -626,6 +640,12 @@ export default function EventsMainpage() {
         onClose={() => setDeleteImageModalOpen(false)}
         day={selectedDay}
         onSuccess={handleModalSuccess}
+      />
+
+      <ViewEventModal
+        isOpen={viewModalOpen}
+        onClose={() => { setViewModalOpen(false); setViewEventId(null) }}
+        eventId={viewEventId}
       />
     </div>
   )
