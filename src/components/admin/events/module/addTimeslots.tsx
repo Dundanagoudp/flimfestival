@@ -9,12 +9,15 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Clock, Loader2, Save } from "lucide-react"
 import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useToast } from "@/components/ui/custom-toast"
 import { addTime, getEvent, getEventDay, getFullEvent } from "@/services/eventsService"
 import type { EventDayItem, EventItem } from "@/types/eventsTypes"
 
 export default function AddTimeSlotPage() {
   const { showToast } = useToast()
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [events, setEvents] = useState<EventItem[]>([])
   const [days, setDays] = useState<EventDayItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -40,11 +43,16 @@ export default function AddTimeSlotPage() {
     try {
       const evs = await getEvent()
       setEvents(evs)
-      const first = evs?.[0]
-      if (first) {
-        const full = await getFullEvent(first._id)
-        setDays(full?.days ?? [])
-        setForm((p) => ({ ...p, eventId: first._id }))
+      // Read deep link params
+      const qpEventId = searchParams?.get("eventId") || ""
+      const qpDayId = searchParams?.get("dayId") || ""
+
+      const initialEvent = (qpEventId && evs.find(e => e._id === qpEventId)) || evs?.[0]
+      if (initialEvent) {
+        const fetchedDays = await getEventDay(initialEvent._id)
+        setDays(fetchedDays)
+        const initialDay = (qpDayId && fetchedDays.find(d => d._id === qpDayId)) || fetchedDays?.[0]
+        setForm((p) => ({ ...p, eventId: initialEvent._id, eventDay_ref: initialDay?._id || "" }))
       }
     } catch (err: any) {
       showToast(err?.message ?? "Failed to load events", "error")
@@ -56,8 +64,26 @@ export default function AddTimeSlotPage() {
   async function handleEventChange(eventId: string) {
     setForm((p) => ({ ...p, eventId, eventDay_ref: "" }))
     try {
-      const full = await getFullEvent(eventId)
-      setDays(full?.days ?? [])
+      const fetchedDays = await getEventDay(eventId)
+      setDays(fetchedDays)
+      // Auto-select first day for convenience
+      if (fetchedDays.length > 0) {
+        const firstDayId = fetchedDays[0]._id
+        setForm((p) => ({ ...p, eventDay_ref: firstDayId }))
+        // reflect in URL
+        const qp = new URLSearchParams(window.location.search)
+        qp.set("eventId", eventId)
+        qp.set("dayId", firstDayId)
+        router.replace(`/admin/dashboard/events/add-time?${qp.toString()}`)
+      } else {
+        // No days available for this event
+        setForm((p) => ({ ...p, eventDay_ref: "" }))
+        const qp = new URLSearchParams(window.location.search)
+        qp.set("eventId", eventId)
+        qp.delete("dayId")
+        router.replace(`/admin/dashboard/events/add-time?${qp.toString()}`)
+        showToast("Selected event has no days. Please create days first.", "warning")
+      }
     } catch (err: any) {
       showToast(err?.message ?? "Failed to load days", "error")
     }
@@ -81,6 +107,8 @@ export default function AddTimeSlotPage() {
       })
       showToast("Time slot added", "success")
       setForm((p) => ({ ...p, startTime: "", endTime: "", title: "", description: "", location: "" }))
+      // Navigate back to events page with this event pre-selected
+      router.push(`/admin/dashboard/events?eventId=${form.eventId}`)
     } catch (err: any) {
       showToast(err?.message ?? "Failed to add time slot", "error")
     } finally {
@@ -135,7 +163,16 @@ export default function AddTimeSlotPage() {
               </div>
               <div className="space-y-2">
                 <Label>Event Day *</Label>
-                <Select value={form.eventDay_ref} onValueChange={(v) => setForm((p) => ({ ...p, eventDay_ref: v }))}>
+                <Select
+                  value={form.eventDay_ref}
+                  onValueChange={(v) => {
+                    setForm((p) => ({ ...p, eventDay_ref: v }))
+                    const qp = new URLSearchParams(window.location.search)
+                    if (form.eventId) qp.set("eventId", form.eventId)
+                    qp.set("dayId", v)
+                    router.replace(`/admin/dashboard/events/add-time?${qp.toString()}`)
+                  }}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select day" />
                   </SelectTrigger>

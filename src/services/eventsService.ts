@@ -16,10 +16,25 @@ import {
 
 const BASE = "/events-schedule"
 
-// Create Event
-export async function addEvent(payload: CreateEventPayload) {
+// Create Event (supports multipart with optional image & location)
+export async function addEvent(payload: CreateEventPayload & { imageFile?: File | null }) {
   try {
-    const { data } = await apiClient.post<CreateEventResponse>(`${BASE}/addEvent`, payload)
+    const hasFile = Boolean(payload.imageFile)
+    if (hasFile) {
+      const form = new FormData()
+      form.append("name", payload.name)
+      form.append("description", payload.description)
+      form.append("year", String(payload.year))
+      form.append("month", String(payload.month))
+      form.append("startDate", payload.startDate)
+      form.append("endDate", payload.endDate)
+      if (payload.location) form.append("location", payload.location)
+      if (payload.imageFile) form.append("image", payload.imageFile)
+      const { data } = await apiClient.post<CreateEventResponse>(`${BASE}/addEvent`, form)
+      return data
+    }
+    const { imageFile, ...json } = payload
+    const { data } = await apiClient.post<CreateEventResponse>(`${BASE}/addEvent`, json)
     return data
   } catch (error: any) {
     console.error("Error creating event:", error)
@@ -36,6 +51,12 @@ export async function getEvent() {
     console.error("Error fetching events:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get events")
   }
+}
+
+// Get single event by id (helper from list if backend lacks endpoint)
+export async function getEventById(eventId: string) {
+  const events = await getEvent()
+  return events.find((e) => e._id === eventId) || null
 }
 
 // Get total events (backend may return number or object)

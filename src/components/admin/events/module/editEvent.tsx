@@ -21,7 +21,7 @@ export default function EditEventPage() {
   const [event, setEvent] = useState<EventItem | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [form, setForm] = useState({ name: "", description: "", year: new Date().getFullYear(), month: new Date().getMonth() + 1, startDate: "", endDate: "" })
+  const [form, setForm] = useState({ name: "", description: "", year: new Date().getFullYear(), month: new Date().getMonth() + 1, startDate: "", endDate: "", location: "", image: "" })
 
   useEffect(() => {
     void load()
@@ -34,7 +34,7 @@ export default function EditEventPage() {
       const curr = evs.find((e) => e._id === id) ?? null
       if (!curr) throw new Error("Event not found")
       setEvent(curr)
-      setForm({ name: curr.name, description: curr.description, year: curr.year, month: curr.month, startDate: curr.startDate.slice(0, 16), endDate: curr.endDate.slice(0, 16) })
+      setForm({ name: curr.name, description: curr.description, year: curr.year, month: curr.month, startDate: curr.startDate.slice(0, 16), endDate: curr.endDate.slice(0, 16), location: curr.location || "", image: curr.image || "" })
     } catch (err: any) {
       showToast(err?.message ?? "Failed to load event", "error")
       router.replace("/admin/dashboard/events")
@@ -166,6 +166,25 @@ export default function EditEventPage() {
                     className="border-slate-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400"
                   />
                 </div>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="location" className="text-slate-700 dark:text-slate-300 font-medium">Location</Label>
+                  <Input
+                    id="location"
+                    value={form.location}
+                    onChange={(e) => setForm((p) => ({ ...p, location: e.target.value }))}
+                    disabled={saving}
+                    className="border-slate-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400"
+                  />
+                </div>
+                {event?.image && (
+                  <div className="space-y-2">
+                    <Label className="text-slate-700 dark:text-slate-300 font-medium">Current Image</Label>
+                    <img src={event.image} alt={event.name} className="w-full max-w-md rounded border border-slate-200 dark:border-slate-600" />
+                  </div>
+                )}
               </div>
               
               <div className="flex gap-4 pt-4">
