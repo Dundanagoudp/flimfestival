@@ -1,0 +1,197 @@
+import apiClient from "@/apiClient"
+import {
+  AddTimePayload,
+  CreateEventPayload,
+  CreateEventResponse,
+  EventDayItem,
+  EventItem,
+  GetEventDaysResponse,
+  GetEventsResponse,
+  GetFullEventResponse,
+  GetTimesResponse,
+  SimpleMessageResponse,
+  UpdateEventDayPayload,
+  UpdateTimePayload,
+} from "@/types/eventsTypes"
+
+const BASE = "/events-schedule"
+
+// Create Event
+export async function addEvent(payload: CreateEventPayload) {
+  try {
+    const { data } = await apiClient.post<CreateEventResponse>(`${BASE}/addEvent`, payload)
+    return data
+  } catch (error: any) {
+    console.error("Error creating event:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to create event")
+  }
+}
+
+// Get events
+export async function getEvent() {
+  try {
+    const { data } = await apiClient.get<GetEventsResponse>(`${BASE}/getEvent`)
+    return data
+  } catch (error: any) {
+    console.error("Error fetching events:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to get events")
+  }
+}
+
+// Get total events (backend may return number or object)
+export async function getTotalEvent() {
+  try {
+    const { data } = await apiClient.get(`${BASE}/totalEvent`)
+    return data as number | { totalEvents: number }
+  } catch (error: any) {
+    console.error("Error fetching total events:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to get total events")
+  }
+}
+
+// Get days for an event
+export async function getEventDay(eventId: string) {
+  try {
+    const { data } = await apiClient.get<GetEventDaysResponse>(`${BASE}/getEventDay`, {
+      params: { eventId },
+    })
+    return data
+  } catch (error: any) {
+    console.error("Error fetching event days:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to get event days")
+  }
+}
+
+// Update event day basic fields
+export async function updateEventDay(eventDayId: string, payload: UpdateEventDayPayload) {
+  try {
+    const { data } = await apiClient.put<SimpleMessageResponse>(`${BASE}/updateEventDay/${eventDayId}`, payload)
+    return data
+  } catch (error: any) {
+    console.error("Error updating event day:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to update event day")
+  }
+}
+
+// Update event day with image
+export async function updateEventDayWithImage(eventDayId: string, image: File) {
+  try {
+    const form = new FormData()
+    form.append("image", image)
+    const { data } = await apiClient.put<{
+      message: string
+      day?: EventDayItem
+    }>(`${BASE}/updateEventDayWithImage/${eventDayId}`, form)
+    return data
+  } catch (error: any) {
+    console.error("Error updating event day image:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to update day image")
+  }
+}
+
+// Upload event day image only
+export async function uploadEventDayImage(eventDayId: string, image: File) {
+  try {
+    const form = new FormData()
+    form.append("image", image)
+    const { data } = await apiClient.post<{ message: string; image: string }>(
+      `${BASE}/uploadEventDayImage/${eventDayId}`,
+      form,
+    )
+    return data
+  } catch (error: any) {
+    console.error("Error uploading event day image:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to upload day image")
+  }
+}
+
+// Add time to a day
+export async function addTime(eventId: string, eventDay_ref: string, payload: AddTimePayload) {
+  try {
+    const { data } = await apiClient.post<SimpleMessageResponse>(
+      `${BASE}/addTime/${eventId}/day/${eventDay_ref}`,
+      payload,
+    )
+    return data
+  } catch (error: any) {
+    console.error("Error adding time entry:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to add time entry")
+  }
+}
+
+// Update a time entry
+export async function updateTime(day_ref: string, timeId: string, payload: UpdateTimePayload) {
+  try {
+    const { data } = await apiClient.put<SimpleMessageResponse>(
+      `${BASE}/updateTime/day/${day_ref}/time/${timeId}`,
+      payload,
+    )
+    return data
+  } catch (error: any) {
+    console.error("Error updating time entry:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to update time entry")
+  }
+}
+
+// Delete a time entry
+export async function deleteTime(timeId: string) {
+  try {
+    const { data } = await apiClient.delete<SimpleMessageResponse>(`${BASE}/deleteTime/${timeId}`)
+    return data
+  } catch (error: any) {
+    console.error("Error deleting time entry:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to delete time entry")
+  }
+}
+
+// Delete an event (and cascade on backend)
+export async function deleteEvent(eventId: string) {
+  try {
+    const { data } = await apiClient.delete<{
+      message: string
+      deletedEvent: string
+      deletedEventDays: number
+      deletedTimeEntries: number
+    }>(`${BASE}/deleteEvent/${eventId}`)
+    return data
+  } catch (error: any) {
+    console.error("Error deleting event:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to delete event")
+  }
+}
+
+// Get times list
+export async function getTime() {
+  try {
+    const { data } = await apiClient.get<GetTimesResponse>(`${BASE}/getTime`)
+    return data
+  } catch (error: any) {
+    console.error("Error fetching times:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to get times")
+  }
+}
+
+// Get full event details
+export async function getFullEvent(eventId: string) {
+  try {
+    const { data } = await apiClient.get<GetFullEventResponse>(`${BASE}/getFullEvent`, {
+      params: { eventId },
+    })
+    return data
+  } catch (error: any) {
+    console.error("Error fetching full event details:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to get full event details")
+  }
+}
+
+// Delete event day image
+export async function deleteEventDayImage(eventDayId: string) {
+  try {
+    const { data } = await apiClient.delete<SimpleMessageResponse>(`${BASE}/deleteEventDayImage/${eventDayId}`)
+    return data
+  } catch (error: any) {
+    console.error("Error deleting event day image:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to delete event day image")
+  }
+}
+
