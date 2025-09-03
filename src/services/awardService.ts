@@ -237,3 +237,11 @@ export function prepareUpdatePayload(payload: UpdateAwardPayload): Partial<Updat
   
   return cleanPayload
 }
+
+export async function getCategoryNameMap(): Promise<Record<string, string>> {
+  const cats = await getAllAwardCategories();
+  return cats.reduce<Record<string, string>>((acc, c) => {
+    acc[c._id] = c.name;
+    return acc;
+  }, {});
+}
