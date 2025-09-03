@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Loader2, Calendar, Clock, MapPin } from "lucide-react"
 import { getEventById, getEventDay, getTime } from "@/services/eventsService"
@@ -30,11 +30,7 @@ export default function ViewEventModal({ isOpen, onClose, eventId }: ViewEventMo
     setLoading(true)
     void (async () => {
       try {
-        const [ev, daysOnly, allTimes] = await Promise.all([
-          getEventById(eventId),
-          getEventDay(eventId),
-          getTime(),
-        ])
+        const [ev, daysOnly, allTimes] = await Promise.all([getEventById(eventId), getEventDay(eventId), getTime()])
         const timesByDay = (allTimes || [])
           .filter((t) => t.event_ref === eventId)
           .reduce<Record<string, any[]>>((acc, t) => {
@@ -56,7 +52,10 @@ export default function ViewEventModal({ isOpen, onClose, eventId }: ViewEventMo
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent key={eventId || "no-event"} className="max-w-3xl">
+      <DialogContent
+        key={eventId || "no-event"}
+        className="max-w-3xl max-h-[85vh] overflow-y-auto data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95 duration-200"
+      >
         <DialogHeader>
           <DialogTitle>Event Details</DialogTitle>
           <DialogDescription>Overview of the selected event.</DialogDescription>
@@ -68,8 +67,8 @@ export default function ViewEventModal({ isOpen, onClose, eventId }: ViewEventMo
           </div>
         ) : event ? (
           <div className="space-y-6">
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="flex-1 space-y-2">
+            <div className="space-y-4">
+              <div className="space-y-2">
                 <h3 className="text-xl font-semibold">{event.name}</h3>
                 <p className="text-sm text-muted-foreground">{event.description}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
@@ -100,7 +99,11 @@ export default function ViewEventModal({ isOpen, onClose, eventId }: ViewEventMo
                 </div>
               </div>
               {event.image && (
-                <img src={event.image} alt={event.name} className="w-full max-w-xs rounded border" />
+                <img
+                  src={event.image || "/placeholder.svg"}
+                  alt={event.name}
+                  className="w-full h-64 md:h-80 object-cover rounded border"
+                />
               )}
             </div>
 
@@ -117,10 +120,14 @@ export default function ViewEventModal({ isOpen, onClose, eventId }: ViewEventMo
                     <li key={d._id} className="border rounded p-3">
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="font-medium">Day {d.dayNumber}: {d.name}</div>
+                          <div className="font-medium">
+                            Day {d.dayNumber}: {d.name}
+                          </div>
                           <div className="text-xs text-muted-foreground">{d.description}</div>
                         </div>
-                        <div className="text-xs text-muted-foreground">{new Date(d.createdAt).toLocaleDateString()}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {new Date(d.createdAt).toLocaleDateString()}
+                        </div>
                       </div>
                       <div className="text-xs mt-2 text-muted-foreground">Sessions: {d.times?.length ?? 0}</div>
                     </li>
@@ -136,4 +143,3 @@ export default function ViewEventModal({ isOpen, onClose, eventId }: ViewEventMo
     </Dialog>
   )
 }
-
