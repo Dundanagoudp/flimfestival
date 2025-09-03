@@ -101,15 +101,15 @@ const adminData = {
       items: [
         {
           title: "All Events",
-          url: "/admin/events",
+          url: "/admin/dashboard/events",
+        },
+           {
+          title: "Create Event",
+          url: "/admin/dashboard/events/create",
         },
         {
-          title: "Add Event",
-          url: "/admin/events/add",
-        },
-        {
-          title: "Schedule",
-          url: "/admin/events/schedule",
+          title: "Add Time Slot",
+          url: "/admin/dashboard/events/add-time",
         },
       ],
     },
