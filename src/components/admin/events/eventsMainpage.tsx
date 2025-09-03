@@ -6,11 +6,15 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Calendar, Clock, Eye, Loader2, MoreHorizontal, Plus, Trash2 } from "lucide-react"
+import { Calendar, Clock, Eye, Loader2, MoreHorizontal, Plus, Trash2, Upload, Image as ImageIcon, Edit } from "lucide-react"
 import Link from "next/link"
 import { useToast } from "@/components/ui/custom-toast"
-import { deleteEvent, getEvent, getFullEvent, getTime } from "@/services/eventsService"
+import { deleteEvent, getEvent, getFullEvent, getTime, uploadEventDayImage, updateEventDayWithImage, deleteEventDayImage } from "@/services/eventsService"
 import type { EventDayItem, EventItem, TimeEntry } from "@/types/eventsTypes"
+import EditTimeSlotModal from "./module/popups/edit-timeslot-modal"
+import DeleteTimeSlotModal from "./module/popups/delete-timeslot-modal"
+import UpdateDayImageModal from "./module/popups/update-day-image-modal"
+import DeleteDayImageModal from "./module/popups/delete-day-image-modal"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +31,14 @@ export default function EventsMainpage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [currentEvent, setCurrentEvent] = useState<EventItem | null>(null)
   const [days, setDays] = useState<EventDayItem[]>([])
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeEntry | null>(null)
+  const [selectedDayId, setSelectedDayId] = useState("")
+  const [uploadingImage, setUploadingImage] = useState<string | null>(null)
+  const [updateImageModalOpen, setUpdateImageModalOpen] = useState(false)
+  const [deleteImageModalOpen, setDeleteImageModalOpen] = useState(false)
+  const [selectedDay, setSelectedDay] = useState<EventDayItem | null>(null)
 
   useEffect(() => {
     void fetchData()
@@ -78,6 +90,44 @@ export default function EventsMainpage() {
     } finally {
       setIsDeleting(null)
     }
+  }
+
+  function handleEditTimeSlot(timeSlot: TimeEntry, dayId: string) {
+    setSelectedTimeSlot(timeSlot)
+    setSelectedDayId(dayId)
+    setEditModalOpen(true)
+  }
+
+  function handleDeleteTimeSlot(timeSlot: TimeEntry) {
+    setSelectedTimeSlot(timeSlot)
+    setDeleteModalOpen(true)
+  }
+
+  function handleModalSuccess() {
+    void fetchData() // Refresh data after successful operation
+  }
+
+  async function handleImageUpload(dayId: string, file: File) {
+    setUploadingImage(dayId)
+    try {
+      await uploadEventDayImage(dayId, file)
+      showToast("Image uploaded successfully", "success")
+      await fetchData() // Refresh data to show new image
+    } catch (err: any) {
+      showToast(err?.message ?? "Failed to upload image", "error")
+    } finally {
+      setUploadingImage(null)
+    }
+  }
+
+  function handleUpdateImage(day: EventDayItem) {
+    setSelectedDay(day)
+    setUpdateImageModalOpen(true)
+  }
+
+  function handleDeleteImage(day: EventDayItem) {
+    setSelectedDay(day)
+    setDeleteImageModalOpen(true)
   }
 
   if (isLoading) {
@@ -247,8 +297,68 @@ export default function EventsMainpage() {
                     <p className="text-sm text-muted-foreground">{day.description}</p>
                     <p className="text-xs text-muted-foreground mt-1">Created: {new Date(day.createdAt).toLocaleDateString()}</p>
                   </div>
-                  <Badge variant="outline">{day.times?.length ?? 0} sessions</Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline">{day.times?.length ?? 0} sessions</Badge>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0]
+                          if (file) handleImageUpload(day._id, file)
+                        }}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        disabled={uploadingImage === day._id}
+                      />
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={uploadingImage === day._id}
+                        className="cursor-pointer"
+                      >
+                        {uploadingImage === day._id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Upload className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
+
+                {/* Day Image Display */}
+                {day.image && (
+                  <div className="mb-4">
+                    <div className="relative w-full max-w-md">
+                      <img
+                        src={day.image}
+                        alt={`Day ${day.dayNumber} - ${day.name}`}
+                        className="w-full h-48 object-cover rounded-lg border"
+                      />
+                      <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-xs">
+                        <ImageIcon className="h-3 w-3 inline mr-1" />
+                        Day Image
+                      </div>
+                      <div className="absolute bottom-2 right-2 flex gap-1">
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => handleUpdateImage(day)}
+                        >
+                          <Edit className="h-3 w-3 mr-1" />
+                          Update
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDeleteImage(day)}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {day.times && day.times.length > 0 ? (
                   <div className="space-y-2 mt-4">
@@ -263,9 +373,22 @@ export default function EventsMainpage() {
                           <p className="text-xs text-muted-foreground mt-1">{t.description}</p>
                           <div className="flex flex-col gap-2 mt-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:gap-4">
                             <span>🕐 {t.startTime} - {t.endTime}</span>
-                            <Button asChild size="sm" variant="outline" className="w-fit">
-                              <Link href={`/admin/dashboard/events/edit-time/${day._id}/${t._id}`}>Edit</Link>
-                            </Button>
+                            <div className="flex gap-2">
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={() => handleEditTimeSlot(t, day._id)}
+                              >
+                                Edit
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="destructive" 
+                                onClick={() => handleDeleteTimeSlot(t)}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -298,6 +421,36 @@ export default function EventsMainpage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Modals */}
+      <EditTimeSlotModal
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        timeSlot={selectedTimeSlot}
+        dayId={selectedDayId}
+        onSuccess={handleModalSuccess}
+      />
+
+      <DeleteTimeSlotModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        timeSlot={selectedTimeSlot}
+        onSuccess={handleModalSuccess}
+      />
+
+      <UpdateDayImageModal
+        isOpen={updateImageModalOpen}
+        onClose={() => setUpdateImageModalOpen(false)}
+        day={selectedDay}
+        onSuccess={handleModalSuccess}
+      />
+
+      <DeleteDayImageModal
+        isOpen={deleteImageModalOpen}
+        onClose={() => setDeleteImageModalOpen(false)}
+        day={selectedDay}
+        onSuccess={handleModalSuccess}
+      />
     </div>
   )
 }

@@ -184,3 +184,14 @@ export async function getFullEvent(eventId: string) {
   }
 }
 
+// Delete event day image
+export async function deleteEventDayImage(eventDayId: string) {
+  try {
+    const { data } = await apiClient.delete<SimpleMessageResponse>(`${BASE}/deleteEventDayImage/${eventDayId}`)
+    return data
+  } catch (error: any) {
+    console.error("Error deleting event day image:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to delete event day image")
+  }
+}
+
