@@ -1,15 +1,7 @@
 'use client'
-import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
-import { NavbarPopup } from "./popUp/NavbarPopUp";
-
-interface MenuItem {
-  title: string;
-  url: string;
-  description?: string;
-  icon?: React.ReactNode;
-  items?: MenuItem[];
-}
+import { Menu } from "lucide-react";
+import React, { useState } from "react";
+import { MegaMenu } from "./popUp/NavbarPopUp";
 
 
 
@@ -63,9 +55,9 @@ const Navbar = () => {
             <button
               aria-expanded={isPopupOpen}
               onClick={toggle}
-              className="bg-primary rounded-full p-2 border border-transparent hover:opacity-90"
+              className="bg-primary rounded-full p-2 border border-transparent hover:bg-yellow-400 hover:shadow-md active:scale-95 transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-5 w-5 transition-transform duration-200 hover:scale-110" />
             </button>
           </div>
         </nav>
@@ -81,24 +73,21 @@ const Navbar = () => {
             <button
               aria-expanded={isPopupOpen}
               onClick={toggle}
-              className="bg-primary rounded-full p-2 border border-transparent hover:opacity-90"
+              className="bg-primary rounded-full p-2 border border-transparent hover:bg-yellow-400 hover:shadow-md active:scale-95 transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-5 w-5 transition-transform duration-200 hover:scale-110" />
             </button>
           </div>
         </div>
       </div>
 
-      {/* Popup Menu (simple) */}
-      <NavbarPopup open={isPopupOpen} onClose={close} menu={sampleMenu} />
+      {/* Mega Menu */}
+      <MegaMenu open={isPopupOpen} onClose={close} menu={sampleMenu} />
     </section>
   );
 };
 
 export { Navbar };
 
-/* --------------------------
-   Simple Popup component
-   -------------------------- */
 
 
