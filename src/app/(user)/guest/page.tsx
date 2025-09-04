@@ -1,5 +1,6 @@
-import Footer from "@/components/layout/Footer";
+
 import Guest from "@/components/user/Guest/Guest";
+import Footer from "@/components/user/Home/footer/Footer";
 import HeroSection from "@/components/user/Home/hero/Herosection";
 import React from "react";
 export default function Page() {
@@ -7,7 +8,7 @@ export default function Page() {
         <div>
               <HeroSection />
             <Guest />
-          <Footer />
+        <Footer />
         </div>
     );
 }
