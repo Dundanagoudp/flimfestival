@@ -69,10 +69,6 @@ export default function ViewUserDrawer({ open, onOpenChange, user }: ViewUserDra
 
               <Card>
                 <CardContent className="space-y-4 p-4">
-                  <div>
-                    <Label className="text-xs text-muted-foreground">User ID</Label>
-                    <div className="font-mono text-sm break-all">{user._id}</div>
-                  </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label className="text-xs text-muted-foreground">Name</Label>
