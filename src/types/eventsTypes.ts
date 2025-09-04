@@ -10,6 +10,9 @@ export interface EventItem {
   startDate: string
   endDate: string
   totalDays: number
+  // Optional fields provided by backend when available
+  location?: string
+  image?: string
   updatedAt: string
   __v: number
 }
@@ -49,6 +52,8 @@ export interface CreateEventPayload {
   month: number
   startDate: string // ISO string
   endDate: string // ISO string
+  // Optional extras supported by backend when using multipart
+  location?: string
 }
 
 export interface UpdateEventDayPayload {
