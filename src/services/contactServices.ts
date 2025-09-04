@@ -1,5 +1,5 @@
 // src/services/ContactService.ts
-import apiClient from "@/apiClient"; // <-- update the path if your apiClient lives elsewhere
+import apiClient from "@/apiClient"; 
 import type {
   Contact,
   ContactForm,
