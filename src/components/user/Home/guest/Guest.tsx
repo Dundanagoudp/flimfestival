@@ -1,71 +1,152 @@
-import React from 'react'
+'use client'
+import React, {  useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { getAllGuests } from '@/services/guestService'
 function Guest() {
-  return (
-    <div>
-         <main className="w-full px-4">
-       <div className="px-10 py-10">
-        <div className='flex justify-between items-center'>
-            <h1 className='text-4xl font-bold'>Guest</h1>
-            <div className="flex items-center gap-2">
-                <Button className="rounded-full bg-primary text-black hover:bg-yellow-300">
-                 View Schedule
-                </Button>
-                <span
-                  aria-hidden
-                  className="inline-block h-4 w-4 rounded-full bg-primary"
-                />
-              </div>
-        </div>
-        <div className="  px-4">
-      <div className="grid grid-cols-3 gap-4">
-        {/* Top-left: featured (larger) image with overlay */}
-        <div className="relative">
-          <img
-            src="video.png"
-            alt="Featured"
-            className="w-full h-72 md:h-80 lg:h-96 rounded-lg object-cover border-2 border-gray-200 shadow-sm"
-          />
-          {/* gradient & text overlay */}
-          <div className="absolute inset-0 rounded-lg pointer-events-none bg-gradient-to-t from-black/65 via-black/30 to-transparent"></div>
-          <div className="absolute left-5 bottom-5 text-white pointer-events-none">
-            <h3 className="text-2xl md:text-3xl font-semibold leading-tight">Judge</h3>
-            <p className="text-sm md:text-base opacity-90 mt-1">13th November 2024</p>
+ const [guestData, setGuestData] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchGuest = async () => {
+      try {
+        const response = await getAllGuests();
+        setGuestData(response);
+      } catch (err: any) {
+        console.log(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchGuest()
+  }, [])
+   const displayGuests = guestData.slice(0, 6)
+    if (loading) {
+    return (
+      <div className="w-full px-4">
+        <div className="px-10 py-10">
+          <div className="flex justify-center items-center h-96">
+            <p className="text-lg">Loading guests...</p>
           </div>
         </div>
-
-        {/* Top row - right two thumbnails */}
-        <img
-          src="video.png"
-          alt="Thumb 2"
-          className="w-full h-72 md:h-80 lg:h-96 rounded-lg object-cover border-2 border-gray-200 shadow-sm"
-        />
-        <img
-          src="video.png"
-          alt="Thumb 3"
-          className="w-full h-72 md:h-80 lg:h-96 rounded-lg object-cover border-2 border-gray-200 shadow-sm"
-        />
-
-        {/* Bottom row - 3 thumbnails (smaller height than top row) */}
-        <img
-          src="video.png"
-          alt="Thumb 4"
-          className="w-full h-60 md:h-56 rounded-lg object-cover border-2 border-gray-200 shadow-sm"
-        />
-        <img
-          src="video.png"
-          alt="Thumb 5"
-          className="w-full h-60 md:h-56 rounded-lg object-cover border-2 border-gray-200 shadow-sm"
-        />
-        <img
-          src="video.png"
-          alt="Thumb 6"
-          className="w-full h-60 md:h-56 rounded-lg object-cover border-2 border-gray-200 shadow-sm"
-        />
       </div>
-    </div>
-       </div>
-        </main>
+    )
+  }
+  return (
+      <div>
+      <main className="w-full px-4">
+        <div className="px-10 py-10">
+          <div className='flex justify-between items-center'>
+            <h1 className='text-4xl font-bold'>Guest</h1>
+            <div className="flex items-center gap-2">
+              <Button className="rounded-full bg-primary text-black hover:bg-yellow-300">
+                View Schedule
+              </Button>
+              <span
+                aria-hidden
+                className="inline-block h-4 w-4 rounded-full bg-primary"
+              />
+            </div>
+          </div>
+          
+          <div className="px-4">
+            <div className="grid grid-cols-3 gap-4 mt-10">
+              {displayGuests.length > 0 && (
+                <>
+                  {/* Featured guest (top-left, larger) */}
+
+                  <div className="relative cursor-pointer group transform transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl ">
+                    <img
+                      src={displayGuests[0]?.photo || "video.png"}
+                      alt={displayGuests[0]?.name || "Featured Guest"}
+                      className="w-full h-72 md:h-80 lg:h-96 rounded-lg object-fill transition-all duration-300 ease-out group-hover:brightness-110"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "video.png"; // Fallback image
+                      }}
+                    />
+                    {/* Gradient & text overlay */}
+                    <div className="absolute inset-0 rounded-lg pointer-events-none bg-gradient-to-t from-black/65 via-black/30 to-transparent"></div>
+                    <div className="absolute left-5 bottom-5 text-white pointer-events-none">
+                      <h3 className="text-2xl md:text-3xl font-semibold leading-tight">
+                        {displayGuests[0]?.name || "Guest Name"}
+                      </h3>
+                      <p className="text-sm md:text-base opacity-90 mt-1">
+                        {displayGuests[0]?.role || "Role"} • {displayGuests[0]?.year || "Year"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Top row - right two thumbnails */}
+                  {displayGuests[1] && (
+                    <div className="relative cursor-pointer group transform transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl">
+                      <img
+                        src={displayGuests[1].photo || "video.png"}
+                        alt={displayGuests[1].name}
+                        className="w-full h-72 md:h-80 lg:h-96 rounded-lg object-fill transition-all duration-300 ease-out group-hover:brightness-110"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = "video.png";
+                        }}
+                      />
+                      <div className="absolute inset-0 rounded-lg pointer-events-none bg-gradient-to-t from-black/40 to-transparent"></div>
+                      <div className="absolute left-3 bottom-3 text-white pointer-events-none">
+                        <h4 className="text-lg font-semibold">{displayGuests[1].name}</h4>
+                        <p className="text-xs opacity-90">{displayGuests[1].role}</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {displayGuests[2] && (
+                    <div className="relative cursor-pointer group transform transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl">
+                      <img
+                        src={displayGuests[2].photo || "video.png"}
+                        alt={displayGuests[2].name}
+                        className="w-full h-72 md:h-80 lg:h-96 rounded-lg object-fill transition-all duration-300 ease-out group-hover:brightness-110"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = "video.png";
+                        }}
+                      />
+                      <div className="absolute inset-0 rounded-lg pointer-events-none bg-gradient-to-t from-black/40 to-transparent"></div>
+                      <div className="absolute left-3 bottom-3 text-white pointer-events-none">
+                        <h4 className="text-lg font-semibold">{displayGuests[2].name}</h4>
+                        <p className="text-xs opacity-90">{displayGuests[2].role}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Bottom row - 3 thumbnails */}
+                  {displayGuests.slice(3, 6).map((guest, index) => (
+                    <div key={guest._id} className="relative cursor-pointer group transform transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl">
+                      <img
+                        src={guest.photo || "video.png"}
+                        alt={guest.name}
+                        className="w-full h-72 md:h-80 lg:h-96 rounded-lg object-fill transition-all duration-300 ease-out group-hover:brightness-110"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = "video.png";
+                        }}
+                      />
+                      <div className="absolute inset-0 rounded-lg pointer-events-none bg-gradient-to-t from-black/40 to-transparent"></div>
+                      <div className="absolute left-3 bottom-3 text-white pointer-events-none">
+                        <h4 className="text-sm font-semibold">{guest.name}</h4>
+                        <p className="text-xs opacity-90">{guest.role}</p>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+
+              {/* Fallback for when there are no guests */}
+              {displayGuests.length === 0 && (
+                <div className="col-span-3 text-center py-20">
+                  <p className="text-lg text-gray-500">No guests available</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   )
 }

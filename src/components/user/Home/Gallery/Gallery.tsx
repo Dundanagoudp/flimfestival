@@ -1,24 +1,56 @@
 
 'use client'
-import React,{useState,useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { getGalleryYearwise } from "@/services/galleryServices";
+
+interface GalleryImage {
+  _id: string;
+  photo: string;
+  year: number;
+}
+
 export default function Gallery() {
-     const items = [1, 2, 3, 4, 5, 6];
-  const [index, setIndex] = useState(0);
+  const [gallery, setGallery] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
 
-      useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % items.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [items.length]);
+  useEffect(() => {
+    const fetchGallery = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getGalleryYearwise();
+        setGallery(response);
+        
+        // Flatten the nested structure to create a single array of images with years
+        const flattenedImages: GalleryImage[] = [];
+        response.forEach((yearData: any) => {
+          yearData.images.forEach((image: any) => {
+            flattenedImages.push({
+              _id: image._id,
+              photo: image.photo,
+              year: yearData.year
+            });
+          });
+        });
+        
+        setGalleryImages(flattenedImages);
+      } catch (error) {
+        console.error('Error fetching gallery:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchGallery();
+  }, []);
 
-
-  const visible = [
-    items[index % items.length],
-    items[(index + 1) % items.length],
-    items[(index + 2) % items.length],
-  ];
   return (
     <div>
       <main className="w-full px-4">
@@ -41,21 +73,70 @@ export default function Gallery() {
           </div>
         </div>
       </main>
-      <div className="w-full flex gap-4 overflow-hidden rounded-[20px]">
-      {visible.map((i) => (
-        <div
-          key={i}
-          className="w-1/3  overflow-hidden shadow-sm"
-        >
-          <img
-            src="video.png"
-            alt={`video ${i}`}
-            className="w-full h-full object-cover rounded-2xl"
-            draggable="false"
-          />
-        </div>
-      ))}
-    </div>
+      
+      <div className="w-full overflow-hidden rounded-[20px]">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        ) : galleryImages.length > 0 ? (
+          <Swiper
+            modules={[Autoplay, Navigation, Pagination]}
+            spaceBetween={16}
+            slidesPerView={3}
+            centeredSlides={false}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+              reverseDirection: true, // This makes it move from right to left
+            }}
+            loop={true}
+            speed={800}
+            breakpoints={{
+              320: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+              },
+              768: {
+                slidesPerView: 2,
+                spaceBetween: 15,
+              },
+              1024: {
+                slidesPerView: 3,
+                spaceBetween: 16,
+              },
+            }}
+            className="gallery-swiper"
+          >
+            {galleryImages.map((image) => (
+              <SwiperSlide key={image._id}>
+                <div className="relative overflow-hidden cursor-pointer group transform transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl">
+                  <img
+                    src={image.photo}
+                    alt={`Gallery image from ${image.year}`}
+                    className="w-full h-82 object-fill rounded-2xl"
+                    draggable="false"
+                    onError={(e) => {
+                      // Fallback image if the API image fails to load
+                      (e.target as HTMLImageElement).src = "/video.png";
+                    }}
+                  />
+                  {/* Year overlay */}
+                  <div className="absolute bottom-4 left-8 bg-black/70 text-white px-3 py-1 rounded-lg text-sm font-semibold backdrop-blur-sm">
+                    {image.year}
+                  </div>
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          <div className="flex justify-center items-center h-64">
+            <p className="text-gray-500 text-lg">No gallery images available</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
