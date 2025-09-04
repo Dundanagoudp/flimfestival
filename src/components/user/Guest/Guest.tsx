@@ -8,14 +8,15 @@ export default function Guest() {
     <>
     
      <div className="sticky top-0 z-50 w-full">
-        <Navbar />
-         <div className="-mt-[5rem]" style={{ backgroundColor: "#EEEEEE" }}>
-        <HeroSection />
+        {/* <Navbar />
+         <div className="-mt-[5rem]" style={{ backgroundColor: "#EEEEEE" }}> */}
+        {/* <HeroSection /> */}
         {/* <GalleryPage /> */}
         <GuestContent />
       
       </div>
-      </div></>
+      {/* </div> */}
+      </>
     );
    
 }
