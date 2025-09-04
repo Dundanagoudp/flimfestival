@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Calendar, Loader2, Save } from "lucide-react"
 import Link from "next/link"
 import { useToast } from "@/components/ui/custom-toast"
-import { getEvent, getFullEvent } from "@/services/eventsService"
+import { getEvent, updateEvent } from "@/services/eventsService"
 import type { EventItem } from "@/types/eventsTypes"
 
 export default function EditEventPage() {
@@ -22,6 +22,7 @@ export default function EditEventPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState({ name: "", description: "", year: new Date().getFullYear(), month: new Date().getMonth() + 1, startDate: "", endDate: "", location: "", image: "" })
+  const [imageFile, setImageFile] = useState<File | null>(null)
 
   useEffect(() => {
     void load()
@@ -43,13 +44,29 @@ export default function EditEventPage() {
     }
   }
 
+  function toISO(value: string) {
+    // Convert `YYYY-MM-DDTHH:mm` (local) to ISO string
+    if (!value) return ""
+    const date = new Date(value)
+    return date.toISOString()
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!event) return
     setSaving(true)
     try {
-      // No explicit update endpoint in services provided; left as no-op UI. Hook your update call here if/when added.
-      showToast("Event updated (mock)", "success")
+      await updateEvent(event._id, {
+        name: form.name,
+        description: form.description,
+        year: form.year,
+        month: form.month,
+        startDate: toISO(form.startDate),
+        endDate: toISO(form.endDate),
+        location: form.location || undefined,
+        imageFile: imageFile || undefined,
+      })
+      showToast("Event updated", "success")
       router.replace("/admin/dashboard/events")
     } finally {
       setSaving(false)
@@ -179,6 +196,17 @@ export default function EditEventPage() {
                     className="border-slate-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400"
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="image" className="text-slate-700 dark:text-slate-300 font-medium">Replace Image</Label>
+                  <Input
+                    id="image"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                    disabled={saving}
+                    className="border-slate-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400"
+                  />
+                </div>
                 {event?.image && (
                   <div className="space-y-2">
                     <Label className="text-slate-700 dark:text-slate-300 font-medium">Current Image</Label>
@@ -195,11 +223,11 @@ export default function EditEventPage() {
                 >
                   {saving ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...
                     </>
                   ) : (
                     <>
-                      <Save className="mr-2 h-4 w-4" /> Save Changes
+                      <Save className="mr-2 h-4 w-4" /> Update
                     </>
                   )}
                 </Button>

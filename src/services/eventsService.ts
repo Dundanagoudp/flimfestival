@@ -42,6 +42,41 @@ export async function addEvent(payload: CreateEventPayload & { imageFile?: File 
   }
 }
 
+// Update Event (supports multipart with optional image & location)
+export async function updateEvent(
+  eventId: string,
+  payload: Partial<CreateEventPayload> & { imageFile?: File | null },
+) {
+  try {
+    const hasFile = Boolean(payload.imageFile)
+    if (hasFile) {
+      const form = new FormData()
+      if (payload.name !== undefined) form.append("name", payload.name)
+      if (payload.description !== undefined) form.append("description", payload.description)
+      if (payload.year !== undefined) form.append("year", String(payload.year))
+      if (payload.month !== undefined) form.append("month", String(payload.month))
+      if (payload.startDate !== undefined) form.append("startDate", payload.startDate)
+      if (payload.endDate !== undefined) form.append("endDate", payload.endDate)
+      if (payload.location) form.append("location", payload.location)
+      if (payload.imageFile) form.append("image", payload.imageFile)
+      const { data } = await apiClient.put<{ message: string; event: EventItem }>(
+        `${BASE}/updateEvent/${eventId}`,
+        form,
+      )
+      return data
+    }
+    const { imageFile, ...json } = payload
+    const { data } = await apiClient.put<{ message: string; event: EventItem }>(
+      `${BASE}/updateEvent/${eventId}`,
+      json,
+    )
+    return data
+  } catch (error: any) {
+    console.error("Error updating event:", error)
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to update event")
+  }
+}
+
 // Get events
 export async function getEvent() {
   try {
