@@ -13,6 +13,7 @@ import {
   UpdateEventDayPayload,
   UpdateTimePayload,
 } from "@/types/eventsTypes"
+import { RegistrationData, RegistrationResponse } from "@/types/registartionTypes"
 
 const BASE = "/events-schedule"
 
@@ -250,4 +251,13 @@ export async function deleteEventDayImage(eventDayId: string) {
     throw new Error(error?.response?.data?.message || error?.message || "Failed to delete event day image")
   }
 }
-
+export async  function registerEvent(registrationData: RegistrationData){
+  try{
+ const response= await apiClient.post<RegistrationResponse>(`/registration/createRegistration`, registrationData)
+ return response.data
+  }
+  catch(err:any){
+    console.error("Error registering for event:", err)
+    throw new Error(err?.response?.data?.message || err?.message || "Failed to register for event")
+  }
+}

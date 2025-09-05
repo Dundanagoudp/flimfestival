@@ -1,9 +1,11 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { getEvent, getFullEvent } from '@/services/eventsService';
 import { EventItem, EventDayItem, TimeEntry, GetFullEventResponse } from '@/types/eventsTypes';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Calendar, MapPin, Clock, Users } from 'lucide-react';
 
 
 type TimeSlot = {
@@ -23,6 +25,7 @@ export default function ViewEvent() {
     const [selectedEvent, setSelectedEvent] = useState<GetFullEventResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [activeEventId, setActiveEventId] = useState<string | null>(null);
+    const [registering, setRegistering] = useState<string | null>(null);
 
     // Fetch all events for badges
     useEffect(() => {
@@ -65,6 +68,26 @@ export default function ViewEvent() {
       setActiveEventId(eventId);
     };
 
+    const handleRegister = async (eventId: string, eventName: string) => {
+      setRegistering(eventId);
+      try {
+        // TODO: Implement registration logic here
+        // This could be a call to a registration service
+        console.log(`Registering for event: ${eventName} (${eventId})`);
+        
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Show success message (you can replace this with a toast notification)
+        alert(`Successfully registered for ${eventName}!`);
+      } catch (error) {
+        console.error('Registration failed:', error);
+        alert('Registration failed. Please try again.');
+      } finally {
+        setRegistering(null);
+      }
+    };
+
   return (
     <div>
       <main className="w-full px-4" style={{ backgroundColor: "#ffffff" }}>
@@ -99,18 +122,56 @@ export default function ViewEvent() {
 
           {selectedEvent && !loading && (
             <div className="mt-8">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">{selectedEvent.event.name}</h2>
-                <p className="text-gray-600 mt-2">{selectedEvent.event.description}</p>
-                <div className="flex gap-4 mt-3 text-sm text-gray-500">
-                  <span>Year: {selectedEvent.event.year}</span>
-                  <span>Month: {selectedEvent.event.month}</span>
-                  <span>Total Days: {selectedEvent.event.totalDays}</span>
+              {/* Event Header with Registration */}
+              <div className="mb-8 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl p-6 border border-primary/20">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <h2 className="text-3xl font-bold text-gray-800 mb-3">{selectedEvent.event.name}</h2>
+                    <p className="text-gray-600 mb-4 text-lg leading-relaxed">{selectedEvent.event.description}</p>
+                    
+                    {/* Event Details with Icons */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <Calendar className="w-5 h-5 text-primary" />
+                        <span className="font-medium">{selectedEvent.event.year} - Month {selectedEvent.event.month}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <Clock className="w-5 h-5 text-primary" />
+                        <span className="font-medium">{selectedEvent.event.totalDays} Days</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <Users className="w-5 h-5 text-primary" />
+                        <span className="font-medium">Multiple Sessions</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Registration Button */}
+                  <div className="ml-6">
+                    <Button
+                      onClick={() => handleRegister(selectedEvent.event._id, selectedEvent.event.name)}
+                      disabled={registering === selectedEvent.event._id}
+                      className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                    >
+                      {registering === selectedEvent.event._id ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          Registering...
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <Users className="w-5 h-5" />
+                          Register Now
+                        </div>
+                      )}
+                    </Button>
+                    <p className="text-xs text-gray-500 mt-2 text-center">Free Registration</p>
+                  </div>
                 </div>
               </div>
 
               {/* Days and Time Slots - Associated Layout */}
-              <div className="space-y-6">
+              <div className="space-y-6 ">
                 {selectedEvent.days.map((day) => (
                   <div key={day._id} className="grid grid-cols-12 gap-6 border rounded-lg p-6 bg-gray-50">
                     {/* Left Side - Day Info */}
@@ -135,30 +196,40 @@ export default function ViewEvent() {
                     {/* Right Side - Day's Time Slots */}
                     <div className="col-span-8">
                       <div className="bg-white rounded-lg p-4 h-full">
-                        <h4 className="text-lg font-medium text-primary mb-4 border-b pb-2">
-                          Schedule for {day.name}
-                        </h4>
+                        <div className="flex justify-between items-center mb-4 border-b pb-2">
+                          <h4 className="text-lg font-medium text-primary">
+                            Schedule for {day.name}
+                          </h4>
+                          <Badge variant="secondary" className="text-xs">
+                            {(day as any).timeSlots?.length || 0} Sessions
+                          </Badge>
+                        </div>
                         <ScrollArea className="h-[300px] pr-4">
                           <div className="space-y-3">
                             {(day as any).timeSlots?.length > 0 ? (
                               (day as any).timeSlots.map((slot: TimeSlot) => (
-                                <div key={slot._id} className="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                <div key={slot._id} className="bg-gradient-to-r from-gray-50 to-white p-4 rounded-lg border border-gray-200 hover:shadow-md hover:border-primary/30 transition-all duration-200">
                                   <div className="flex justify-between items-start">
                                     <div className="flex-1">
-                                      <h5 className="font-semibold text-gray-800 mb-1">{slot.title}</h5>
-                                      <p className="text-sm text-gray-600 mb-2">{slot.description}</p>
-                                      <div className="flex items-center gap-4 text-sm text-gray-500">
-                                        <span className="flex items-center gap-1">
-                                          📍 {slot.location}
-                                        </span>
-                                        <Badge variant="outline" className="text-xs">
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <h5 className="font-semibold text-gray-800">{slot.title}</h5>
+                                        <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">
                                           {slot.type}
                                         </Badge>
                                       </div>
+                                      <p className="text-sm text-gray-600 mb-3 leading-relaxed">{slot.description}</p>
+                                      <div className="flex items-center gap-1 text-sm text-gray-500">
+                                        <MapPin className="w-4 h-4" />
+                                        <span>{slot.location}</span>
+                                      </div>
                                     </div>
                                     <div className="text-right ml-4">
-                                      <div className="bg-primary/10 px-3 py-2 rounded-lg">
-                                        <p className="font-semibold text-primary text-sm">
+                                      <div className="bg-primary/10 px-4 py-3 rounded-lg border border-primary/20">
+                                        <div className="flex items-center gap-1 text-primary mb-1">
+                                          <Clock className="w-4 h-4" />
+                                          <span className="text-xs font-medium">Time</span>
+                                        </div>
+                                        <p className="font-bold text-primary text-sm">
                                           {slot.startTime} - {slot.endTime}
                                         </p>
                                       </div>
@@ -167,8 +238,10 @@ export default function ViewEvent() {
                                 </div>
                               ))
                             ) : (
-                              <div className="text-center py-8 text-gray-500">
-                                <p>No time slots scheduled for this day</p>
+                              <div className="text-center py-12 text-gray-500">
+                                <Calendar className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                                <p className="text-lg font-medium">No sessions scheduled</p>
+                                <p className="text-sm">Check back later for updates</p>
                               </div>
                             )}
                           </div>
