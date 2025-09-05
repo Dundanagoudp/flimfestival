@@ -64,7 +64,7 @@ export default function DynamicPagination({
   };
 
   return (
-    <div className={`flex flex-col space-y-4 sm:flex-row sm:justify-between sm:items-center sm:space-y-0 px-6 py-4 ${className}`}>
+    <div className={`flex flex-col space-y-4 sm:flex-row sm:justify-between sm:items-center sm:space-y-0 px-4 py-3 ${className}`}>
       {/* Items info - Left side */}
       {showItemsInfo && (
         <div className="text-sm text-gray-600 text-center sm:text-left">
@@ -75,7 +75,7 @@ export default function DynamicPagination({
       {/* Pagination Controls - Right side */}
       <div className={`flex ${showItemsInfo ? 'justify-center sm:justify-end' : 'justify-center'}`}>
         <Pagination>
-          <PaginationContent className="gap-1">
+          <PaginationContent className="gap-1.5">
             <PaginationItem>
               <PaginationPrevious
                 onClick={() => onPageChange(Math.max(1, currentPage - 1))}
@@ -92,10 +92,10 @@ export default function DynamicPagination({
                 <PaginationLink
                   isActive={currentPage === pageNum}
                   onClick={() => onPageChange(pageNum)}
-                  className={`cursor-pointer min-w-[40px] h-[40px] flex items-center justify-center ${
+                  className={`cursor-pointer min-w-[36px] h-[36px] rounded-md flex items-center justify-center transition-colors ${
                     currentPage === pageNum
-                      ? "bg-white border-2 border-gray-900 text-gray-900 font-medium"
-                      : "hover:bg-gray-100"
+                      ? "bg-gray-900 text-white border border-gray-900"
+                      : "bg-white border border-gray-200 hover:bg-gray-50"
                   }`}
                 >
                   {pageNum}

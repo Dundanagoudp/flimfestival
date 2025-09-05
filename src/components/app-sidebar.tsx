@@ -135,6 +135,10 @@ const adminData = {
           title: "Categories",
           url: "/admin/dashboard/award/categories",
         },
+        {
+          title:"submissions",
+          url:"/admin/dashboard/award/submissions"
+        }
       ],
     },
   
