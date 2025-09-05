@@ -139,14 +139,21 @@ export async function getSingleBlog(id: string) {
 export async function updateBlog(id: string, payload: UpdateBlogPayload) {
   try {
     const formData = new FormData()
-    
-    if (payload.title) formData.append("title", payload.title)
-    if (payload.contentType) formData.append("contentType", payload.contentType)
-    if (payload.category) formData.append("category", payload.category)
-    if (payload.author) formData.append("author", payload.author)
-    if (payload.publishedDate) formData.append("publishedDate", payload.publishedDate)
-    if (payload.contents) formData.append("contents", payload.contents)
-    if (payload.link) formData.append("link", payload.link)
+
+    // Always send required fields — many backends validate these on update as well
+    if (payload.title !== undefined) formData.append("title", payload.title)
+    if (payload.contentType !== undefined) formData.append("contentType", payload.contentType)
+    if (payload.category !== undefined) formData.append("category", payload.category)
+    if (payload.author !== undefined) formData.append("author", payload.author)
+    if (payload.publishedDate !== undefined) formData.append("publishedDate", payload.publishedDate)
+
+    // Optional fields
+    if (payload.contents !== undefined && payload.contents !== null) {
+      formData.append("contents", payload.contents)
+    }
+    if (payload.link !== undefined && payload.link !== null) {
+      formData.append("link", payload.link)
+    }
     if (payload.image) formData.append("image", payload.image)
 
     const { data } = await apiClient.put<BlogPost>(`${BASE}/updateblogs/${id}`, formData)

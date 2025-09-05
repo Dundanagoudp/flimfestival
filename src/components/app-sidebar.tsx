@@ -119,6 +119,21 @@ const adminData = {
       ],
     },
     {
+      title: "Videos",
+      url: "/admin/dashboard/videos",
+      icon: Clapperboard,
+      items: [
+        {
+          title: "All Videos",
+          url: "/admin/dashboard/videos",
+        },
+        {
+          title: "Add Video",
+          url: "/admin/dashboard/videos/add",
+        }
+      ],
+    },
+    {
       title: "Awards",
       url: "/admin/dashboard/award",
       icon: Award,
