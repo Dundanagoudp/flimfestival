@@ -111,6 +111,7 @@ const adminData = {
           title: "Add Time Slot",
           url: "/admin/dashboard/events/add-time",
         },
+        
       ],
     },
     {
@@ -130,6 +131,10 @@ const adminData = {
           title: "Categories",
           url: "/admin/dashboard/award/categories",
         },
+        {
+          title:"registrations",
+          url:"/admin/dashboard/award/registrations"
+        }
       ],
     },
   
