@@ -32,6 +32,9 @@ export default function EventSchedule() {
   const [eventData, setEventData] = useState<any>(null);
   const [selectedDay, setSelectedDay] = useState<number>(0);
 
+  // Get the most recent event (first in items array)
+  const currentEvent = eventData?.items?.[0];
+
   useEffect(() => {
     const fetchEvent = async () => {
       try {
@@ -56,7 +59,7 @@ export default function EventSchedule() {
             <section className="space-y-4">
               <h2 className="text-4xl font-bold ">Events Schedule</h2>
               <p className="text-3xl text-[#989898] leading-relaxed">
-                We’ve been perfecting our steps for over 15 years to assure
+                We've been perfecting our steps for over 15 years to assure
                 success for every single client we create for.
               </p>
               <div className="flex items-center gap-2">
@@ -73,7 +76,7 @@ export default function EventSchedule() {
         </div>
       </div>
       <section
-        aria-label={`Event schedule for ${eventData?.days?.[selectedDay]?.name}`}
+        aria-label={`Event schedule for ${currentEvent?.days?.[selectedDay]?.name}`}
         className="bg-white p-4 shadow-md border-t-10 border-r-10 border-b-10 border-[#343434] w-[95%] rounded-r-[10px] min-h-[400px]"
       >
         <div className=" p-6 md:p-8">
@@ -82,14 +85,14 @@ export default function EventSchedule() {
               {/* Left: Day + Date */}
               <header className="text-left">
                 <h1 className="text-4xl font-semibold text-h1rimary">
-                  {eventData?.days?.[selectedDay]?.name ||
+                  {currentEvent?.days?.[selectedDay]?.name ||
                     `Day ${selectedDay + 1}`}
                 </h1>
                 <h2 className="text-4xl font-bold">
-                  {eventData?.event?.name || "Event"}
+                  {currentEvent?.event?.name || "Event"}
                 </h2>
                 <p className="text-lg font-semibold">
-                  {eventData?.days?.[selectedDay]?.description ||
+                  {currentEvent?.days?.[selectedDay]?.description ||
                     "No description available"}
                 </p>
               </header>
@@ -102,7 +105,7 @@ export default function EventSchedule() {
                 <div className="h-full flex items-center">
                   <ol className="flex flex-col items-center gap-6">
                     {/* Always show 4 timeline items for consistency */}
-                    {eventData?.days?.map((day: any, dayIndex: number) => (
+                    {currentEvent?.days?.map((day: any, dayIndex: number) => (
                       <li key={day._id}>
                         <button
                           onClick={() => setSelectedDay(dayIndex)}
@@ -125,8 +128,8 @@ export default function EventSchedule() {
                 <div className="h-72 overflow-hidden ">
                   <ScrollArea className="h-full ">
                     <div className="flex flex-col gap-8 pr-4 items-center">
-                      {eventData?.days?.[selectedDay]?.times?.length > 0
-                        ? eventData.days[selectedDay].times.map(
+                      {currentEvent?.days?.[selectedDay]?.times?.length > 0
+                        ? currentEvent.days[selectedDay].times.map(
                             (timeSlot: any, index: number) => (
                               <Item
                                 key={timeSlot._id || index}
@@ -157,12 +160,12 @@ export default function EventSchedule() {
                 <div className="aspect-[4/3] w-full">
                   <img
                     src={
-                      eventData?.days?.[selectedDay]?.image ||
-                      eventData?.event?.image ||
+                      currentEvent?.days?.[selectedDay]?.image ||
+                      currentEvent?.event?.image ||
                       "/fallback.png"
                     }
                     alt={
-                      eventData?.days?.[selectedDay]?.description ||
+                      currentEvent?.days?.[selectedDay]?.description ||
                       "Event preview"
                     }
                     className="w-full h-full rounded-xl border border-zinc-200 object-cover shadow-sm"

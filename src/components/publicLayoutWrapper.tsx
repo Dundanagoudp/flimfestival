@@ -1,9 +1,10 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import Header from './layout/Header';
-import Footer from './layout/Footer';
+
 import { useEffect, useState } from 'react';
+import { Navbar } from './user/Home/navbar/Navbar';
+import Footer from './user/Home/footer/Footer';
 
 export default function AdminLayoutWrapper({
   children,
@@ -27,11 +28,15 @@ export default function AdminLayoutWrapper({
 
   return (
     <div className="flex flex-col min-h-screen">
-      {showHeaderFooter && !isAdminRoute && !isLoginPage && !isUserRoute && <Header />}
+      {showHeaderFooter && !isAdminRoute && !isLoginPage && !isUserRoute && (
+        <div className="sticky top-0 z-50 w-full">
+          <Navbar />
+        </div>
+      )}
       <main className="flex-grow">
         {children}
       </main>
-      {showHeaderFooter && !isAdminRoute && !isLoginPage && !isUserRoute && <Footer />}
+      {showHeaderFooter && !isAdminRoute && !isLoginPage && !isUserRoute && <Footer/>}
     </div>
   );
 } 
