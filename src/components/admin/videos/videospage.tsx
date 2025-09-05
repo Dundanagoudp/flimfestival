@@ -217,7 +217,7 @@ export default function VideosPage() {
     <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Video Blog Management</h1>
+          <h1 className="text-2xl font-bold">Video Blog Management</h1>
           <p className="text-gray-600 mt-1">Manage your video content</p>
         </div>
         <Button asChild>
