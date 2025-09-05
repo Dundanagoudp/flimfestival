@@ -26,8 +26,9 @@ export default function PublicLayoutWrapper({
     setIsLoginPage(pathname === '/login');
   }, [pathname]);
 
-  // If showHeaderFooter is explicitly false, don't show header/footer regardless of route
-  const shouldShowHeaderFooter = showHeaderFooter && !isAdminRoute && !isLoginPage && !isUserRoute;
+  // Only show header/footer on public routes after mount, and only when explicitly enabled
+  const shouldShowHeaderFooter =
+    mounted && showHeaderFooter === true && !isAdminRoute && !isLoginPage && !isUserRoute;
 
   return (
     <div className="flex flex-col min-h-screen">
