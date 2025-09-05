@@ -17,6 +17,7 @@ import AddRegistrationModal from "./modalpopups/add-registration-modal";
 import EditRegistrationModal from "./modalpopups/edit-registration-modal";
 import ViewRegistrationModal from "./modalpopups/view-registration-modal";
 import DeleteRegistrationModal from "./modalpopups/delete-registration-modal";
+import ToggleContactModal from "./modalpopups/toggle-contact-modal";
 import RegistrationsTable from "./registrations-table";
 
 export default function Registrationspage() {
@@ -36,6 +37,9 @@ export default function Registrationspage() {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedRegistration, setSelectedRegistration] = useState<RegistrationItem | null>(null);
+  const [isToggleModalOpen, setIsToggleModalOpen] = useState(false);
+  const [toggleTargetStatus, setToggleTargetStatus] = useState<boolean>(false);
+  const [toggleLoading, setToggleLoading] = useState(false);
 
   // Load registrations
   const loadRegistrations = async () => {
@@ -59,17 +63,31 @@ export default function Registrationspage() {
   }, [currentPage]);
 
   // Handle contact status toggle
-  const handleContactToggle = async (registration: RegistrationItem) => {
+  const handleContactToggle = (registration: RegistrationItem) => {
+    setSelectedRegistration(registration);
+    setToggleTargetStatus(!registration.contacted);
+    setIsToggleModalOpen(true);
+  };
+
+  const confirmToggleContact = async () => {
+    if (!selectedRegistration) return;
+    setToggleLoading(true);
     try {
-      if (registration.contacted) {
-        await markAsNotContacted(registration._id);
+      if (toggleTargetStatus) {
+        await markAsContacted(selectedRegistration._id);
       } else {
-        await markAsContacted(registration._id);
+        await markAsNotContacted(selectedRegistration._id);
       }
-      showToast(`Registration marked as ${registration.contacted ? "not contacted" : "contacted"}`, "success");
-      loadRegistrations();
+      showToast(
+        `Registration marked as ${toggleTargetStatus ? "contacted" : "not contacted"}`,
+        "success"
+      );
+      await loadRegistrations();
+      setIsToggleModalOpen(false);
     } catch (error) {
       showToast("Failed to update contact status", "error");
+    } finally {
+      setToggleLoading(false);
     }
   };
 
@@ -98,17 +116,8 @@ export default function Registrationspage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Event Registrations</h1>
-          <p className="text-gray-600 mt-1">Manage all event registrations and track contact status</p>
+          <h1 className="text-2xl font-bold text-gray-900">Event Registrations</h1>
         </div>
-        <DynamicButton
-          variant="default"
-          icon={<Plus className="h-4 w-4" />}
-          iconPosition="left"
-          onClick={() => setIsAddModalOpen(true)}
-        >
-          Add Registration
-        </DynamicButton>
       </div>
 
       {/* Statistics Cards */}
@@ -206,6 +215,15 @@ export default function Registrationspage() {
         onClose={() => setIsDeleteModalOpen(false)}
         onSuccess={loadRegistrations}
         registration={selectedRegistration}
+      />
+
+      <ToggleContactModal
+        isOpen={isToggleModalOpen}
+        onClose={() => setIsToggleModalOpen(false)}
+        onConfirm={confirmToggleContact}
+        registration={selectedRegistration}
+        targetStatus={toggleTargetStatus}
+        loading={toggleLoading}
       />
     </div>
   );
