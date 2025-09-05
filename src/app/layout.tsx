@@ -3,7 +3,7 @@ import "./globals.css";
 import { ToastProvider } from "@/components/ui/custom-toast";
 import { AuthProvider } from "@/context/auth-context";
 import type { Metadata } from "next";
-
+import AdminLayoutWrapper from "@/components/publicLayoutWrapper";
 const manrope = Manrope({ subsets: ["latin"] });
 // const dmSerifDisplay = DM_Serif_Display({ 
 //   weight: "400",
@@ -33,7 +33,9 @@ export default function RootLayout({
       <body className={`${manrope.className}  ${montserrat.variable}`}>
         <AuthProvider>
           <ToastProvider>
-            {children}
+            <AdminLayoutWrapper showHeaderFooter={true}>
+              {children}
+            </AdminLayoutWrapper>
           </ToastProvider>
         </AuthProvider>
       </body>
