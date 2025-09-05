@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 
-const HeroSection = () => {
+const BlogHeroSection = () => {
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
@@ -31,21 +31,19 @@ const HeroSection = () => {
       {/* Content */}
       <div className="absolute inset-0 flex items-end justify-start px-10 md:px-20 pb-20 md:pb-32">
         <div className="space-y-6 text-white max-w-2xl">
-          {/* <p className="text-primary text-3xl font-medium">
-            Arunachal Film Festival
-          </p> */}
+     
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-           About Us
+          Blogs
           </h1>
 
           
           <div className="w-screen max-w-[250%] border-t-2 border-gray-500"></div>
 
-
+        
         </div>
       </div>
     </section>
   );
 };
 
-export default HeroSection;
+export default BlogHeroSection;
