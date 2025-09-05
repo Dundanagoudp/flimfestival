@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Navbar } from './user/Home/navbar/Navbar';
 import Footer from './user/Home/footer/Footer';
 
-export default function AdminLayoutWrapper({
+export default function PublicLayoutWrapper({
   children,
   showHeaderFooter,
 }: {
@@ -26,9 +26,12 @@ export default function AdminLayoutWrapper({
     setIsLoginPage(pathname === '/login');
   }, [pathname]);
 
+  // If showHeaderFooter is explicitly false, don't show header/footer regardless of route
+  const shouldShowHeaderFooter = showHeaderFooter && !isAdminRoute && !isLoginPage && !isUserRoute;
+
   return (
     <div className="flex flex-col min-h-screen">
-      {showHeaderFooter && !isAdminRoute && !isLoginPage && !isUserRoute && (
+      {shouldShowHeaderFooter && (
         <div className="sticky top-0 z-50 w-full">
           <Navbar />
         </div>
@@ -36,7 +39,7 @@ export default function AdminLayoutWrapper({
       <main className="flex-grow">
         {children}
       </main>
-      {showHeaderFooter && !isAdminRoute && !isLoginPage && !isUserRoute && <Footer/>}
+      {shouldShowHeaderFooter && <Footer/>}
     </div>
   );
 } 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, DM_Serif_Display, Montserrat } from "next/font/google";
+import PublicLayoutWrapper from "@/components/publicLayoutWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 const dmSerifDisplay = DM_Serif_Display({ 
@@ -26,8 +27,10 @@ export default function AdminRootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`${inter.className} ${dmSerifDisplay.variable} ${montserrat.variable}`}>
-      {children}
-    </div>
+    <PublicLayoutWrapper showHeaderFooter={false}>
+      <div className={`${inter.className} ${dmSerifDisplay.variable} ${montserrat.variable}`}>
+        {children}
+      </div>
+    </PublicLayoutWrapper>
   );
 }
