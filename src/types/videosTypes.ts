@@ -43,8 +43,20 @@ export interface SimpleMessageResponse {
   message: string
 }
 
+// API Response wrapper types
+export interface ApiResponse<T> {
+  success: boolean
+  data?: T
+  error?: string
+}
+
 export type GetAllVideosResponse = Array<VideoBlog>
 export type GetYouTubeVideosResponse = Array<VideoBlog>
 export type GetUploadedVideosResponse = Array<VideoBlog>
+
+// Service response types
+export type VideoApiResponse = ApiResponse<VideoBlog>
+export type VideosApiResponse = ApiResponse<VideoBlog[]>
+export type MessageApiResponse = ApiResponse<SimpleMessageResponse>
 
 
