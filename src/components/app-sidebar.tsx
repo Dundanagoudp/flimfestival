@@ -111,6 +111,26 @@ const adminData = {
           title: "Add Time Slot",
           url: "/admin/dashboard/events/add-time",
         },
+                {
+          title:"registrations",
+          url:"/admin/dashboard/events/registrations"
+        }
+        
+      ],
+    },
+    {
+      title: "Videos",
+      url: "/admin/dashboard/videos",
+      icon: Clapperboard,
+      items: [
+        {
+          title: "All Videos",
+          url: "/admin/dashboard/videos",
+        },
+        {
+          title: "Add Video",
+          url: "/admin/dashboard/videos/add",
+        }
       ],
     },
     {
@@ -130,6 +150,10 @@ const adminData = {
           title: "Categories",
           url: "/admin/dashboard/award/categories",
         },
+        {
+          title:"submissions",
+          url:"/admin/dashboard/award/submissions"
+        }
       ],
     },
   

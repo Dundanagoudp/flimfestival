@@ -36,9 +36,7 @@ export async function updateYear(id: string, payload: UpdateYearPayload) {
 
 export async function getAllYears() {
   try {
-    console.log("Calling getAllYears with URL:", `${BASE}/getallyear`)
     const { data } = await apiClient.get<YearsResponse>(`${BASE}/getallyear`)
-    console.log("getAllYears response:", data)
     return data
   } catch (error: any) {
     console.error("Error getting years:", error)
@@ -76,14 +74,10 @@ export async function getAllGalleryByYear(yearId: string) {
   try {
     const url = `${BASE}/getallgallery`
     const params = { yearId }
-    console.log("Calling getAllGalleryByYear with URL:", url, "and params:", params)
-    
     // Fixed: Use the correct endpoint with query parameter as your backend expects
     const { data } = await apiClient.get<GetAllGalleryResponse>(url, {
       params: params
     })
-    
-    console.log("getAllGalleryByYear response:", data)
     return data
   } catch (error: any) {
     console.error("Error getting gallery by year:", error)
