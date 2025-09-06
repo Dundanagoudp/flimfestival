@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import { Button } from "@/components/ui/button";
 
 interface DynamicPaginationProps {
   currentPage: number;
@@ -73,48 +66,47 @@ export default function DynamicPagination({
       )}
 
       {/* Pagination Controls - Right side */}
-      <div className={`flex ${showItemsInfo ? 'justify-center sm:justify-end' : 'justify-center'}`}>
-        <Pagination>
-          <PaginationContent className="gap-1.5">
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-                className={
-                  currentPage === 1
-                    ? "pointer-events-none opacity-50"
-                    : "cursor-pointer hover:bg-gray-100"
-                }
-              />
-            </PaginationItem>
+      <div className={`flex items-center gap-2 ${showItemsInfo ? 'justify-center sm:justify-end' : 'justify-center'}`}>
+        {/* Previous Button */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 text-sm"
+        >
+          &lt; Previous
+        </Button>
 
-            {getVisiblePages().map((pageNum) => (
-              <PaginationItem key={pageNum}>
-                <PaginationLink
-                  isActive={currentPage === pageNum}
-                  onClick={() => onPageChange(pageNum)}
-                  className={`cursor-pointer min-w-[36px] h-[36px] rounded-md flex items-center justify-center transition-colors ${
-                    currentPage === pageNum
-                      ? "bg-gray-900 text-white border border-gray-900"
-                      : "bg-white border border-gray-200 hover:bg-gray-50"
-                  }`}
-                >
-                  {pageNum}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
+        {/* Page Numbers */}
+        <div className="flex items-center gap-1">
+          {getVisiblePages().map((pageNum) => (
+            <Button
+              key={pageNum}
+              variant={currentPage === pageNum ? "default" : "outline"}
+              size="sm"
+              onClick={() => onPageChange(pageNum)}
+              className={`min-w-[32px] h-8 px-2 text-sm ${
+                currentPage === pageNum
+                  ? "bg-gray-900 text-white hover:bg-gray-800"
+                  : "bg-white border-gray-200 hover:bg-gray-50"
+              }`}
+            >
+              {pageNum}
+            </Button>
+          ))}
+        </div>
 
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-                className={
-                  currentPage === totalPages
-                    ? "pointer-events-none opacity-50"
-                    : "cursor-pointer hover:bg-gray-100"
-                }
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        {/* Next Button */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 text-sm"
+        >
+          Next &gt;
+        </Button>
       </div>
     </div>
   );
