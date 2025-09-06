@@ -134,6 +134,17 @@ const adminData = {
       ],
     },
     {
+      title:"Workshops",
+      url:"/admin/dashboard/workshops",
+      icon:Clapperboard,
+      items:[
+        {
+          title:"All Workshops",
+          url:"/admin/dashboard/workshops"
+        },
+      ]
+    },
+    {
       title: "Awards",
       url: "/admin/dashboard/award",
       icon: Award,
