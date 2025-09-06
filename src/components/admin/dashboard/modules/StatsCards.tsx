@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { TrendingUp, Users, Activity, Eye } from "lucide-react"
 import {
   Card,
@@ -8,38 +8,82 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { getDashboardOverview } from '@/services/dashboardServices'
+import { DashboardOverviewResponse } from '@/types/dashboardTypes'
 
 export default function StatsCards() {
+  const [dashboardData, setDashboardData] = useState<DashboardOverviewResponse | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const data = await getDashboardOverview()
+        setDashboardData(data)
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error)
+        setDashboardData(null)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDashboardData()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {[...Array(4)].map((_, index) => (
+          <Card key={index}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
+            </CardHeader>
+            <CardContent>
+              <div className="h-8 w-16 bg-gray-200 rounded animate-pulse mb-2"></div>
+              <div className="h-3 w-24 bg-gray-200 rounded animate-pulse"></div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )
+  }
+
+  if (!dashboardData) {
+    return <div>Error loading dashboard data</div>
+  }
+
   const stats = [
     { 
       title: "Total Users", 
-      value: "2,847", 
-      change: "+12.5%", 
-      trend: "up",
+      value: dashboardData.data.totalUsers.value.toLocaleString(), 
+      change: typeof dashboardData.data.totalUsers.change === 'string' ? dashboardData.data.totalUsers.change : `+${dashboardData.data.totalUsers.change}%`, 
+      trend: dashboardData.data.totalUsers.trend,
       icon: Users,
       color: "text-blue-600"
     },
     { 
       title: "Active Sessions", 
-      value: "1,234", 
-      change: "+8.2%", 
-      trend: "up",
+      value: dashboardData.data.activeSessions.value.toLocaleString(), 
+      change: typeof dashboardData.data.activeSessions.change === 'string' ? dashboardData.data.activeSessions.change : `+${dashboardData.data.activeSessions.change}%`, 
+      trend: dashboardData.data.activeSessions.trend,
       icon: Activity,
       color: "text-green-600"
     },
     { 
       title: "Page Views", 
-      value: "45,678", 
-      change: "+15.3%", 
-      trend: "up",
+      value: dashboardData.data.pageViews.value.toLocaleString(), 
+      change: typeof dashboardData.data.pageViews.change === 'string' ? dashboardData.data.pageViews.change : `+${dashboardData.data.pageViews.change}%`, 
+      trend: dashboardData.data.pageViews.trend,
       icon: Eye,
       color: "text-purple-600"
     },
     { 
       title: "Bounce Rate", 
-      value: "23.4%", 
-      change: "-2.1%", 
-      trend: "down",
+      value: `${dashboardData.data.bounceRate.value}%`, 
+      change: typeof dashboardData.data.bounceRate.change === 'string' ? dashboardData.data.bounceRate.change : `${dashboardData.data.bounceRate.change > 0 ? '+' : ''}${dashboardData.data.bounceRate.change}%`, 
+      trend: dashboardData.data.bounceRate.trend,
       icon: TrendingUp,
       color: "text-orange-600"
     },
