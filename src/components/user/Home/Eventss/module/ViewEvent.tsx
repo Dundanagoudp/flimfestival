@@ -6,6 +6,9 @@ import { getEvent, getFullEvent } from '@/services/eventsService';
 import { EventItem, EventDayItem, TimeEntry, GetFullEventResponse } from '@/types/eventsTypes';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Calendar, MapPin, Clock, Users } from 'lucide-react';
+import { LoadingSpinner } from '@/components/common/LoaderSpinner';
+import HeroEvent from './HeroEvent';
+import Reveal from '@/components/common/Reveal';
 
 
 type TimeSlot = {
@@ -88,9 +91,16 @@ export default function ViewEvent() {
         setRegistering(null);
       }
     };
-
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center p-6">
+          <LoadingSpinner />
+        </div>
+      );
+    }
   return (
     <div>
+    
       <main className="w-full px-4" style={{ backgroundColor: "#ffffff" }}>
         <div className="px-10 py-10 ">
           <div>
@@ -99,7 +109,8 @@ export default function ViewEvent() {
 
           {/* Event Selection Badges */}
           <div className='mt-10 px-8 gap-4 flex flex-wrap'>
-            {events.map((event) => (
+            {events.map((event,index) => (
+              <Reveal key={index} delay={0.1} y={-10} transition={{ type: 'spring', stiffness: 90, damping: 18, mass: 0.8 }}>
               <Badge
                 key={event._id}
                 className={`w-auto h-[28px] px-3 cursor-pointer transition-all duration-200 ${
@@ -111,6 +122,7 @@ export default function ViewEvent() {
               >
                 {event.name}
               </Badge>
+            </Reveal>
             ))}
           </div>
 

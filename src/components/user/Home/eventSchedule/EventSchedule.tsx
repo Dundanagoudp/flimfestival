@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getTotalEvent } from "@/services/eventsService";
+import Link from "next/link";
+import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 
 type ScheduleItemProps = {
   time: string;
@@ -31,22 +33,29 @@ function Item({ time, title, subtitle, active }: ScheduleItemProps) {
 export default function EventSchedule() {
   const [eventData, setEventData] = useState<any>(null);
   const [selectedDay, setSelectedDay] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
 
   // Get the most recent event (first in items array)
   const currentEvent = eventData?.items?.[0];
 
   useEffect(() => {
     const fetchEvent = async () => {
+      setLoading(true);
       try {
         const response = await getTotalEvent();
         setEventData(response);
         console.log("response of Event", response);
       } catch (err: any) {
         console.log(err);
+        setLoading(false);
+      } finally {
+        setLoading(false);
       }
     };
     void fetchEvent();
   }, []);
+
+
 
   return (
     <>
@@ -63,9 +72,10 @@ export default function EventSchedule() {
                 success for every single client we create for.
               </p>
               <div className="flex items-center gap-2">
+                 <Link href="/events" >
                 <Button className="rounded-full bg-primary text-black hover:bg-yellow-300">
                   View Schedule
-                </Button>
+                </Button></Link>
                 <span
                   aria-hidden
                   className="inline-block h-4 w-4 rounded-full bg-primary"

@@ -3,27 +3,54 @@
 import { getAboutStatistics, getIntroduction } from "@/services/aboutServices";
 import { AboutIntroduction, AboutStatistics } from "@/types/aboutTypes";
 import React, { useEffect ,useState} from "react";
+import Reveal from "@/components/common/Reveal";
+import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 
 export default function AboutUsContent() {
   const [stats, setStats] = useState<AboutStatistics | null>(null)
   const [introduction, setIntroduction] = useState<AboutIntroduction | null>(null)
+  const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
     const fetchStats = async () => {
+      setLoading(true);
+      try{
       const response = await getAboutStatistics();
       setStats(response);
-      console.log(response);
+      }catch(error){
+        console.log("error", error);
+        setLoading(false);
+      }finally{
+        setLoading(false);
+      }
     };
     fetchStats();
   }, []);
   useEffect(() => {
     const fetchIntroduction = async () => {
+      setLoading(true);
+      try{
+        
       const response = await getIntroduction();
       setIntroduction(response);
-      console.log("introduction", response);
+        
+   
+      }catch(error){
+        console.log("error", error);
+        setLoading(false);
+      }finally{
+        setLoading(false);
+      }
     };
     fetchIntroduction();
   }, []);
   const imgs = stats?.image ? [stats.image, stats.image] : [];
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-6">
+        <LoadingSpinner />
+      </div>
+    );
+  }
   return (
       <section className="bg-gray-100">
       <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
@@ -37,7 +64,7 @@ export default function AboutUsContent() {
                 <div className="w-full h-full bg-gray-200" />
               )}
             </div>
-
+            <Reveal delay={0.1} y={-10} transition={{ type: 'spring', stiffness: 90, damping: 18, mass: 0.8 }}>
             <div className="h-[180px] sm:h-[220px] md:h-[260px] rounded-2xl mt-18 overflow-hidden ring-1 ring-gray-300/70 bg-white">
               {imgs[0] ? (
                 <img src={imgs[1]} alt="Left bottom" className="h-full w-full object-cover" />
@@ -45,6 +72,7 @@ export default function AboutUsContent() {
                 <div className="w-full h-full bg-gray-200" />
               )}
             </div>
+            </Reveal>
           </div>
 
           {/* Right: headline + copy + metrics */}
@@ -60,7 +88,7 @@ export default function AboutUsContent() {
             </div>
 
             {/* Metrics */}
-            <div className="mt-18">
+            <div className="mt-65">
               <div className="flex items-center gap-6">
                 <div className="font-montserrat text-6xl font-extrabold leading-none" style={{ color: "#cdb84f" }}>
                   {stats?.films ?? 500}+
