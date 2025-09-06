@@ -100,4 +100,33 @@ export async function deleteAboutIntroduction(id: string) {
   const { data } = await apiClient.delete<{ success: boolean; message: string; data: DeleteResponse }>(`${BASE}/introduction/${id}`)
   return data.data
 }
+export async function getStats() {
+  try {
+    const response = await apiClient.get<{
+      success: boolean, message: string, data: {
+        years: number,
+        films: number,
+        countries: number,
+        image: string
+      }[]
+    }>("/aboutus/statistics")
+    return response.data.data
+  } catch (error) {
+    console.log(error)
+    throw error
 
+  }
+
+
+}
+
+
+export async function getIntroduction() {
+  try {
+    const response = await apiClient.get<AboutIntroduction>(`${BASE}/introduction`)
+    return response.data
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
