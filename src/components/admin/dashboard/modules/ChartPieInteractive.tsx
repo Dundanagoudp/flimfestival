@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Label, Pie, PieChart as RechartsPieChart, Sector } from "recharts"
 import {
   Card,
@@ -23,56 +23,94 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { getDashboardPieChart } from '@/services/dashboardServices'
+import { DashboardPieChartResponse } from '@/types/dashboardTypes'
 
 export default function ChartPieInteractive() {
   const id = "pie-interactive"
-  const [activeMonth, setActiveMonth] = React.useState("january")
+  const [chartData, setChartData] = useState<DashboardPieChartResponse | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [activeCategory, setActiveCategory] = useState("")
 
-  const desktopData = [
-    { month: "january", desktop: 186, fill: "var(--color-january)" },
-    { month: "february", desktop: 305, fill: "var(--color-february)" },
-    { month: "march", desktop: 237, fill: "var(--color-march)" },
-    { month: "april", desktop: 173, fill: "var(--color-april)" },
-    { month: "may", desktop: 209, fill: "var(--color-may)" },
-  ]
+  useEffect(() => {
+    const fetchChartData = async () => {
+      try {
+        const data = await getDashboardPieChart()
+        setChartData(data)
+        if (data.data.labels.length > 0) {
+          setActiveCategory(data.data.labels[0].toLowerCase())
+        }
+      } catch (error) {
+        console.error('Error fetching pie chart data:', error)
+        setChartData(null)
+        setActiveCategory("")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchChartData()
+  }, [])
 
   const chartConfig = {
-    visitors: {
-      label: "Visitors",
+    count: {
+      label: "Count",
     },
-    desktop: {
-      label: "Desktop",
-    },
-    mobile: {
-      label: "Mobile",
-    },
-    january: {
-      label: "January",
+    shortfilm: {
+      label: "Short Film",
       color: "var(--chart-1)",
     },
-    february: {
-      label: "February",
+    documentary: {
+      label: "Documentary",
       color: "var(--chart-2)",
-    },
-    march: {
-      label: "March",
-      color: "var(--chart-3)",
-    },
-    april: {
-      label: "April",
-      color: "var(--chart-4)",
-    },
-    may: {
-      label: "May",
-      color: "var(--chart-5)",
     },
   } satisfies ChartConfig
 
+  // Transform API data to chart format - always call hooks at the top level
+  const pieData = React.useMemo(() => {
+    if (!chartData) return []
+    return chartData.data.labels.map((label, index) => ({
+      category: label.toLowerCase().replace(/\s+/g, ''),
+      count: chartData.data.datasets[0]?.data[index] || 0,
+      fill: `var(--color-${label.toLowerCase().replace(/\s+/g, '')})`,
+    }))
+  }, [chartData])
+
   const activeIndex = React.useMemo(
-    () => desktopData.findIndex((item) => item.month === activeMonth),
-    [activeMonth]
+    () => pieData.findIndex((item) => item.category === activeCategory),
+    [activeCategory, pieData]
   )
-  const months = React.useMemo(() => desktopData.map((item) => item.month), [])
+  
+  const categories = React.useMemo(() => pieData.map((item) => item.category), [pieData])
+
+  if (loading) {
+    return (
+      <Card data-chart={id} className="flex flex-col">
+        <CardHeader className="flex-row items-start space-y-0 pb-0">
+          <div className="grid gap-1">
+            <CardTitle>Pie Chart - Interactive</CardTitle>
+            <CardDescription>Loading chart data...</CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent className="flex flex-1 justify-center pb-0">
+          <div className="mx-auto aspect-square w-full max-w-[200px] bg-gray-100 rounded animate-pulse"></div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (!chartData) {
+    return (
+      <Card data-chart={id} className="flex flex-col">
+        <CardHeader className="flex-row items-start space-y-0 pb-0">
+          <div className="grid gap-1">
+            <CardTitle>Pie Chart - Interactive</CardTitle>
+            <CardDescription>Error loading chart data</CardDescription>
+          </div>
+        </CardHeader>
+      </Card>
+    )
+  }
 
   return (
     <Card data-chart={id} className="flex flex-col">
@@ -80,17 +118,17 @@ export default function ChartPieInteractive() {
       <CardHeader className="flex-row items-start space-y-0 pb-0">
         <div className="grid gap-1">
           <CardTitle>Pie Chart - Interactive</CardTitle>
-          <CardDescription>January - June 2024</CardDescription>
+          <CardDescription>{chartData.period || "Current Month"}</CardDescription>
         </div>
-        <Select value={activeMonth} onValueChange={setActiveMonth}>
+        <Select value={activeCategory} onValueChange={setActiveCategory}>
           <SelectTrigger
             className="ml-auto h-7 w-[130px] rounded-lg pl-2.5"
             aria-label="Select a value"
           >
-            <SelectValue placeholder="Select month" />
+            <SelectValue placeholder="Select category" />
           </SelectTrigger>
           <SelectContent align="end" className="rounded-xl">
-            {months.map((key) => {
+            {categories.map((key) => {
               const config = chartConfig[key as keyof typeof chartConfig]
 
               if (!config) {
@@ -130,9 +168,9 @@ export default function ChartPieInteractive() {
               content={<ChartTooltipContent hideLabel />}
             />
             <Pie
-              data={desktopData}
-              dataKey="desktop"
-              nameKey="month"
+              data={pieData}
+              dataKey="count"
+              nameKey="category"
               innerRadius={40}
               strokeWidth={5}
               activeIndex={activeIndex}
@@ -162,14 +200,14 @@ export default function ChartPieInteractive() {
                           y={viewBox.cy}
                           className="fill-foreground text-2xl font-bold"
                         >
-                          {desktopData[activeIndex].desktop.toLocaleString()}
+                          {pieData[activeIndex]?.count.toLocaleString() || 0}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 20}
                           className="fill-muted-foreground text-sm"
                         >
-                          Visitors
+                          Submissions
                         </tspan>
                       </text>
                     )

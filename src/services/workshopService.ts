@@ -5,7 +5,7 @@ const BASE = "/workshop";
 
 export async function getWorkshops(): Promise<Workshop[]> {
     try{
-            const response = await apiClient.get<WorkshopResponse | Workshop[]>(`${BASE}/getWorkshop`);
+         const response = await apiClient.get<WorkshopResponse | Workshop[]>(`${BASE}/getWorkshop`);
         const payload = response.data as any;
         return Array.isArray(payload) ? payload as Workshop[] : payload.data;
     }

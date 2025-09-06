@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { TrendingUp } from "lucide-react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 import {
@@ -19,41 +19,85 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { getDashboardAreaChart } from '@/services/dashboardServices'
+import { DashboardChartResponse } from '@/types/dashboardTypes'
 
 export default function ChartAreaLegend() {
-  const chartData = [
-    { month: "January", desktop: 186, mobile: 80 },
-    { month: "February", desktop: 305, mobile: 200 },
-    { month: "March", desktop: 237, mobile: 120 },
-    { month: "April", desktop: 73, mobile: 190 },
-    { month: "May", desktop: 209, mobile: 130 },
-    { month: "June", desktop: 214, mobile: 140 },
-  ]
+  const [chartData, setChartData] = useState<DashboardChartResponse | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchChartData = async () => {
+      try {
+        const data = await getDashboardAreaChart()
+        setChartData(data)
+      } catch (error) {
+        console.error('Error fetching area chart data:', error)
+        setChartData(null)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchChartData()
+  }, [])
 
   const chartConfig = {
-    desktop: {
-      label: "Desktop",
+    submissions: {
+      label: "Submissions",
       color: "var(--chart-1)",
     },
-    mobile: {
-      label: "Mobile",
+    registrations: {
+      label: "Registrations",
       color: "var(--chart-2)",
     },
   } satisfies ChartConfig
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Area Chart - Legend</CardTitle>
+          <CardDescription>Loading chart data...</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[200px] bg-gray-100 rounded animate-pulse"></div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (!chartData) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Area Chart - Legend</CardTitle>
+          <CardDescription>Error loading chart data</CardDescription>
+        </CardHeader>
+      </Card>
+    )
+  }
+
+  // Transform API data to chart format
+  const transformedData = chartData.data.labels.map((label, index) => ({
+    month: label,
+    submissions: chartData.data.datasets[0]?.data[index] || 0,
+    registrations: chartData.data.datasets[1]?.data[index] || 0,
+  }))
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Area Chart - Legend</CardTitle>
         <CardDescription>
-          Showing total visitors for the last 6 months
+          Showing submissions and registrations for the last 6 months
         </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[200px]">
           <AreaChart
             accessibilityLayer
-            data={chartData}
+            data={transformedData}
             margin={{
               left: 12,
               right: 12,
@@ -72,19 +116,19 @@ export default function ChartAreaLegend() {
               content={<ChartTooltipContent indicator="line" />}
             />
             <Area
-              dataKey="mobile"
+              dataKey="registrations"
               type="natural"
-              fill="var(--color-mobile)"
+              fill="var(--color-registrations)"
               fillOpacity={0.4}
-              stroke="var(--color-mobile)"
+              stroke="var(--color-registrations)"
               stackId="a"
             />
             <Area
-              dataKey="desktop"
+              dataKey="submissions"
               type="natural"
-              fill="var(--color-desktop)"
+              fill="var(--color-submissions)"
               fillOpacity={0.4}
-              stroke="var(--color-desktop)"
+              stroke="var(--color-submissions)"
               stackId="a"
             />
             <ChartLegend content={<ChartLegendContent />} />
@@ -95,10 +139,14 @@ export default function ChartAreaLegend() {
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 leading-none font-medium">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+              {chartData.trend && (
+                <>
+                  Trending {chartData.trend} this month <TrendingUp className="h-4 w-4" />
+                </>
+              )}
             </div>
             <div className="text-muted-foreground flex items-center gap-2 leading-none">
-              January - June 2024
+              {chartData.period || "January - June 2024"}
             </div>
           </div>
         </div>
