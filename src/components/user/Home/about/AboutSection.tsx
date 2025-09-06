@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 function Feature({
   title,
@@ -48,9 +49,11 @@ export default function AboutSection() {
                 to make a type specimen book.
               </p>
               <div className="flex items-center gap-2">
+                <Link href="/aboutus">
                 <Button className="rounded-full bg-primary text-black hover:bg-yellow-300">
                   Read More
                 </Button>
+                </Link>
                 <span
                   aria-hidden
                   className="inline-block h-4 w-4 rounded-full bg-primary"
