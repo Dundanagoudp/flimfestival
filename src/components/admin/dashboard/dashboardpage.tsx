@@ -2,11 +2,13 @@
 
 import React from 'react'
 import { TrendingUp, Users, Calendar, Film, Award, Eye, BarChart3, PieChart, Activity, Clock, CheckCircle, XCircle } from "lucide-react"
+import { Area, AreaChart, CartesianGrid, XAxis, Bar, BarChart, YAxis, PolarAngleAxis, PolarGrid, Radar, RadarChart, Label, Pie, PieChart as RechartsPieChart, Sector } from "recharts"
 
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -17,6 +19,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartStyle,
+} from "@/components/ui/chart"
 
 // Stats Cards Component
 function StatsCards() {
@@ -153,96 +164,392 @@ function ManagementWidgets() {
   )
 }
 
-// Customer and Return Rate Widgets
-function CustomerWidgets() {
-  return (
-    <div className="grid gap-6 md:grid-cols-2">
-      {/* Customer Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            Customer Management
-            <Users className="h-4 w-4" />
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center">
-            <div className="text-4xl font-bold mb-2">2,917</div>
-            <div className="flex items-center justify-center text-green-600">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              <span className="text-sm">7.2%</span>
-            </div>
-            <div className="mt-4 h-2 bg-gray-200 rounded-full">
-              <div className="h-2 bg-green-500 rounded-full w-3/4"></div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Return Rate */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            Return Rate
-            <TrendingUp className="h-4 w-4" />
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center">
-            <div className="text-4xl font-bold mb-2">2,917</div>
-            <div className="flex items-center justify-center text-green-600">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              <span className="text-sm">7.2%</span>
-            </div>
-            <div className="mt-4 h-2 bg-gray-200 rounded-full">
-              <div className="h-2 bg-blue-500 rounded-full w-2/3"></div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
-
-// Product Management Widget
-function ProductManagementWidget() {
-  const productStats = [
-    { label: "APPROVED", value: "1,500", color: "bg-purple-500" },
-    { label: "PENDING", value: "1,200", color: "bg-green-500" },
-    { label: "CREATED", value: "800", color: "bg-orange-500" },
-    { label: "REJECTED", value: "486", color: "bg-red-500" },
+// Area Chart with Legend
+function ChartAreaLegend() {
+  const chartData = [
+    { month: "January", desktop: 186, mobile: 80 },
+    { month: "February", desktop: 305, mobile: 200 },
+    { month: "March", desktop: 237, mobile: 120 },
+    { month: "April", desktop: 73, mobile: 190 },
+    { month: "May", desktop: 209, mobile: 130 },
+    { month: "June", desktop: 214, mobile: 140 },
   ]
+
+  const chartConfig = {
+    desktop: {
+      label: "Desktop",
+      color: "var(--chart-1)",
+    },
+    mobile: {
+      label: "Mobile",
+      color: "var(--chart-2)",
+    },
+  } satisfies ChartConfig
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Product Management</CardTitle>
-        <CardDescription>Product status distribution</CardDescription>
+        <CardTitle>Area Chart - Legend</CardTitle>
+        <CardDescription>
+          Showing total visitors for the last 6 months
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="text-center mb-6">
-          <div className="text-2xl font-bold">3,986 PRODUCTS</div>
-        </div>
-        
-        {/* Simple donut representation */}
-        <div className="flex justify-center mb-6">
-          <div className="relative w-32 h-32">
-            <div className="absolute inset-0 rounded-full border-8 border-purple-500"></div>
-            <div className="absolute inset-0 rounded-full border-8 border-green-500 border-t-transparent"></div>
-            <div className="absolute inset-0 rounded-full border-8 border-orange-500 border-t-transparent border-r-transparent"></div>
-            <div className="absolute inset-0 rounded-full border-8 border-red-500 border-t-transparent border-r-transparent border-b-transparent"></div>
+        <ChartContainer config={chartConfig} className="h-[200px]">
+          <AreaChart
+            accessibilityLayer
+            data={chartData}
+            margin={{
+              left: 12,
+              right: 12,
+            }}
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tickFormatter={(value) => value.slice(0, 3)}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent indicator="line" />}
+            />
+            <Area
+              dataKey="mobile"
+              type="natural"
+              fill="var(--color-mobile)"
+              fillOpacity={0.4}
+              stroke="var(--color-mobile)"
+              stackId="a"
+            />
+            <Area
+              dataKey="desktop"
+              type="natural"
+              fill="var(--color-desktop)"
+              fillOpacity={0.4}
+              stroke="var(--color-desktop)"
+              stackId="a"
+            />
+            <ChartLegend content={<ChartLegendContent />} />
+          </AreaChart>
+        </ChartContainer>
+      </CardContent>
+      <CardFooter>
+        <div className="flex w-full items-start gap-2 text-sm">
+          <div className="grid gap-2">
+            <div className="flex items-center gap-2 leading-none font-medium">
+              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+            </div>
+            <div className="text-muted-foreground flex items-center gap-2 leading-none">
+              January - June 2024
+            </div>
           </div>
         </div>
+      </CardFooter>
+    </Card>
+  )
+}
 
-        <div className="grid grid-cols-2 gap-4">
-          {productStats.map((stat, index) => (
-            <div key={index} className="flex items-center space-x-2">
-              <div className={`w-3 h-3 rounded-full ${stat.color}`}></div>
-              <span className="text-sm font-medium">{stat.label}</span>
-            </div>
-          ))}
-        </div>
+// Radar Chart
+function ChartRadarGridFill() {
+  const chartData = [
+    { month: "January", desktop: 186 },
+    { month: "February", desktop: 285 },
+    { month: "March", desktop: 237 },
+    { month: "April", desktop: 203 },
+    { month: "May", desktop: 209 },
+    { month: "June", desktop: 264 },
+  ]
+
+  const chartConfig = {
+    desktop: {
+      label: "Desktop",
+      color: "var(--chart-1)",
+    },
+  } satisfies ChartConfig
+
+  return (
+    <Card>
+      <CardHeader className="items-center pb-4">
+        <CardTitle>Radar Chart - Grid Filled</CardTitle>
+        <CardDescription>
+          Showing total visitors for the last 6 months
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pb-0">
+        <ChartContainer
+          config={chartConfig}
+          className="mx-auto aspect-square max-h-[200px]"
+        >
+          <RadarChart data={chartData}>
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <PolarGrid className="fill-(--color-desktop) opacity-20" />
+            <PolarAngleAxis dataKey="month" />
+            <Radar
+              dataKey="desktop"
+              fill="var(--color-desktop)"
+              fillOpacity={0.5}
+            />
+          </RadarChart>
+        </ChartContainer>
       </CardContent>
+      <CardFooter className="flex-col gap-2 text-sm">
+        <div className="flex items-center gap-2 leading-none font-medium">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        </div>
+        <div className="text-muted-foreground flex items-center gap-2 leading-none">
+          January - June 2024
+        </div>
+      </CardFooter>
+    </Card>
+  )
+}
+
+// Interactive Pie Chart
+function ChartPieInteractive() {
+  const id = "pie-interactive"
+  const [activeMonth, setActiveMonth] = React.useState("january")
+
+  const desktopData = [
+    { month: "january", desktop: 186, fill: "var(--color-january)" },
+    { month: "february", desktop: 305, fill: "var(--color-february)" },
+    { month: "march", desktop: 237, fill: "var(--color-march)" },
+    { month: "april", desktop: 173, fill: "var(--color-april)" },
+    { month: "may", desktop: 209, fill: "var(--color-may)" },
+  ]
+
+  const chartConfig = {
+    visitors: {
+      label: "Visitors",
+    },
+    desktop: {
+      label: "Desktop",
+    },
+    mobile: {
+      label: "Mobile",
+    },
+    january: {
+      label: "January",
+      color: "var(--chart-1)",
+    },
+    february: {
+      label: "February",
+      color: "var(--chart-2)",
+    },
+    march: {
+      label: "March",
+      color: "var(--chart-3)",
+    },
+    april: {
+      label: "April",
+      color: "var(--chart-4)",
+    },
+    may: {
+      label: "May",
+      color: "var(--chart-5)",
+    },
+  } satisfies ChartConfig
+
+  const activeIndex = React.useMemo(
+    () => desktopData.findIndex((item) => item.month === activeMonth),
+    [activeMonth]
+  )
+  const months = React.useMemo(() => desktopData.map((item) => item.month), [])
+
+  return (
+    <Card data-chart={id} className="flex flex-col">
+      <ChartStyle id={id} config={chartConfig} />
+      <CardHeader className="flex-row items-start space-y-0 pb-0">
+        <div className="grid gap-1">
+          <CardTitle>Pie Chart - Interactive</CardTitle>
+          <CardDescription>January - June 2024</CardDescription>
+        </div>
+        <Select value={activeMonth} onValueChange={setActiveMonth}>
+          <SelectTrigger
+            className="ml-auto h-7 w-[130px] rounded-lg pl-2.5"
+            aria-label="Select a value"
+          >
+            <SelectValue placeholder="Select month" />
+          </SelectTrigger>
+          <SelectContent align="end" className="rounded-xl">
+            {months.map((key) => {
+              const config = chartConfig[key as keyof typeof chartConfig]
+
+              if (!config) {
+                return null
+              }
+
+              return (
+                <SelectItem
+                  key={key}
+                  value={key}
+                  className="rounded-lg [&_span]:flex"
+                >
+                  <div className="flex items-center gap-2 text-xs">
+                    <span
+                      className="flex h-3 w-3 shrink-0 rounded-xs"
+                      style={{
+                        backgroundColor: `var(--color-${key})`,
+                      }}
+                    />
+                    {config?.label}
+                  </div>
+                </SelectItem>
+              )
+            })}
+          </SelectContent>
+        </Select>
+      </CardHeader>
+      <CardContent className="flex flex-1 justify-center pb-0">
+        <ChartContainer
+          id={id}
+          config={chartConfig}
+          className="mx-auto aspect-square w-full max-w-[200px]"
+        >
+          <RechartsPieChart>
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Pie
+              data={desktopData}
+              dataKey="desktop"
+              nameKey="month"
+              innerRadius={40}
+              strokeWidth={5}
+              activeIndex={activeIndex}
+              activeShape={({ outerRadius = 0, ...props }) => (
+                <g>
+                  <Sector {...props} outerRadius={outerRadius + 10} />
+                  <Sector
+                    {...props}
+                    outerRadius={outerRadius + 20}
+                    innerRadius={outerRadius + 8}
+                  />
+                </g>
+              )}
+            >
+              <Label
+                content={({ viewBox }) => {
+                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                    return (
+                      <text
+                        x={viewBox.cx}
+                        y={viewBox.cy}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                      >
+                        <tspan
+                          x={viewBox.cx}
+                          y={viewBox.cy}
+                          className="fill-foreground text-2xl font-bold"
+                        >
+                          {desktopData[activeIndex].desktop.toLocaleString()}
+                        </tspan>
+                        <tspan
+                          x={viewBox.cx}
+                          y={(viewBox.cy || 0) + 20}
+                          className="fill-muted-foreground text-sm"
+                        >
+                          Visitors
+                        </tspan>
+                      </text>
+                    )
+                  }
+                }}
+              />
+            </Pie>
+          </RechartsPieChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  )
+}
+
+// Mixed Bar Chart Component
+function ChartBarMixed() {
+  const chartData = [
+    { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
+    { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
+    { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
+    { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
+    { browser: "other", visitors: 90, fill: "var(--color-other)" },
+  ]
+
+  const chartConfig = {
+    visitors: {
+      label: "Visitors",
+    },
+    chrome: {
+      label: "Chrome",
+      color: "var(--chart-1)",
+    },
+    safari: {
+      label: "Safari",
+      color: "var(--chart-2)",
+    },
+    firefox: {
+      label: "Firefox",
+      color: "var(--chart-3)",
+    },
+    edge: {
+      label: "Edge",
+      color: "var(--chart-4)",
+    },
+    other: {
+      label: "Other",
+      color: "var(--chart-5)",
+    },
+  } satisfies ChartConfig
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Bar Chart - Mixed</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig} className="h-[250px]">
+          <BarChart
+            accessibilityLayer
+            data={chartData}
+            layout="vertical"
+            margin={{
+              left: 0,
+            }}
+          >
+            <YAxis
+              dataKey="browser"
+              type="category"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tickFormatter={(value) =>
+                chartConfig[value as keyof typeof chartConfig]?.label
+              }
+            />
+            <XAxis dataKey="visitors" type="number" hide />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Bar dataKey="visitors" layout="vertical" radius={5} />
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 leading-none font-medium">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        </div>
+        <div className="text-muted-foreground leading-none">
+          Showing total visitors for the last 6 months
+        </div>
+      </CardFooter>
     </Card>
   )
 }
@@ -388,6 +695,183 @@ function OrderSummaryWidget() {
   )
 }
 
+// Interactive Area Chart Component
+function ChartAreaInteractive() {
+  const [timeRange, setTimeRange] = React.useState("90d")
+
+  const chartData = [
+    { date: "2024-04-01", desktop: 222, mobile: 150 },
+    { date: "2024-04-02", desktop: 97, mobile: 180 },
+    { date: "2024-04-03", desktop: 167, mobile: 120 },
+    { date: "2024-04-04", desktop: 242, mobile: 260 },
+    { date: "2024-04-05", desktop: 373, mobile: 290 },
+    { date: "2024-04-06", desktop: 301, mobile: 340 },
+    { date: "2024-04-07", desktop: 245, mobile: 180 },
+    { date: "2024-04-08", desktop: 409, mobile: 320 },
+    { date: "2024-04-09", desktop: 59, mobile: 110 },
+    { date: "2024-04-10", desktop: 261, mobile: 190 },
+    { date: "2024-04-11", desktop: 327, mobile: 350 },
+    { date: "2024-04-12", desktop: 292, mobile: 210 },
+    { date: "2024-04-13", desktop: 342, mobile: 380 },
+    { date: "2024-04-14", desktop: 137, mobile: 220 },
+    { date: "2024-04-15", desktop: 120, mobile: 170 },
+    { date: "2024-04-16", desktop: 138, mobile: 190 },
+    { date: "2024-04-17", desktop: 446, mobile: 360 },
+    { date: "2024-04-18", desktop: 364, mobile: 410 },
+    { date: "2024-04-19", desktop: 243, mobile: 180 },
+    { date: "2024-04-20", desktop: 89, mobile: 150 },
+    { date: "2024-04-21", desktop: 137, mobile: 200 },
+    { date: "2024-04-22", desktop: 224, mobile: 170 },
+    { date: "2024-04-23", desktop: 138, mobile: 230 },
+    { date: "2024-04-24", desktop: 387, mobile: 290 },
+    { date: "2024-04-25", desktop: 215, mobile: 250 },
+    { date: "2024-04-26", desktop: 75, mobile: 130 },
+    { date: "2024-04-27", desktop: 383, mobile: 420 },
+    { date: "2024-04-28", desktop: 122, mobile: 180 },
+    { date: "2024-04-29", desktop: 315, mobile: 240 },
+    { date: "2024-04-30", desktop: 454, mobile: 380 },
+  ]
+
+  const chartConfig = {
+    visitors: {
+      label: "Visitors",
+    },
+    desktop: {
+      label: "Desktop",
+      color: "var(--chart-1)",
+    },
+    mobile: {
+      label: "Mobile",
+      color: "var(--chart-2)",
+    },
+  } satisfies ChartConfig
+
+  const filteredData = chartData.filter((item) => {
+    const date = new Date(item.date)
+    const referenceDate = new Date("2024-04-30")
+    let daysToSubtract = 30
+    if (timeRange === "7d") {
+      daysToSubtract = 7
+    } else if (timeRange === "14d") {
+      daysToSubtract = 14
+    }
+    const startDate = new Date(referenceDate)
+    startDate.setDate(startDate.getDate() - daysToSubtract)
+    return date >= startDate
+  })
+
+  return (
+    <Card className="pt-0">
+      <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
+        <div className="grid flex-1 gap-1">
+          <CardTitle>Area Chart - Interactive</CardTitle>
+          <CardDescription>
+            Showing total visitors for the last month
+          </CardDescription>
+        </div>
+        <Select value={timeRange} onValueChange={setTimeRange}>
+          <SelectTrigger
+            className="hidden w-[160px] rounded-lg sm:ml-auto sm:flex"
+            aria-label="Select a value"
+          >
+            <SelectValue placeholder="Last 30 days" />
+          </SelectTrigger>
+          <SelectContent className="rounded-xl">
+            <SelectItem value="30d" className="rounded-lg">
+              Last 30 days
+            </SelectItem>
+            <SelectItem value="14d" className="rounded-lg">
+              Last 14 days
+            </SelectItem>
+            <SelectItem value="7d" className="rounded-lg">
+              Last 7 days
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </CardHeader>
+      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+        <ChartContainer
+          config={chartConfig}
+          className="aspect-auto h-[200px] w-full"
+        >
+          <AreaChart data={filteredData}>
+            <defs>
+              <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-desktop)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-desktop)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+              <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-mobile)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-mobile)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+            </defs>
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              minTickGap={32}
+              tickFormatter={(value) => {
+                const date = new Date(value)
+                return date.toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })
+              }}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={
+                <ChartTooltipContent
+                  labelFormatter={(value) => {
+                    return new Date(value).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    })
+                  }}
+                  indicator="dot"
+                />
+              }
+            />
+            <Area
+              dataKey="mobile"
+              type="natural"
+              fill="url(#fillMobile)"
+              stroke="var(--color-mobile)"
+              stackId="a"
+            />
+            <Area
+              dataKey="desktop"
+              type="natural"
+              fill="url(#fillDesktop)"
+              stroke="var(--color-desktop)"
+              stackId="a"
+            />
+            <ChartLegend content={<ChartLegendContent />} />
+          </AreaChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  )
+}
+
 // Quick Actions
 function QuickActions() {
   const actions = [
@@ -424,29 +908,9 @@ function QuickActions() {
 export default function DashboardPage() {
   return (
     <div className="space-y-6 p-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome to your film festival management dashboard
-        </p>
-      </div>
 
-      {/* Search and Filters */}
-      <div className="flex items-center gap-4">
-        <div className="flex-1">
-          <input 
-            type="text" 
-            placeholder="Search Spare parts" 
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">Filters</button>
-        <button className="px-4 py-2 border rounded-lg hover:bg-gray-50 flex items-center gap-2">
-          <Calendar className="h-4 w-4" />
-          Date
-        </button>
-      </div>
+
+    
 
       {/* Order Status Cards */}
       {/* <OrderStatusCards /> */}
@@ -454,20 +918,22 @@ export default function DashboardPage() {
       {/* Main Stats Cards */}
       <StatsCards />
 
-      {/* Management Widgets */}
-      <ManagementWidgets />
+      {/* Three Charts Row */}
+      <div className="grid gap-6 md:grid-cols-3">
+        <ChartAreaLegend />
+        <ChartRadarGridFill />
+        <ChartPieInteractive />
+      </div>
 
-      {/* Customer and Return Rate Widgets */}
-      <CustomerWidgets />
-
-      {/* Product Management and Quick Actions */}
+      {/* Mixed Bar Chart and Quick Actions */}
       <div className="grid gap-6 md:grid-cols-2">
-        <ProductManagementWidget />
+        <ChartBarMixed />
         <QuickActions />
       </div>
 
-      {/* Order Summary Widget */}
-      <OrderSummaryWidget />
+      {/* Interactive Area Chart */}
+      <ChartAreaInteractive />
+
     </div>
   )
 }
