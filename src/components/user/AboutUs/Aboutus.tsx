@@ -12,7 +12,7 @@ export default function AboutUs() {
          <div className="-mt-[10rem]" style={{ backgroundColor: "#EEEEEE" }}>
         <HeroSection />
         <AboutUsContent />
-        <ContentPage />
+        {/* <ContentPage /> */}
       
       </div>
       </>
