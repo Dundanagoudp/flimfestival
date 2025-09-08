@@ -3,7 +3,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import NominationsTable from "./nominations/modules/nominations-table";
-import DynamicPagination from "@/components/common/DynamicPagination";
 import DynamicButton from "@/components/common/DynamicButton";
 import { useToast } from "@/components/ui/custom-toast";
 import type { Nomination } from "@/types/nominationsTypes";
@@ -11,6 +10,7 @@ import { deleteNomination, getNominations } from "@/services/nominationsServices
 import AddNominationModal from "./nominations/modules/add-nomination-modal";
 import EditNominationModal from "./nominations/modules/edit-nomination-modal";
 import ViewNominationModal from "./nominations/modules/view-nomination-modal";
+import { MessageSquareDiff } from "lucide-react";
 
 const TYPES: { label: string; value: string }[] = [
   { label: "Short Film", value: "short_film" },
@@ -80,9 +80,9 @@ export default function NominationsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Nominations</h2>
-        <DynamicButton onClick={() => setIsAddOpen(true)} iconPosition="left">+ Add</DynamicButton>
+      <div className="flex items-center justify-between mt-4">
+        <h2 className="text-xl font-semibold">  Nominations</h2>
+        <DynamicButton onClick={() => setIsAddOpen(true)} iconPosition="left"> <MessageSquareDiff style={{color: "white"}} /> Add</DynamicButton>
       </div>
 
       <Card>
@@ -97,9 +97,6 @@ export default function NominationsPage() {
             onEdit={(n) => { setSelected(n); setIsEditOpen(true); }}
             onDelete={onDelete}
             onView={(n) => { setSelected(n); setIsViewOpen(true); }}
-          />
-
-          <DynamicPagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}
