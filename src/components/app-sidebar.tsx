@@ -262,17 +262,6 @@ const userNavData = {
       ]
     },
     {
-      title: "Events",
-      url: "/admin/events",
-      icon: Calendar,
-      items: [
-        {
-          title: "All Events",
-          url: "/admin/dashboard/events",
-        },
-      ],
-    },
-    {
       title: "Videos",
       url: "/admin/dashboard/videos",
       icon: Video,
