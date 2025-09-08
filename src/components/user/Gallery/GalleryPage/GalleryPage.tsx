@@ -2,15 +2,13 @@
 
 import Image from "next/image";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  getAllYears,
-  getAllGalleryByYear,
-} from "@/services/galleryServices"; // <- adjust path if different
+import { getAllYears, getAllGalleryByYear } from "@/services/galleryServices"; // <- adjust path if different
 import type {
   GalleryYear,
   GetAllGalleryResponse,
   GalleryImage,
 } from "@/types/galleryTypes";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type YearId = string;
 
@@ -20,11 +18,13 @@ export default function GalleryPage() {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loadingYears, setLoadingYears] = useState(true);
   const [loadingImages, setLoadingImages] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // 1) Load all years
   useEffect(() => {
     (async () => {
+      setLoading(true);
       try {
         setLoadingYears(true);
         setError(null);
@@ -41,6 +41,7 @@ export default function GalleryPage() {
         setError(e?.message || "Failed to load years");
       } finally {
         setLoadingYears(false);
+        setLoading(false);
       }
     })();
   }, []);
@@ -49,16 +50,20 @@ export default function GalleryPage() {
   useEffect(() => {
     if (!activeYearId) return;
     (async () => {
+      setLoading(true);
       try {
         setLoadingImages(true);
         setError(null);
-        const resp: GetAllGalleryResponse = await getAllGalleryByYear(activeYearId);
+        const resp: GetAllGalleryResponse = await getAllGalleryByYear(
+          activeYearId
+        );
         setImages(resp?.images ?? []);
       } catch (e: any) {
         setError(e?.message || "Failed to load gallery");
         setImages([]);
       } finally {
         setLoadingImages(false);
+        setLoading(false);
       }
     })();
   }, [activeYearId]);
@@ -70,7 +75,7 @@ export default function GalleryPage() {
         id: y._id,
         value: y.value,
       })),
-    [years],
+    [years]
   );
 
   // Find the active year value for display (optional)
@@ -94,10 +99,7 @@ export default function GalleryPage() {
           {loadingYears ? (
             <>
               {Array.from({ length: 3 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-8 w-16 rounded-full bg-muted animate-pulse"
-                />
+                <Skeleton key={i} className="h-8 w-16 rounded-full bg-gray-300" />
               ))}
             </>
           ) : yearChips.length > 0 ? (
@@ -127,36 +129,8 @@ export default function GalleryPage() {
         {/* Grid */}
         <div className="mt-8">
           {loadingImages ? (
-            // Skeleton grid
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 8 }).map((_, idx) => {
-                const span = idx === 0 || idx === 7 ? "lg:col-span-2" : "";
-                const h =
-                  idx === 0
-                    ? "h-[230px] sm:h-[280px] md:h-[320px] lg:h-[300px] xl:h-[340px]"
-                    : idx === 1 || idx === 2
-                    ? "h-[230px] sm:h-[260px] md:h-[280px]"
-                    : idx >= 3 && idx <= 6
-                    ? "h-[210px] sm:h-[230px] md:h-[240px]"
-                    : idx === 7
-                    ? "h-[230px] sm:h-[260px] md:h-[300px]"
-                    : "h-[210px] sm:h-[230px] md:h-[240px]";
-                return (
-                  <div
-                    key={idx}
-                    className={`rounded-2xl bg-muted ring-1 ring-border/70 ${span} ${h} animate-pulse`}
-                  />
-                );
-              })}
-            </div>
-          ) : images.length === 0 ? (
-            <div className="rounded-2xl border border-border/70 bg-card p-8 text-center text-sm text-muted-foreground">
-              {activeYearValue ? `No images found for ${activeYearValue}.` : "No images found."}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {images.map((item, idx) => {
-                // Figma-like layout pattern
                 const span = idx === 0 || idx === 7 ? "lg:col-span-2" : "";
                 const heightClass =
                   idx === 0
@@ -168,7 +142,34 @@ export default function GalleryPage() {
                     : idx === 7
                     ? "h-[230px] sm:h-[260px] md:h-[300px]"
                     : "h-[210px] sm:h-[230px] md:h-[240px]";
-
+                return (
+                  <Skeleton
+                    key={idx}
+                    className={`rounded-2xl ${span} ${heightClass} bg-gray-100`}
+                  />
+                );
+              })}
+            </div>
+          ) : images.length === 0 ? (
+            <div className="rounded-2xl border border-border/70 bg-card p-8 text-center text-sm text-muted-foreground">
+              {activeYearValue
+                ? `No images found for ${activeYearValue}.`
+                : "No images found."}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {images.map((item, idx) => {
+                const span = idx === 0 || idx === 7 ? "lg:col-span-2" : "";
+                const heightClass =
+                  idx === 0
+                    ? "h-[230px] sm:h-[280px] md:h-[320px] lg:h-[300px] xl:h-[340px]"
+                    : idx === 1 || idx === 2
+                    ? "h-[230px] sm:h-[260px] md:h-[280px]"
+                    : idx >= 3 && idx <= 6
+                    ? "h-[210px] sm:h-[230px] md:h-[240px]"
+                    : idx === 7
+                    ? "h-[230px] sm:h-[260px] md:h-[300px]"
+                    : "h-[210px] sm:h-[230px] md:h-[240px]";
                 return (
                   <figure
                     key={item._id}

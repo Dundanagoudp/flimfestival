@@ -14,11 +14,11 @@ const HeroSection = () => {
   }, []);
   return (
     <section
-      className="w-full h-screen relative overflow-hidden"
+      className="w-full  h-150  relative overflow-hidden"
     >
       {/* Parallax background */}
       <div
-        className="absolute inset-0 bg-cover bg-center"
+        className="absolute inset-0 bg-cover bg-center "
         style={{
           backgroundImage: "url(/home.png)",
           transform: `translateY(${scrollY * 0.2}px)`,

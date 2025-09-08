@@ -6,7 +6,7 @@ export default function Page() {
     return (
         <div>
             <GalleryPages />
-    <Footer />
+
         </div>
     );
 }

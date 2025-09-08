@@ -10,6 +10,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { getGalleryYearwise } from "@/services/galleryServices";
+import Link from "next/link";
 
 interface GalleryImage {
   _id: string;
@@ -60,9 +61,10 @@ export default function Gallery() {
               <h1 className="text-6xl font-black">Gallery</h1>
 
               <div className="flex items-center gap-2 mt-5">
+                <Link href={'/gallery'}>
                 <Button className="rounded-full bg-primary text-black hover:bg-yellow-300">
                   View More
-                </Button>
+                </Button></Link>
                 <span
                   aria-hidden
                   className="inline-block h-4 w-4 rounded-full bg-primary"
