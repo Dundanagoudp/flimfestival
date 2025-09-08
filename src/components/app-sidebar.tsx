@@ -32,6 +32,7 @@ import {
 import type { User } from "@/types/user-types"
 import { FaUsers } from "react-icons/fa6";
 import { FaAward } from "react-icons/fa";
+import { title } from "process"
 
 
 
@@ -162,6 +163,18 @@ const adminNavData = {
       ]
     },
     {
+      title:"Home",
+      url:"/admin/dashboard/home",
+      icon: Home,
+      items:[
+        {
+          title:"nominations",
+          url:"/admin/dashboard/home/nominations"
+        }
+      ]
+
+    },
+    {
       title: "Awards",
       url: "/admin/dashboard/award",
       icon: FaAward,
@@ -184,6 +197,7 @@ const adminNavData = {
         }
       ],
     },
+    
   ],
   projects: [
     {
