@@ -70,7 +70,7 @@ export default function ChartBarMixed() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Bar Chart - Mixed</CardTitle>
+          <CardTitle>Category Breakdown</CardTitle>
           <CardDescription>Loading chart data...</CardDescription>
         </CardHeader>
         <CardContent>
@@ -84,7 +84,7 @@ export default function ChartBarMixed() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Bar Chart - Mixed</CardTitle>
+          <CardTitle>Category Breakdown</CardTitle>
           <CardDescription>Error loading chart data</CardDescription>
         </CardHeader>
       </Card>
@@ -101,7 +101,7 @@ export default function ChartBarMixed() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Bar Chart - Mixed</CardTitle>
+        <CardTitle>Category Breakdown</CardTitle>
         <CardDescription>{chartData.period || "January - June 2024"}</CardDescription>
       </CardHeader>
       <CardContent>

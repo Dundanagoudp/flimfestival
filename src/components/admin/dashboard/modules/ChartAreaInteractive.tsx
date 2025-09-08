@@ -67,7 +67,7 @@ export default function ChartAreaInteractive() {
       <Card className="pt-0">
         <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
           <div className="grid flex-1 gap-1">
-            <CardTitle>Area Chart - Interactive</CardTitle>
+            <CardTitle>Submissions & Registrations Trend</CardTitle>
             <CardDescription>Loading chart data...</CardDescription>
           </div>
         </CardHeader>
@@ -83,7 +83,7 @@ export default function ChartAreaInteractive() {
       <Card className="pt-0">
         <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
           <div className="grid flex-1 gap-1">
-            <CardTitle>Area Chart - Interactive</CardTitle>
+            <CardTitle>Submissions & Registrations Trend</CardTitle>
             <CardDescription>Error loading chart data</CardDescription>
           </div>
         </CardHeader>
@@ -111,7 +111,7 @@ export default function ChartAreaInteractive() {
     <Card className="pt-0">
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1">
-          <CardTitle>Area Chart - Interactive</CardTitle>
+          <CardTitle>Submissions & Registrations Trend</CardTitle>
           <CardDescription>
             Showing submissions and registrations for the last 6 months
           </CardDescription>

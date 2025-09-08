@@ -57,7 +57,7 @@ export default function ChartAreaLegend() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Area Chart - Legend</CardTitle>
+          <CardTitle>Submissions vs Registrations</CardTitle>
           <CardDescription>Loading chart data...</CardDescription>
         </CardHeader>
         <CardContent>
@@ -71,7 +71,7 @@ export default function ChartAreaLegend() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Area Chart - Legend</CardTitle>
+          <CardTitle>Submissions vs Registrations</CardTitle>
           <CardDescription>Error loading chart data</CardDescription>
         </CardHeader>
       </Card>
@@ -88,7 +88,7 @@ export default function ChartAreaLegend() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Area Chart - Legend</CardTitle>
+        <CardTitle>Submissions vs Registrations</CardTitle>
         <CardDescription>
           Showing submissions and registrations for the last 6 months
         </CardDescription>

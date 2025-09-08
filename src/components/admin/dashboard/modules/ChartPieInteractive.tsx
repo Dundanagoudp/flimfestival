@@ -88,7 +88,7 @@ export default function ChartPieInteractive() {
       <Card data-chart={id} className="flex flex-col">
         <CardHeader className="flex-row items-start space-y-0 pb-0">
           <div className="grid gap-1">
-            <CardTitle>Pie Chart - Interactive</CardTitle>
+            <CardTitle>Genre Distribution</CardTitle>
             <CardDescription>Loading chart data...</CardDescription>
           </div>
         </CardHeader>
@@ -104,7 +104,7 @@ export default function ChartPieInteractive() {
       <Card data-chart={id} className="flex flex-col">
         <CardHeader className="flex-row items-start space-y-0 pb-0">
           <div className="grid gap-1">
-            <CardTitle>Pie Chart - Interactive</CardTitle>
+            <CardTitle>Genre Distribution</CardTitle>
             <CardDescription>Error loading chart data</CardDescription>
           </div>
         </CardHeader>
@@ -117,7 +117,7 @@ export default function ChartPieInteractive() {
       <ChartStyle id={id} config={chartConfig} />
       <CardHeader className="flex-row items-start space-y-0 pb-0">
         <div className="grid gap-1">
-          <CardTitle>Pie Chart - Interactive</CardTitle>
+          <CardTitle>Genre Distribution</CardTitle>
           <CardDescription>{chartData.period || "Current Month"}</CardDescription>
         </div>
         <Select value={activeCategory} onValueChange={setActiveCategory}>
@@ -207,7 +207,7 @@ export default function ChartPieInteractive() {
                           y={(viewBox.cy || 0) + 20}
                           className="fill-muted-foreground text-sm"
                         >
-                          Submissions
+                          Titles
                         </tspan>
                       </text>
                     )
