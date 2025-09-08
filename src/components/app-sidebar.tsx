@@ -11,6 +11,7 @@ import {
   UserRound,
   Globe,
   Video,
+  LayoutDashboard,
 } from "lucide-react"
 import { useToast } from "@/components/ui/custom-toast"
 import { logoutUser } from "@/services/authService"
@@ -32,8 +33,7 @@ import {
 import type { User } from "@/types/user-types"
 import { FaUsers } from "react-icons/fa6";
 import { FaAward } from "react-icons/fa";
-
-
+import { title } from "process"
 
 // Admin navigation data for film festival
 const adminNavData = {
@@ -48,7 +48,7 @@ const adminNavData = {
     {
       title: "Dashboard",
       url: "/admin/dashboard",
-      icon: Home,
+      icon: LayoutDashboard ,
       isActive: true,
       items: [],
     },
@@ -78,11 +78,11 @@ const adminNavData = {
       items: [
         {
           title: "All Guests",
-          url: "/admin/dashboard/blogs/guests",
+          url: "/admin/dashboard/guests",
         },
         {
           title: "years",
-          url: "/admin/dashboard/blogs/guests/year",
+          url: "/admin/dashboard/guests/year",
         }
       ]
     },
@@ -162,6 +162,22 @@ const adminNavData = {
       ]
     },
     {
+      title:"Home",
+      url:"/admin/dashboard/home",
+      icon: Home,
+      items:[
+        {
+          title:"nominations",
+          url:"/admin/dashboard/home/nominations"
+        },
+        {
+          title:"HomeVideo",
+          url:"/admin/dashboard/home/homevideo"
+        }
+      ]
+
+    },
+    {
       title: "Awards",
       url: "/admin/dashboard/award",
       icon: FaAward,
@@ -184,6 +200,7 @@ const adminNavData = {
         }
       ],
     },
+    
   ],
   projects: [
     {
