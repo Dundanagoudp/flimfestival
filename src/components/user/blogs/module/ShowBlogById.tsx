@@ -68,27 +68,27 @@ export default function ShowBlogById() {
         <article className="space-y-8">
           {/* Featured Image Skeleton */}
           <div className="relative overflow-hidden rounded-2xl shadow-lg">
-            <Skeleton className="w-full h-[300px] sm:h-[400px] lg:h-[500px] rounded-2xl" />
+            <Skeleton className="w-full h-[300px] sm:h-[400px] lg:h-[500px] rounded-2xl bg-gray-100" />
             <div className="absolute bottom-6 left-6 right-6">
-              <Skeleton className="inline-flex items-center h-[36px] w-[150px] rounded-full" />
+              <Skeleton className="inline-flex items-center h-[36px] w-[150px] rounded-full bg-gray-100" />
             </div>
           </div>
 
           {/* Article Header Skeleton */}
           <div className="space-y-6">
-            <Skeleton className="h-[40px] w-full max-w-[600px] rounded-lg" />
+            <Skeleton className="h-[40px] w-full max-w-[600px] rounded-lg bg-gray-100" />
             <div className="flex items-center gap-4">
-              <Skeleton className="h-[20px] w-[100px] rounded-full" />
-              <Skeleton className="h-[20px] w-[120px] rounded-full" />
+              <Skeleton className="h-[20px] w-[100px] rounded-full bg-gray-100" />
+              <Skeleton className="h-[20px] w-[120px] rounded-full bg-gray-100" />
             </div>
           </div>
 
           {/* Article Content Skeleton */}
           <div className="p-6 lg:p-8 shadow-sm border-0 bg-white/70 backdrop-blur-sm rounded-lg">
             <div className="space-y-4">
-              <Skeleton className="h-[20px] w-full rounded-lg" />
-              <Skeleton className="h-[20px] w-full rounded-lg" />
-              <Skeleton className="h-[20px] w-[80%] rounded-lg" />
+              <Skeleton className="h-[20px] w-full rounded-lg bg-gray-100" />
+              <Skeleton className="h-[20px] w-full rounded-lg bg-gray-100" />
+              <Skeleton className="h-[20px] w-[80%] rounded-lg bg-gray-100" />
             </div>
           </div>
         </article>
@@ -97,21 +97,21 @@ export default function ShowBlogById() {
       {/* Sidebar Skeleton */}
       <div className="space-y-6">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-          <Skeleton className="h-[28px] w-[150px] mb-4 rounded-lg" />
+          <Skeleton className="h-[28px] w-[150px] mb-4 rounded-lg bg-gray-100" />
 
           <div className="flex flex-col gap-3">
             {[...Array(5)].map((_, index) => (
               <div key={index} className="flex items-center gap-3 p-2 rounded-md">
-                <Skeleton className="w-12 h-12 rounded-md" />
+                <Skeleton className="w-12 h-12 rounded-md bg-gray-100" />
                 <div className="min-w-0 space-y-2">
-                  <Skeleton className="h-[16px] w-[200px] rounded-full" />
-                  <Skeleton className="h-[14px] w-[100px] rounded-full" />
+                  <Skeleton className="h-[16px] w-[200px] rounded-full bg-gray-100" />
+                  <Skeleton className="h-[14px] w-[100px] rounded-full bg-gray-100" />
                 </div>
               </div>
             ))}
           </div>
 
-          <Skeleton className="mt-4 h-[24px] w-[120px] rounded-lg" />
+          <Skeleton className="mt-4 h-[24px] w-[120px] rounded-lg bg-gray-100" />
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card'
 import { getLatestBlogs } from '@/services/blogsServices';
 import { format } from 'date-fns';
 import { BlogPost } from '@/types/blogsTypes';
+import Link from 'next/link';
 
 
 
@@ -15,6 +16,7 @@ import { BlogPost } from '@/types/blogsTypes';
 export default function BlogsAndMedia() {
   const [blogs, setBlogs] = React.useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
     useEffect(() => {
       const fetchBlogs = async () => {
         setIsLoading(true);
@@ -47,7 +49,7 @@ export default function BlogsAndMedia() {
   .slice()
   .sort((a, b) => new Date(b.createdAt || b.publishedDate).getTime() - new Date(a.createdAt || a.publishedDate).getTime())
   .slice(0, 3);
-
+const items = latestBlogs.slice(0, 3);
   return (
     <div >
      <main className="w-full px-4" style={{ backgroundColor: "#ffffff" }}>
@@ -58,9 +60,10 @@ export default function BlogsAndMedia() {
           <h3 className="text-sm">Latest News</h3>
         </div>
         <div className="flex items-center gap-3">
+          <Link href={'/blogs'}>
           <Button className="rounded-full bg-primary text-black hover:bg-yellow-300">
             View All Post
-          </Button>
+          </Button></Link>
           <span aria-hidden className="inline-block h-3 w-3 rounded-full bg-primary" />
         </div>
       </div>
@@ -69,34 +72,56 @@ export default function BlogsAndMedia() {
         <h1 className="text-6xl font-extrabold text-center">Blogs and Media</h1>
       </div>
       {/* DESKTOP GRID */}
-      <div className="hidden md:grid md:grid-cols-4 md:gap-6">
-        {latestBlogs.map((blog, i) => {
-          const isFirst = i === 0;
-          return (
-            <article
-              key={blog._id}
-              className={`${isFirst ? "md:col-span-2" : "md:col-span-1"} flex flex-col`}
+  <div className="hidden md:flex md:h-[360px] md:gap-6">
+      {items.map((blog, i) => {
+        const isHovered = hoveredIndex === i;
+        // when nothing is hovered, all flex = 1 (equal)
+        // when one hovered: hovered ~ 2, others ~ 0.9 (tweak numbers to taste)
+        const flexValue =
+          hoveredIndex === null ? 1 : isHovered ? 2 : 0.9;
+
+        return (
+          <article
+            key={blog._id}
+            className="flex flex-col h-full transition-all duration-500"
+            style={{ flex: flexValue, minWidth: 0 }} // minWidth:0 avoids img overflow
+          >
+            <div
+              role="button"
+              tabIndex={0}
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              onFocus={() => setHoveredIndex(i)}
+              onBlur={() => setHoveredIndex(null)}
+              className="relative rounded-lg overflow-hidden bg-gray-100 cursor-pointer shadow-sm transition-shadow duration-300 flex-1"
             >
-              <div className="relative rounded-lg overflow-hidden bg-gray-100 group cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-black/20">
-                <img
-                  src={blog.imageUrl || 'default-image.png'}
-                  alt={blog.title}
-                  className={`w-full ${isFirst ? "h-100" : "h-64"} object-cover transition-transform duration-300 group-hover:scale-105`}
-                />
-                <div className="absolute left-4 top-4 text-xs">
-                  {format(new Date(blog.publishedDate || blog.createdAt), 'MMM d, yyyy')}
-                </div>
-                <div className="absolute right-4 bottom-4">
-                  <button className="text-xs px-3 py-1 rounded-full bg-primary">
-                    Read More
-                  </button>
-                </div>
+              {/* image wrapper keeps full height */}
+              <Link href={`/blogs/${blog._id}`}>
+              <img
+                src={blog.imageUrl || "default-image.png"}
+                alt={blog.title}
+                loading="lazy"
+                className={`w-full h-full object-cover transition-transform duration-500`}
+                // small scale-up on the hovered item for extra punch:
+                style={{ transform: isHovered ? "scale(1.04)" : "scale(1)" }}
+              /></Link>
+
+              <div className="absolute left-4 top-4 text-xs">
+                {format(new Date(blog.publishedDate || blog.createdAt), "MMM d, yyyy")}
               </div>
-              <h2 className="mt-4 text-lg font-semibold">{blog.title}</h2>
-            </article>
-          );
-        })}
-      </div>
+
+              <div className="absolute right-4 bottom-4">
+                <button className="text-xs px-3 py-1 rounded-full bg-primary">
+                  Read More
+                </button>
+              </div>
+            </div>
+
+            <h2 className="mt-4 text-lg font-semibold truncate">{blog.title}</h2>
+          </article>
+        );
+      })}
+    </div>
       {/* MOBILE / NARROW: horizontal scroll (carousel-like) */}
       <div className="md:hidden mt-4 relative">
         <div className="flex justify-between items-center mb-3 px-1">
@@ -151,7 +176,7 @@ export default function BlogsAndMedia() {
         </div>
       </div>
     </div>
-  </main>
+    </main>
     </div>
   )
 }

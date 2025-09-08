@@ -8,22 +8,22 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getAllAwards } from "@/services/awardService";
+import { getAllAwards, getNomination } from "@/services/awardService";
+import { FilmItem } from "@/types/nominatedTypes";
 import React, { useEffect } from "react";
 import Link from "next/link";
 
 export default function AwardNomination() {
-  const [awards, setAwards] = React.useState([]);
+  const [awards, setAwards] = React.useState<FilmItem[]>([]);
   const [loading, setLoading] = React.useState(true);
   useEffect(() => {
     const fetchAwards = async () => {
       setLoading(true);
       try {
-        const response = await getAllAwards();
-        const data = Array.isArray(response)
-          ? response
-          : (response as any)?.data?.data ?? (response as any)?.data ?? [];
-        setAwards(data as any);
+        const response = await getNomination();
+        console.log("Nomination", response);
+        const data = response.items || [];
+        setAwards(data);
       } catch (err: any) {
         console.log(err);
       } finally {
@@ -32,18 +32,57 @@ export default function AwardNomination() {
     };
     fetchAwards();
   }, []);
-  const getImagesByCategory = (categoryName: string): string[] => {
+  const getImagesByCategory = (categoryType: string): string[] => {
     if (!Array.isArray(awards)) return [];
-    return (awards as any[])
-      .filter((a) => a?.category?.name === categoryName)
-      .flatMap((a) =>
-        Array.isArray(a?.array_images) && a.array_images.length > 0
-          ? a.array_images
-          : a?.image
-          ? [a.image]
-          : []
-      )
-      .filter(Boolean) as string[];
+    return awards
+      .filter((a) => a?.type === categoryType)
+      .map((a) => a?.image)
+      .filter(Boolean);
+  };
+
+  const getSwiperConfig = (images: string[]) => {
+    const imageCount = images.length;
+
+    // Dynamic slidesPerView based on image count
+    const getSlidesPerView = (defaultSlides: number) => {
+      if (imageCount === 0) return 1;
+      if (imageCount === 1) return 1;
+      if (imageCount === 2) return 2;
+      if (imageCount === 3) return 3;
+      return Math.min(defaultSlides, imageCount);
+    };
+
+    return {
+      slidesPerView: getSlidesPerView(4),
+      spaceBetween: 16,
+      centeredSlides: false,
+      loop: imageCount > 3, // Only loop if we have more than 3 images
+      autoplay: imageCount > 1 ? {
+        delay: 3000,
+        disableOnInteraction: false,
+      } : false,
+      speed: 800,
+      pagination: { clickable: true },
+      navigation: imageCount > 3, // Only show navigation if we have more than 3 images
+      breakpoints: {
+        320: {
+          slidesPerView: getSlidesPerView(1),
+          spaceBetween: 10
+        },
+        640: {
+          slidesPerView: getSlidesPerView(2),
+          spaceBetween: 12
+        },
+        768: {
+          slidesPerView: getSlidesPerView(3),
+          spaceBetween: 14
+        },
+        1024: {
+          slidesPerView: getSlidesPerView(4),
+          spaceBetween: 16
+        },
+      },
+    };
   };
 
   return (
@@ -51,7 +90,7 @@ export default function AwardNomination() {
       <main className="w-full px-4" style={{ backgroundColor: "#ffffff" }}>
         <div className="px-10 py-10">
           {/* Best Documentary Film Section */}
-          <div className="space-y-10" data-section-type="Documentry-flim">
+          <div className="space-y-10" data-section-type="documentary">
             <div className="flex justify-between">
               <div>
                 <h1 className="text-lg font-bold text-primary">
@@ -75,38 +114,34 @@ export default function AwardNomination() {
 
             {/* Documentary Films Carousel */}
             <div className="px-4 py-6">
-              <Swiper
-                modules={[Autoplay, Navigation, Pagination]}
-                spaceBetween={16}
-                slidesPerView={4} // Default to 4 slides
-                centeredSlides={false}
-                autoplay={{
-                  delay: 3000,
-                  disableOnInteraction: false,
-                }}
-                loop={true}
-                speed={800}
-                pagination={{ clickable: true }}
-                navigation
-                breakpoints={{
-                  320: { slidesPerView: 1, spaceBetween: 10 }, // Mobile: 1 slide
-                  640: { slidesPerView: 2, spaceBetween: 12 }, // Small tablets: 2 slides
-                  768: { slidesPerView: 3, spaceBetween: 14 }, // Tablets: 3 slides
-                  1024: { slidesPerView: 4, spaceBetween: 16 }, // Desktops: 4 slides
-                }}
-                className="gallery-swiper"
-              >
+              {(() => {
+                const documentaryImages = getImagesByCategory("documentary");
+                const swiperConfig = getSwiperConfig(documentaryImages);
+                return (
+                  <Swiper
+                    modules={[Autoplay, Navigation, Pagination]}
+                    slidesPerView={swiperConfig.slidesPerView}
+                    spaceBetween={swiperConfig.spaceBetween}
+                    centeredSlides={swiperConfig.centeredSlides}
+                    loop={swiperConfig.loop}
+                    speed={swiperConfig.speed}
+                    pagination={swiperConfig.pagination}
+                    navigation={swiperConfig.navigation}
+                    breakpoints={swiperConfig.breakpoints}
+                    autoplay={swiperConfig.autoplay}
+                    className="gallery-swiper"
+                  >
                 {loading
-                  ? Array.from({ length: 4 }).map((_, i) => (
+                  ? Array.from({ length: Math.max(documentaryImages.length, 4) }).map((_, i) => (
                       <SwiperSlide key={`doc-skel-${i}`}>
                         <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 overflow-hidden shadow-sm">
                           <Skeleton className="w-full h-full" />
                         </div>
                       </SwiperSlide>
                     ))
-                  : getImagesByCategory("Documentry-flim").map((img, idx) => (
+                  : documentaryImages.map((img, idx) => (
                       <SwiperSlide key={`doc-${idx}`}>
-                        <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 overflow-hidden shadow-sm">
+                        <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 hover:scale-105 transition-all duration-300 overflow-hidden shadow-sm">
                           <img
                             src={img}
                             alt={`documentary ${idx + 1}`}
@@ -116,12 +151,14 @@ export default function AwardNomination() {
                         </div>
                       </SwiperSlide>
                     ))}
-              </Swiper>
+                  </Swiper>
+                );
+              })()}
             </div>
           </div>
 
           {/* Best Short Film Section */}
-          <div className="space-y-10" data-section-type="Short-flimss">
+          <div className="space-y-10" data-section-type="short_film">
             <div className="flex justify-between">
               <div>
                 <h1 className="text-lg font-bold text-primary">
@@ -147,39 +184,37 @@ export default function AwardNomination() {
 
             {/* Short Films Carousel */}
             <div className="px-4 py-6">
-              <Swiper
-                modules={[Autoplay, Pagination]} // Removed Navigation
-                spaceBetween={16}
-                slidesPerView={4} // Default to 4 slides
-                centeredSlides={false}
-                autoplay={{
-                  delay: 3000,
-                  disableOnInteraction: false,
-                  reverseDirection: true, // Autoplay moves from right to left
-                }}
-                loop={true}
-                speed={800}
-                pagination={{ clickable: true }}
-                // Removed navigation prop
-                breakpoints={{
-                  320: { slidesPerView: 1, spaceBetween: 10 }, // Mobile: 1 slide
-                  640: { slidesPerView: 2, spaceBetween: 12 }, // Small tablets: 2 slides
-                  768: { slidesPerView: 3, spaceBetween: 14 }, // Tablets: 3 slides
-                  1024: { slidesPerView: 4, spaceBetween: 16 }, // Desktops: 4 slides
-                }}
-                className="gallery-swiper"
-              >
+              {(() => {
+                const shortFilmImages = getImagesByCategory("short_film");
+                const swiperConfig = getSwiperConfig(shortFilmImages);
+                return (
+                  <Swiper
+                    modules={[Autoplay, Navigation, Pagination]}
+                    slidesPerView={swiperConfig.slidesPerView}
+                    spaceBetween={swiperConfig.spaceBetween}
+                    centeredSlides={swiperConfig.centeredSlides}
+                    loop={swiperConfig.loop}
+                    speed={swiperConfig.speed}
+                    pagination={swiperConfig.pagination}
+                    navigation={swiperConfig.navigation}
+                    breakpoints={swiperConfig.breakpoints}
+                    autoplay={swiperConfig.autoplay && typeof swiperConfig.autoplay === 'object' ? {
+                      ...swiperConfig.autoplay,
+                      reverseDirection: true, // Autoplay moves from right to left
+                    } : false}
+                    className="gallery-swiper"
+                  >
                 {loading
-                  ? Array.from({ length: 4 }).map((_, i) => (
+                  ? Array.from({ length: Math.max(shortFilmImages.length, 4) }).map((_, i) => (
                       <SwiperSlide key={`short-skel-${i}`}>
                         <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 overflow-hidden shadow-sm">
                           <Skeleton className="w-full h-full" />
                         </div>
                       </SwiperSlide>
                     ))
-                  : getImagesByCategory("Short-flimss").map((img, idx) => (
+                  : shortFilmImages.map((img, idx) => (
                       <SwiperSlide key={`short-${idx}`}>
-                        <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 overflow-hidden shadow-sm">
+                        <div className="w-full h-[277px] rounded-[10px] bg-gray-100 hover:scale-105 transition-all duration-300 border border-gray-200 overflow-hidden shadow-sm">
                           <img
                             src={img}
                             alt={`short film ${idx + 1}`}
@@ -189,7 +224,9 @@ export default function AwardNomination() {
                         </div>
                       </SwiperSlide>
                     ))}
-              </Swiper>
+                  </Swiper>
+                );
+              })()}
             </div>
           </div>
         </div>
