@@ -102,8 +102,8 @@ export function EditBlogForm({ blogId }: EditBlogFormProps) {
           title: blogData.title || "",
           contentType: blogData.contentType || "blog",
           category: typeof blogData.category === 'string' ? blogData.category : blogData.category._id,
-          contents: blogData.contents || "",
-          link: blogData.link || "",
+          contents: blogData.contentType === 'blog' ? (blogData.contents || undefined) : undefined,
+          link: blogData.contentType === 'link' ? (blogData.link || undefined) : undefined,
           author: blogData.author || "",
           publishedDate: blogData.publishedDate ? new Date(blogData.publishedDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
         })
@@ -161,15 +161,28 @@ export function EditBlogForm({ blogId }: EditBlogFormProps) {
         return
       }
 
-      const payload = {
+      const payload: any = {
         title: values.title,
         contentType: values.contentType,
         category: values.category,
-        contents: values.contents || "",
-        link: values.link || "",
         author: values.author,
         publishedDate: values.publishedDate,
         image: values.image,
+      }
+
+      // Only include the relevant field based on contentType
+      if (values.contentType === "blog") {
+        if (values.contents && values.contents.trim() !== "") {
+          payload.contents = values.contents
+        }
+        // Ensure link is not sent if switching from link -> blog
+        payload.link = undefined
+      } else if (values.contentType === "link") {
+        if (values.link && values.link.trim() !== "") {
+          payload.link = values.link
+        }
+        // Ensure contents is not sent if switching from blog -> link
+        payload.contents = undefined
       }
 
       await updateBlog(blogId, payload)

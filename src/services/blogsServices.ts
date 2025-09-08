@@ -148,11 +148,16 @@ export async function updateBlog(id: string, payload: UpdateBlogPayload) {
     if (payload.publishedDate !== undefined) formData.append("publishedDate", payload.publishedDate)
 
     // Optional fields
-    if (payload.contents !== undefined && payload.contents !== null) {
-      formData.append("contents", payload.contents)
+    // Only include the field that matches the contentType and is non-empty
+    if (payload.contentType === "blog") {
+      if (payload.contents !== undefined && payload.contents !== null && payload.contents.trim() !== "") {
+        formData.append("contents", payload.contents)
+      }
     }
-    if (payload.link !== undefined && payload.link !== null) {
-      formData.append("link", payload.link)
+    if (payload.contentType === "link") {
+      if (payload.link !== undefined && payload.link !== null && payload.link.trim() !== "") {
+        formData.append("link", payload.link)
+      }
     }
     if (payload.image) formData.append("image", payload.image)
 
