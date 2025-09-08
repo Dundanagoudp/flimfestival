@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import DynamicButton from "@/components/common/DynamicButton";
 import type { Nomination } from "@/types/nominationsTypes";
+import DynamicPagination from "@/components/common/DynamicPagination";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const TYPES: { label: string; value: string }[] = [
   { label: "All", value: "all" },
@@ -24,6 +26,11 @@ interface NominationsTableProps {
   onEdit: (item: Nomination) => void;
   onDelete: (item: Nomination) => void;
   onView: (item: Nomination) => void;
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  totalItems: number;
+  itemsPerPage: number;
 }
 
 export default function NominationsTable({
@@ -36,7 +43,32 @@ export default function NominationsTable({
   onEdit,
   onDelete,
   onView,
+  currentPage,
+  totalPages,
+  onPageChange,
+  totalItems,
+  itemsPerPage,
 }: NominationsTableProps) {
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<Nomination | null>(null);
+
+  const openDeleteConfirm = (item: Nomination) => {
+    setPendingDelete(item);
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (pendingDelete) {
+      onDelete(pendingDelete);
+    }
+    setIsConfirmOpen(false);
+    setPendingDelete(null);
+  };
+
+  const handleCancelDelete = () => {
+    setIsConfirmOpen(false);
+    setPendingDelete(null);
+  };
   return (
     <div className="space-y-3">
       <div className="flex flex-col sm:flex-row gap-3">
@@ -82,7 +114,7 @@ export default function NominationsTable({
                 <TableCell className="text-right space-x-2">
                   <DynamicButton variant="outline" size="sm" onClick={() => onView(n)}>View</DynamicButton>
                   <DynamicButton variant="outline" size="sm" onClick={() => onEdit(n)}>Edit</DynamicButton>
-                  <DynamicButton variant="destructive" size="sm" onClick={() => onDelete(n)}>Delete</DynamicButton>
+                  <DynamicButton variant="destructive" size="sm" onClick={() => openDeleteConfirm(n)}>Delete</DynamicButton>
                 </TableCell>
               </TableRow>
             ))}
@@ -96,6 +128,27 @@ export default function NominationsTable({
           </TableBody>
         </Table>
       </div>
+      <Dialog open={isConfirmOpen} onOpenChange={handleCancelDelete}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete nomination?</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <p className="text-sm text-gray-600">This action cannot be undone. Are you sure you want to delete{pendingDelete ? ` "${pendingDelete.title}"` : " this item"}?</p>
+            <div className="flex justify-end gap-2">
+              <DynamicButton variant="outline" onClick={handleCancelDelete}>Cancel</DynamicButton>
+              <DynamicButton variant="destructive" onClick={handleConfirmDelete}>Delete</DynamicButton>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <DynamicPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+        totalItems={totalItems}
+        itemsPerPage={itemsPerPage}
+      />
     </div>
   );
 }

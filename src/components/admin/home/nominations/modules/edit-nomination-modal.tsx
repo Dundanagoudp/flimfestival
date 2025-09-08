@@ -27,10 +27,12 @@ export default function EditNominationModal({ isOpen, onClose, onSuccess, nomina
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<UpdateNominationPayload>({ title: "", description: "", type: "short_film", imageFile: null });
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (nomination) {
       setForm({ title: nomination.title, description: nomination.description, type: nomination.type, imageFile: null });
+      setPreviewUrl(nomination.image || null);
     }
   }, [nomination]);
 
@@ -65,7 +67,21 @@ export default function EditNominationModal({ isOpen, onClose, onSuccess, nomina
               </SelectContent>
             </Select>
           </div>
-          <input type="file" accept="image/*" onChange={(e) => setForm({ ...form, imageFile: e.target.files?.[0] || null })} />
+          {previewUrl && (
+            <div className="flex items-center gap-3">
+              <img src={previewUrl} alt="Current" className="h-24 w-40 object-cover rounded border" />
+              <span className="text-sm text-gray-500">Current/Selected image</span>
+            </div>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0] || null;
+              setForm({ ...form, imageFile: file });
+              setPreviewUrl(file ? URL.createObjectURL(file) : (nomination?.image || null));
+            }}
+          />
           <div className="flex justify-end gap-2">
             <DynamicButton type="button" variant="outline" onClick={onClose}>Cancel</DynamicButton>
             <DynamicButton type="submit" loading={loading} loadingText="Saving...">Update</DynamicButton>
