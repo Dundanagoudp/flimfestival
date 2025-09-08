@@ -14,6 +14,7 @@ import {
   CategoryCreateResponse,
   GetAllCategoriesResponse,
 } from "@/types/awardTypes"
+import { FilmItem, GetAllNominationResponse } from "@/types/nominatedTypes"
 
 const BASE = "/awards"
 
@@ -36,6 +37,17 @@ export async function getAllAwardCategories(): Promise<GetAllCategoriesResponse>
   } catch (error: any) {
     console.error("Error getting all award categories:", error)
     const errorMessage = error?.response?.data?.message || error?.message || "Failed to get award categories"
+    throw new Error(errorMessage)
+  }
+}
+
+export async function getNomination(): Promise<GetAllNominationResponse> {
+  try {
+    const { data } = await apiClient.get(`/nominations`)
+    return data
+  } catch (error: any) {
+    console.error("Error getting all nomination:", error)
+    const errorMessage = error?.response?.data?.message || error?.message || "Failed to get all nomination"
     throw new Error(errorMessage)
   }
 }

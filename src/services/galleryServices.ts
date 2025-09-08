@@ -1,6 +1,6 @@
 import apiClient from "@/apiClient"
-import {  
- AddImagesResponse,
+import {
+  AddImagesResponse,
   BulkDeleteImagesRequest,
   CreateYearPayload,
   GetAllGalleryResponse,
@@ -8,8 +8,9 @@ import {
   UpdateYearPayload,
   YearCreateResponse,
   YearwiseResponse,
-  YearsResponse, 
+  YearsResponse,
 } from "@/types/galleryTypes"
+import { GetAllMediaResponse } from "@/types/HomeTypes"
 
 const BASE = "/gallery"
 
@@ -114,5 +115,19 @@ export async function getGalleryYearwise() {
   } catch (error: any) {
     console.error("Error getting gallery yearwise:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get gallery yearwise")
+  }
+}
+
+export async function getVideoHome(): Promise<GetAllMediaResponse> {
+  try {
+    const response = await apiClient.get<GetAllMediaResponse>("/Homepage");
+    return response.data;
+  } catch (error: any) {
+    console.error("Error getting video home:", error);
+    throw new Error(
+      error?.response?.data?.message ||
+        error?.message ||
+        "Failed to get video home"
+    );
   }
 }

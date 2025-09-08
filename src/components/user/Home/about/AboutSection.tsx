@@ -94,9 +94,10 @@ export default function AboutSection() {
           <div>
             {/* Tags */}
             <section className="mt-10 flex items-center gap-3">
+              <Link href="/workshop">
               <Button className="rounded-full bg-primary px-4 py-2 text-black hover:bg-yellow-300">
                 Master Class
-              </Button>
+              </Button></Link>
               <Button variant="secondary" className="rounded-full px-4 py-2">
                 Workshop
               </Button>
@@ -111,9 +112,10 @@ export default function AboutSection() {
                 dummy text.
               </p>
               <div className="flex items-center gap-2">
+                <Link href="/workshop">
                 <Button className="rounded-full bg-primary text-black hover:bg-yellow-300">
                   Register
-                </Button>
+                </Button></Link>
                 <button
                   aria-label="go"
                   className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-black hover:bg-yellow-300"
