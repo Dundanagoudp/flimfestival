@@ -78,11 +78,11 @@ const adminNavData = {
       items: [
         {
           title: "All Guests",
-          url: "/admin/dashboard/blogs/guests",
+          url: "/admin/dashboard/guests",
         },
         {
           title: "years",
-          url: "/admin/dashboard/blogs/guests/year",
+          url: "/admin/dashboard/guests/year",
         }
       ]
     },
@@ -169,6 +169,10 @@ const adminNavData = {
         {
           title:"nominations",
           url:"/admin/dashboard/home/nominations"
+        },
+        {
+          title:"HomeVideo",
+          url:"/admin/dashboard/home/homevideo"
         }
       ]
 
