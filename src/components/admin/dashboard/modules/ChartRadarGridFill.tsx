@@ -51,7 +51,7 @@ export default function ChartRadarGridFill() {
     return (
       <Card>
         <CardHeader className="items-center pb-4">
-          <CardTitle>Radar Chart - Grid Filled</CardTitle>
+          <CardTitle>Monthly Content Creation</CardTitle>
           <CardDescription>Loading chart data...</CardDescription>
         </CardHeader>
         <CardContent className="pb-0">
@@ -65,7 +65,7 @@ export default function ChartRadarGridFill() {
     return (
       <Card>
         <CardHeader className="items-center pb-4">
-          <CardTitle>Radar Chart - Grid Filled</CardTitle>
+          <CardTitle>Monthly Content Creation</CardTitle>
           <CardDescription>Error loading chart data</CardDescription>
         </CardHeader>
       </Card>
@@ -81,7 +81,7 @@ export default function ChartRadarGridFill() {
   return (
     <Card>
       <CardHeader className="items-center pb-4">
-        <CardTitle>Radar Chart - Grid Filled</CardTitle>
+        <CardTitle>Monthly Content Creation</CardTitle>
         <CardDescription>
           Showing content creation for the last 6 months
         </CardDescription>
