@@ -21,10 +21,13 @@ import ConfirmDeleteModal from "@/components/admin/gallery/modules/popups/confir
 import ImageModal from "@/components/admin/gallery/modules/popups/image-modal"
 import ImageCard from "@/components/admin/gallery/modules/image-card"
 import DynamicPagination from "@/components/common/DynamicPagination"
+import { useAuth } from "@/context/auth-context"
 
 export default function GalleryPage() {
   const { showToast } = useToast()
   const router = useRouter()
+  const { userRole } = useAuth()
+  const canDelete = userRole === "admin"
   const [error, setError] = React.useState<string | null>(null)
   const [selectedImage, setSelectedImage] = React.useState<GalleryImage | null>(null)
   const [showImageModal, setShowImageModal] = React.useState(false)
@@ -137,6 +140,10 @@ export default function GalleryPage() {
   }
 
   const handleDeleteYear = async () => {
+    if (!canDelete) {
+      showToast("You don't have permission to delete years", "error")
+      return
+    }
     if (!selectedYearId) return
     try {
       await deleteYear(selectedYearId)
@@ -152,6 +159,10 @@ export default function GalleryPage() {
   }
 
   const handleBulkDelete = async () => {
+    if (!canDelete) {
+      showToast("You don't have permission to delete images", "error")
+      return
+    }
     if (!selected.size) return
     try {
       await bulkDeleteImages(Array.from(selected))
@@ -172,7 +183,7 @@ export default function GalleryPage() {
   }
 
   const goToUploadPage = () => {
-    router.push('/admin/gallery/add')
+    router.push('/admin/dashboard/gallery/add')
   }
 
   // Show error if there's one
@@ -213,7 +224,13 @@ export default function GalleryPage() {
                              <DynamicButton size="sm" variant="outline" onClick={(e) => setUpdateOpen(true)}>
                  <Pencil className="mr-2 h-4 w-4" /> Edit Year
                </DynamicButton>
-               <DynamicButton size="sm" variant="destructive" onClick={(e) => setDeleteOpen(true)}>
+               <DynamicButton size="sm" variant="destructive" onClick={(e) => {
+                 if (!canDelete) {
+                   showToast("You don't have permission to delete years", "error")
+                   return
+                 }
+                 setDeleteOpen(true)
+               }} disabled={!canDelete}>
                  <Trash2 className="mr-2 h-4 w-4" /> Delete Year
                </DynamicButton>
             </>
@@ -292,14 +309,20 @@ export default function GalleryPage() {
 
         <Separator className="my-4" />
 
-        <div className="flex items-center justify-between">
+        <div className="flex items:center justify-between">
           <div className="flex items-center gap-3">
             <Checkbox checked={!!allChecked} onCheckedChange={(v) => toggleAll(Boolean(v))} id="select-all" />
             <Label htmlFor="select-all">Select All ({images?.length ?? 0})</Label>
             <Badge variant="secondary">{selected.size} selected</Badge>
           </div>
           <div className="flex items-center gap-2">
-                         <DynamicButton variant="destructive" size="sm" disabled={!selected.size} onClick={(e) => handleBulkDelete()}>
+                         <DynamicButton variant="destructive" size="sm" disabled={!selected.size || !canDelete} onClick={(e) => {
+               if (!canDelete) {
+                 showToast("You don't have permission to delete images", "error")
+                 return
+               }
+               handleBulkDelete()
+             }}>
                <Trash2 className="mr-2 h-4 w-4" /> Delete Selected
              </DynamicButton>
           </div>
