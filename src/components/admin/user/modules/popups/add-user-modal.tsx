@@ -25,7 +25,7 @@ export default function AddUserModal({ open, onOpenChange, onSuccess }: AddUserM
     email: "",
     password: "",
     confirmPassword: "",
-    role: "user",
+    role: "editor",
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,7 +44,7 @@ export default function AddUserModal({ open, onOpenChange, onSuccess }: AddUserM
       if (response.success) {
         showToast("User created successfully!", "success")
         onOpenChange(false)
-        setFormData({ name: "", email: "", password: "", confirmPassword: "", role: "user" })
+        setFormData({ name: "", email: "", password: "", confirmPassword: "", role: "editor" })
         onSuccess?.()
       } else {
         showToast(response.error || "Failed to create user", "error")
@@ -124,13 +124,13 @@ export default function AddUserModal({ open, onOpenChange, onSuccess }: AddUserM
 
               <div className="space-y-2">
                 <Label htmlFor="role">User Role *</Label>
-                <Select value={formData.role} onValueChange={(value: "admin" | "user") => handleInputChange("role", value)}>
+                <Select value={formData.role} onValueChange={(value: "admin" | "editor") => handleInputChange("role", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select user role" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="user">User</SelectItem>
+                    <SelectItem value="editor">Editor</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

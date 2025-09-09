@@ -237,6 +237,10 @@ const userNavData = {
           title: "All Blogs",
           url: "/admin/dashboard/blog",
         },
+                {
+          title: "Categories",
+          url: "/admin/dashboard/blog/category",
+        },
       ]
     },
     {

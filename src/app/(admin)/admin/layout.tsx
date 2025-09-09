@@ -82,7 +82,7 @@ export default function AdminLayout({
           </div>
         </header>
         <Suspense fallback={<AdminLayoutLoading />}>
-          <ProtectedRoute allowedRoles={["admin", "user"]}>
+          <ProtectedRoute allowedRoles={["admin", "editor"]}>
             <div className="flex flex-1 flex-col gap-4 p-2  pt-0">
               {children}
             </div>

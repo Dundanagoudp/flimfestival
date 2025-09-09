@@ -23,7 +23,7 @@ export default function UserProfile() {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "user",
+    role: "editor",
   })
   const { showToast } = useToast()
 

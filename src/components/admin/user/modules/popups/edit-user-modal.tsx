@@ -26,7 +26,7 @@ export default function EditUserModal({ open, onOpenChange, user, onSuccess }: E
     email: "",
     password: "",
     confirmPassword: "",
-    role: "user",
+    role: "editor",
   })
 
   useEffect(() => {
@@ -134,13 +134,13 @@ export default function EditUserModal({ open, onOpenChange, user, onSuccess }: E
 
               <div className="space-y-2">
                 <Label htmlFor="role">User Role *</Label>
-                <Select value={formData.role} onValueChange={(value: "admin" | "user") => handleInputChange("role", value)}>
+                <Select value={formData.role} onValueChange={(value: "admin" | "editor") => handleInputChange("role", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select user role" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="user">User</SelectItem>
+                    <SelectItem value="editor">Editor</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
