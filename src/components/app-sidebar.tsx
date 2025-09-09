@@ -200,6 +200,17 @@ const adminNavData = {
         }
       ],
     },
+    {
+      title: "Contact Us",
+      url: "/admin/dashboard/contact",
+      icon: LayoutDashboard,
+      items: [
+        {
+          title: "All Messages",
+          url: "/admin/dashboard/contact",
+        }
+      ],
+    }
     
   ],
   projects: [
