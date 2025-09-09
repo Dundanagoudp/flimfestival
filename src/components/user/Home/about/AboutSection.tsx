@@ -1,9 +1,15 @@
+'use client'
 import type React from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getWorkshops } from "@/services/workshopService";
+import { Workshop } from "@/types/workShopTypes";
+import Image from "next/image";
+
 
 function Feature({
   title,
@@ -26,7 +32,45 @@ function ImagePlaceholder() {
   );
 }
 
+function WorkshopCard({ workshop }: { workshop: Workshop }) {
+  return (
+    <Card className="overflow-hidden rounded-[10px] shadow-sm">
+      <div className="relative w-full h-[220px]">
+        <Image
+          src={workshop?.imageUrl || "/event.png"}
+          alt={workshop?.name || "Workshop image"}
+          fill
+          sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+          className="object-cover"
+        />
+      </div>
+      <div className="p-3">
+        <h3 className="text-base font-semibold truncate">{workshop?.name}</h3>
+      </div>
+    </Card>
+  );
+}
+
 export default function AboutSection() {
+
+  const [workshopData, setWorkshopData] = useState<Workshop[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  useEffect(() => {
+    const fetchWorkshops = async () => {
+      setLoading(true);
+      try {
+        const response = await getWorkshops();
+        setWorkshopData(response);
+        console.log("response of Workshop", response);
+      } catch (err: any) {
+        console.log(err);
+        setLoading(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    void fetchWorkshops();
+   }, []);
   return (
     <main className="w-full px-4">
       <div className="px-10 py-10">
@@ -82,12 +126,13 @@ export default function AboutSection() {
           </Feature>
         </section>
 
-        {/* 4 Equal divisions across screen */}
-        <section className="w-full flex flex-wrap justify-around  mt-10">
-          <ImagePlaceholder />
-          <ImagePlaceholder />
-          <ImagePlaceholder />
-          <ImagePlaceholder />
+        {/* Workshops grid */}
+        <section className="w-full mt-10 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {loading
+            ? Array.from({ length: 4 }).map((_, idx) => <ImagePlaceholder key={idx} />)
+            : workshopData.map((workshop) => (
+                <WorkshopCard key={workshop._id} workshop={workshop} />
+              ))}
         </section>
         <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] ">
           <div></div>

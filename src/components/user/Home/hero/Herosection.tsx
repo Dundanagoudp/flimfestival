@@ -16,15 +16,22 @@ const HeroSection = () => {
     <section
       className="w-full h-screen relative overflow-hidden"
     >
-      {/* Parallax background */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
+      {/* Video background */}
+      <video
+        className="absolute inset-0 w-full h-full object-cover"
         style={{
-          backgroundImage: "url(/home.png)",
           transform: `translateY(${scrollY * 0.2}px)`,
           transition: 'transform 0.1s linear',
         }}
-      ></div>
+        autoPlay
+        muted
+        loop
+        playsInline
+      >
+        <source src="/HeroVideo.mp4" type="video/mp4" />
+        <source src="/HeroVideo.webm" type="video/webm" />
+        Your browser does not support the video tag.
+      </video>
       {/* Dark overlay for better text visibility */}
       <div className="absolute inset-0 bg-black opacity-40"></div>
 
