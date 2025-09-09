@@ -237,6 +237,10 @@ const userNavData = {
           title: "All Blogs",
           url: "/admin/dashboard/blog",
         },
+                {
+          title: "Categories",
+          url: "/admin/dashboard/blog/category",
+        },
       ]
     },
     {
@@ -260,17 +264,6 @@ const userNavData = {
           url: "/admin/dashboard/gallery",
         }
       ]
-    },
-    {
-      title: "Events",
-      url: "/admin/events",
-      icon: Calendar,
-      items: [
-        {
-          title: "All Events",
-          url: "/admin/dashboard/events",
-        },
-      ],
     },
     {
       title: "Videos",

@@ -31,6 +31,13 @@ export default function ViewUserDrawer({ open, onOpenChange, user }: ViewUserDra
         </Badge>
       )
     }
+    if (role === "editor") {
+      return (
+        <Badge variant="outline" className="ml-2">
+          <UserIcon className="w-3 h-3 mr-1" /> Editor
+        </Badge>
+      )
+    }
     return (
       <Badge variant="outline" className="ml-2">
         <UserIcon className="w-3 h-3 mr-1" /> User

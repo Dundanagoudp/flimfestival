@@ -128,11 +128,11 @@ export default function UserManagement() {
             Admin
           </Badge>
         )
-      case "user":
+        case "editor":
         return (
           <Badge variant="outline">
             <UserIcon className="w-3 h-3 mr-1" />
-            User
+            Editor
           </Badge>
         )
       default:
@@ -199,12 +199,12 @@ export default function UserManagement() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Regular Users</CardTitle>
+            <CardTitle className="text-sm font-medium">Editors</CardTitle>
             <UserIcon className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{users.filter((u) => u.role === "user").length}</div>
-            <p className="text-xs text-muted-foreground">Regular users</p>
+            <div className="text-2xl font-bold">{users.filter((u) => u.role === "editor").length}</div>
+            <p className="text-xs text-muted-foreground">Editor accounts</p>
           </CardContent>
         </Card>
       </div>
@@ -237,7 +237,7 @@ export default function UserManagement() {
                 <SelectContent>
                   <SelectItem value="all">All Roles</SelectItem>
                   <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="editor">Editor</SelectItem>
                 </SelectContent>
               </Select>
             </div>
