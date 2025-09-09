@@ -163,7 +163,7 @@ export default function VideoDetailPage() {
           </Link>
         </Button>
         <div className="flex-1">
-          <div className="flex items-center gap-3 mb-3">
+          <div className="flex items-center gap-3 flex-wrap mb-3">
             {video.videoType === "youtube" ? (
               <div className="bg-red-100 p-2 rounded-lg">
                 <Youtube className="h-6 w-6 text-red-600" />
@@ -179,22 +179,22 @@ export default function VideoDetailPage() {
             >
               {video.videoType === "youtube" ? "YouTube Video" : "Uploaded Video"}
             </Badge>
-          </div>
-          <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-3">
-            {video.title}
-          </h1>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Calendar className="h-4 w-4" />
-            <span>
-              Added on{" "}
-              {new Date(video.addedAt).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </span>
+            <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              {video.title}
+            </h1>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Calendar className="h-4 w-4" />
+              <span>
+                Added on{" "}
+                {new Date(video.addedAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </span>
+            </div>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">

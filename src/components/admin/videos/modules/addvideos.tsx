@@ -131,16 +131,15 @@ export default function AddVideoPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-3 mb-2 mt-2">
         <Button variant="outline" size="sm" asChild>
           <Link href="/admin/dashboard/videos">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Link>
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold">Add New Video</h1>
-          <p className="text-gray-600 mt-1">Upload a video file or add a YouTube link</p>
+        <div className="flex items-center gap-3 ">
+          <h1 className="text-2xl font-bold">Add New Video</h1>
         </div>
       </div>
       <Card>
