@@ -9,27 +9,31 @@ const sampleMenu: { heading: string; links: { title: string; url?: string }[] }[
   {
     heading: "About Us",
     links: [
-      { title: "About AFF" },
-      { title: "Glimpses of AFF 2025" },
-      { title: "Festive Venue" },
-      { title: "Contact Us" },
+      { title: "About AFF", url: "/aboutus" },
+      { title: "Glimpses of AFF 2025", url: "/gallery" },
+      { title: "Festive Venue", url: "/aboutus" },
+      { title: "Contact Us", url: "/contactus" },
     ],
   },
   {
     heading: "Film Selection",
     links: [
-      { title: "Invitees Film" },
-      { title: "Short Film" },
-      { title: "Short Documentary" },
+      { title: "Invitees Film", url: "/videos" },
+      { title: "Short Film", url: "/videos" },
+      { title: "Short Documentary", url: "/videos" },
     ],
   },
   {
     heading: "Media",
-    links: [{ title: "Blogs" }, { title: "Gallery" }, { title: "10th AFF Catalogue" }],
+    links: [
+      { title: "Blogs", url: "/blogs" }, 
+      { title: "Gallery", url: "/gallery" }, 
+      { title: "10th AFF Catalogue", url: "/gallery" }
+    ],
   },
   {
     heading: "Master Class/Workshop",
-    links: [{ title: "10th AFF Schedule" }],
+    links: [{ title: "10th AFF Schedule", url: "/workshop" }],
   },
 ];
 

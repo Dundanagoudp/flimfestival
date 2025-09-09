@@ -5,6 +5,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { getTotalEvent } from "@/services/eventsService";
 import Link from "next/link";
 import { LoadingSpinner } from "@/components/common/LoaderSpinner";
+import { getWorkshops } from "@/services/workshopService";
+
 
 type ScheduleItemProps = {
   time: string;
@@ -33,6 +35,7 @@ function Item({ time, title, subtitle, active }: ScheduleItemProps) {
 export default function EventSchedule() {
   const [eventData, setEventData] = useState<any>(null);
   const [selectedDay, setSelectedDay] = useState<number>(0);
+  const [workshopData, setWorkshopData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   // Get the most recent event (first in items array)
@@ -53,6 +56,23 @@ export default function EventSchedule() {
       }
     };
     void fetchEvent();
+  }, []);
+
+  useEffect(() => {
+   const fetchWorkshops = async () => {
+     setLoading(true);
+     try {
+       const response = await getWorkshops();
+       setWorkshopData(response);
+       console.log("response of Workshop", response);
+     } catch (err: any) {
+       console.log(err);
+       setLoading(false);
+     } finally {
+       setLoading(false);
+     }
+   };
+   void fetchWorkshops();
   }, []);
 
 

@@ -1,7 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
-html { scroll-behavior: smooth; }
+html { 
+  scroll-behavior: none; 
+  overscroll-behavior: none;
+}
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -128,5 +131,8 @@ html { scroll-behavior: smooth; }
   }
   body {
     @apply bg-background text-foreground;
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
   }
 }
