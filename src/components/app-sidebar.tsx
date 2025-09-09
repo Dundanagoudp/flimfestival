@@ -35,6 +35,8 @@ import { FaUsers } from "react-icons/fa6";
 import { FaAward } from "react-icons/fa";
 import { title } from "process"
 import { useAuth } from "@/context/auth-context"
+import { MdOutlineContactMail } from "react-icons/md";
+
 
 // Admin navigation data for film festival
 const adminNavData = {
@@ -52,6 +54,29 @@ const adminNavData = {
       icon: LayoutDashboard ,
       isActive: true,
       items: [],
+    },
+       {
+      title: "Events",
+      url: "/admin/events",
+      icon: Calendar,
+      items: [
+        {
+          title: "All Events",
+          url: "/admin/dashboard/events",
+        },
+        {
+          title: "Create Event",
+          url: "/admin/dashboard/events/create",
+        },
+        {
+          title: "Add Time Slot",
+          url: "/admin/dashboard/events/add-time",
+        },
+        {
+          title: "registrations",
+          url: "/admin/dashboard/events/registrations"
+        }
+      ],
     },
     {
       title: "Blogs",
@@ -102,29 +127,7 @@ const adminNavData = {
         }
       ]
     },
-    {
-      title: "Events",
-      url: "/admin/events",
-      icon: Calendar,
-      items: [
-        {
-          title: "All Events",
-          url: "/admin/dashboard/events",
-        },
-        {
-          title: "Create Event",
-          url: "/admin/dashboard/events/create",
-        },
-        {
-          title: "Add Time Slot",
-          url: "/admin/dashboard/events/add-time",
-        },
-        {
-          title: "registrations",
-          url: "/admin/dashboard/events/registrations"
-        }
-      ],
-    },
+
     {
       title: "Users",
       url: "/admin/dashboard/users",
@@ -204,7 +207,7 @@ const adminNavData = {
     {
       title: "Contact Us",
       url: "/admin/dashboard/contact",
-      icon: LayoutDashboard,
+      icon: MdOutlineContactMail ,
       items: [
         {
           title: "All Messages",

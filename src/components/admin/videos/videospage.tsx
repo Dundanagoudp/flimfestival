@@ -223,10 +223,9 @@ export default function VideosPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
-      <div className="flex justify-between items-center mb-6">
-        <div>
+      <div className="flex justify-between items-center mb-2 mt-2">
+        <div className="flex items-center gap-3 ">
           <h1 className="text-2xl font-bold">Video Blog Management</h1>
-          <p className="text-gray-600 mt-1">Manage your video content</p>
         </div>
         <Button asChild>
           <Link href="/admin/dashboard/videos/add">
