@@ -8,12 +8,11 @@ export default function EventRegister() {
   
   return (
     <>
-      <div className="sticky top-0 z-50 w-full">
-    <Navbar/></div>
+   
     <div className="-mt-[10rem]" style={{ backgroundColor: '#EEEEEE' }}>
     <HeroEvent/>
     <Eventpage/>
-    <Footer/></div>
+   </div>
     </>
   )
 }

@@ -1,6 +1,10 @@
 import React from 'react'
-import NotFound from '@/components/common/404NotFound/NotFound'
+import ShowNotFound from '@/components/common/404NotFound/module/ShowNotFound'
 
 export default function GlobalNotFound() {
-  return <NotFound />
+  return (
+    <div data-page-type="404">
+      <ShowNotFound />
+    </div>
+  )
 }
