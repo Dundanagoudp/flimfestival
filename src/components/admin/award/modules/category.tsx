@@ -237,7 +237,6 @@ export default function CategoryPage() {
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center gap-2">
                         <h3 className="text-lg font-semibold">{category.name}</h3>
-                        <Badge variant="outline">ID: {category._id.slice(-8)}</Badge>
                       </div>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">

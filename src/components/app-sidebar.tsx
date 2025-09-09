@@ -200,6 +200,17 @@ const adminNavData = {
         }
       ],
     },
+    {
+      title: "Contact Us",
+      url: "/admin/dashboard/contact",
+      icon: LayoutDashboard,
+      items: [
+        {
+          title: "All Messages",
+          url: "/admin/dashboard/contact",
+        }
+      ],
+    }
     
   ],
   projects: [
@@ -250,7 +261,11 @@ const userNavData = {
       items: [
         {
           title: "All Guests",
-          url: "/admin/dashboard/blogs/guests",
+          url: "/admin/dashboard/guests",
+        },
+              {
+          title: "years",
+          url: "/admin/dashboard/guests/year",
         }
       ]
     },
@@ -295,6 +310,10 @@ const userNavData = {
         {
           title: "All Awards",
           url: "/admin/dashboard/award",
+        },
+        {
+          title: "Categories",
+          url: "/admin/dashboard/award/categories",
         },
       ],
     },

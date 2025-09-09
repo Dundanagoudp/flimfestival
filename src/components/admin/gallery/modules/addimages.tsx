@@ -15,9 +15,12 @@ import { getAllYears, getAllGalleryByYear, deleteImage } from "@/services/galler
 import { addImages } from "@/services/galleryServices"
 import type { GalleryYear, GalleryImage } from "@/types/galleryTypes"
 import { useToast } from "@/components/ui/custom-toast"
+import { useAuth } from "@/context/auth-context"
 
 export default function ImageUploadPage() {
   const { showToast } = useToast()
+  const { userRole } = useAuth()
+  const canDelete = userRole === "admin"
   const [selectedYearId, setSelectedYearId] = React.useState<string | null>(null)
   const [files, setFiles] = React.useState<FileList | null>(null)
   const [loading, setLoading] = React.useState(false)
@@ -134,6 +137,10 @@ export default function ImageUploadPage() {
   }
 
   const handleDeleteImage = async (imageId: string) => {
+    if (!canDelete) {
+      showToast("You don't have permission to delete images", "error")
+      return
+    }
     try {
       await deleteImage(imageId)
       showToast("Image deleted successfully", "success")
@@ -324,16 +331,16 @@ export default function ImageUploadPage() {
                   <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer">
                     <CardContent className="p-0">
                                              <img
-                         src={image.photo}
-                         alt={`Gallery image ${image._id}`}
-                         className="w-full h-32 object-cover"
-                         onClick={(e) => openImageModal(image)}
-                       />
-                       <div className="p-2">
-                         <p className="text-xs text-muted-foreground truncate">
-                           Image {image._id.slice(-6)}
-                         </p>
-                       </div>
+                        src={image.photo}
+                        alt={`Gallery image ${image._id}`}
+                        className="w-full h-32 object-cover"
+                        onClick={(e) => openImageModal(image)}
+                      />
+                      <div className="p-2">
+                        <p className="text-xs text-muted-foreground truncate">
+                          Image {image._id.slice(-6)}
+                        </p>
+                      </div>
                     </CardContent>
                   </Card>
                   
@@ -352,6 +359,7 @@ export default function ImageUploadPage() {
                       variant="destructive"
                                              onClick={(e) => handleDeleteImage(image._id)}
                        className="h-8 w-8 p-0"
+                       disabled={!canDelete}
                     >
                       <Trash2 className="h-4 w-4" />
                     </DynamicButton>
@@ -374,6 +382,8 @@ export default function ImageUploadPage() {
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={setCurrentPage}
+                totalItems={images?.length || 0}
+                itemsPerPage={imagesPerPage}
                 maxVisiblePages={7}
               />
             </div>
@@ -393,27 +403,27 @@ export default function ImageUploadPage() {
             </div>
             <div className="p-4">
                              <img
-                 src={selectedImage.photo}
-                 alt={`Gallery image ${selectedImage._id}`}
-                 className="w-full max-h-[60vh] object-contain rounded-lg"
-               />
-               <div className="mt-4 space-y-2">
-                 <p><strong>Year:</strong> {selectedYear?.value}</p>
-                 <div className="flex items-center gap-2">
-                   <DynamicButton 
+                src={selectedImage.photo}
+                alt={`Gallery image ${selectedImage._id}`}
+                className="w-full max-h-[60vh] object-contain rounded-lg"
+              />
+              <div className="mt-4 space-y-2">
+                <p><strong>Year:</strong> {selectedYear?.value}</p>
+                <div className="flex items-center gap-2">
+                  <DynamicButton 
                                            onClick={(e) => {
-                        const link = document.createElement('a')
-                        link.href = selectedImage.photo
-                        link.download = `image-${selectedImage._id.slice(-6)}.jpg`
-                        link.click()
-                      }}
-                     className="flex items-center gap-2"
-                   >
-                     <Download className="h-4 w-4" />
-                     Download Image
-                   </DynamicButton>
-                 </div>
-               </div>
+                       const link = document.createElement('a')
+                       link.href = selectedImage.photo
+                       link.download = `image-${selectedImage._id.slice(-6)}.jpg`
+                       link.click()
+                     }}
+                    className="flex items-center gap-2"
+                  >
+                    <Download className="h-4 w-4" />
+                    Download Image
+                  </DynamicButton>
+                </div>
+              </div>
             </div>
           </div>
         </div>
