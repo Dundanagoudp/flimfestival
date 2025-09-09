@@ -20,10 +20,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { useAuth } from "@/context/auth-context"
 
 const fetcher = async () => getYears()
 
 export default function YearsPage() {
+  const { userRole } = useAuth()
+  const canDelete = userRole === "admin"
   const { data, isLoading, mutate } = useSWR<Year[]>("/guest/years", fetcher)
   const { showToast } = useToast()
   const [open, setOpen] = useState(false)
@@ -45,6 +48,7 @@ export default function YearsPage() {
   }, [years, currentPage, itemsPerPage])
 
   async function onDelete(y: Year) {
+    if (!canDelete) return
     try {
       await deleteYear(y._id)
       showToast("Year deleted successfully", "success")
@@ -55,10 +59,12 @@ export default function YearsPage() {
   }
 
   function confirmDelete(year: Year) {
+    if (!canDelete) return
     setDeleteDialog({ open: true, year })
   }
 
   function handleDelete() {
+    if (!canDelete) return
     if (deleteDialog.year) {
       onDelete(deleteDialog.year)
       setDeleteDialog({ open: false, year: null })
@@ -123,6 +129,7 @@ export default function YearsPage() {
                         onClick={() => confirmDelete(y)} 
                         aria-label="Delete year"
                         icon={<Trash2 className="size-4" />}
+                        disabled={!canDelete}
                       >
                         <span className="sr-only">Delete</span>
                       </DynamicButton>
@@ -165,6 +172,7 @@ export default function YearsPage() {
                               variant="destructive" 
                               onClick={() => confirmDelete(y)}
                               icon={<Trash2 className="size-4" />}
+                              disabled={!canDelete}
                             >
                               Delete
                             </DynamicButton>
@@ -208,7 +216,7 @@ export default function YearsPage() {
             <DynamicButton variant="outline" onClick={() => setDeleteDialog({ open: false, year: null })}>
               Cancel
             </DynamicButton>
-            <DynamicButton onClick={handleDelete} variant="destructive">
+            <DynamicButton onClick={handleDelete} variant="destructive" disabled={!canDelete}>
               Delete
             </DynamicButton>
           </DialogFooter>

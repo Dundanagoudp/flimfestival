@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/custom-toast"
 import { deleteCategory } from "@/services/blogsServices"
 import { BlogCategory } from "@/types/blogsTypes"
 import { Loader2, AlertTriangle } from "lucide-react"
+import { useAuth } from "@/context/auth-context"
 import DynamicButton from "@/components/common/DynamicButton"
 
 interface DeleteCategoryDialogProps {
@@ -26,8 +27,11 @@ interface DeleteCategoryDialogProps {
 export function DeleteCategoryDialog({ open, onOpenChange, category, onSuccess }: DeleteCategoryDialogProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const { showToast } = useToast()
+  const { userRole } = useAuth()
+  const canDelete = userRole === "admin"
 
   const handleDelete = async () => {
+    if (!canDelete) return
     if (!category) return
 
     setIsDeleting(true)
@@ -72,6 +76,7 @@ export function DeleteCategoryDialog({ open, onOpenChange, category, onSuccess }
             loading={isDeleting}
             loadingText="Deleting..."
             onClick={handleDelete}
+            disabled={!canDelete}
           >
             Delete Category
           </DynamicButton>
