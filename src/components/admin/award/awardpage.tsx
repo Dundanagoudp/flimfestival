@@ -23,8 +23,11 @@ import { MoreHorizontal } from "lucide-react"
 import DynamicButton from "@/components/common/DynamicButton"
 import DynamicPagination from "@/components/common/DynamicPagination"
 import { DeleteAwardDialog } from "./modules/popups/delete-award-dialog"
+import { useAuth } from "@/context/auth-context"
 
 export default function AwardPage() {
+  const { userRole } = useAuth()
+  const canDelete = userRole === "admin"
   const [awards, setAwards] = useState<Award[]>([])
   const [categories, setCategories] = useState<AwardCategory[]>([])
   const [loading, setLoading] = useState(true)
@@ -98,6 +101,7 @@ export default function AwardPage() {
   }
 
   const handleDeleteClick = (award: Award) => {
+    if (!canDelete) return
     setSelectedAward(award)
     setDeleteDialogOpen(true)
   }
@@ -356,13 +360,14 @@ export default function AwardPage() {
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
-                                                      <DropdownMenuItem 
-                              className="text-red-600" 
-                              onClick={() => handleDeleteClick(award)}
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Delete
-                            </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className={`text-red-600 ${!canDelete ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            onClick={() => canDelete && handleDeleteClick(award)}
+                            disabled={!canDelete}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>

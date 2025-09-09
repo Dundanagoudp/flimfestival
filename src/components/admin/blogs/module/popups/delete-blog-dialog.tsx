@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/custom-toast"
 import { deleteBlog } from "@/services/blogsServices"
 import { BlogPost } from "@/types/blogsTypes"
 import { Loader2, AlertTriangle, Trash2 } from "lucide-react"
+import { useAuth } from "@/context/auth-context"
 import DynamicButton from "@/components/common/DynamicButton"
 
 interface DeleteBlogDialogProps {
@@ -26,8 +27,11 @@ interface DeleteBlogDialogProps {
 export function DeleteBlogDialog({ open, onOpenChange, blog, onSuccess }: DeleteBlogDialogProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const { showToast } = useToast()
+  const { userRole } = useAuth()
+  const canDelete = userRole === "admin"
 
   const handleDelete = async () => {
+    if (!canDelete) return
     if (!blog) return
 
     setIsDeleting(true)
@@ -97,6 +101,7 @@ export function DeleteBlogDialog({ open, onOpenChange, blog, onSuccess }: Delete
             loadingText="Deleting..."
             icon={<Trash2 className="mr-2 h-4 w-4" />}
             onClick={handleDelete}
+            disabled={!canDelete}
           >
             Delete Blog
           </DynamicButton>

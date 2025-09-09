@@ -9,9 +9,15 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useAuth } from "@/context/auth-context";
+import { getCookie } from "@/lib/cookies";
 
 export function DynamicBreadcrumb() {
   const pathname = usePathname();
+  const { userRole } = useAuth();
+  const role = userRole || getCookie("userRole");
+  const baseLabel = role === "admin" ? "Admin Panel" : "Editor Panel";
+  const baseHref = "/admin/dashboard";
   const segments = pathname.replace(/^\/+/g, '').split('/');
   
   // Only show breadcrumb for admin routes
@@ -23,7 +29,7 @@ export function DynamicBreadcrumb() {
   const meaningfulSegments = segments.slice(1).filter((seg) => !isIdLike(seg));
 
   const items = [
-    { label: 'Admin Panel', href: '/admin/dashboard' },
+    { label: baseLabel, href: baseHref },
     ...meaningfulSegments.map((seg, idx) => {
       const label = seg.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
       const href = '/admin/' + meaningfulSegments.slice(0, idx + 1).join('/');
@@ -35,7 +41,7 @@ export function DynamicBreadcrumb() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem className="hidden md:block">
-          <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
+          <BreadcrumbLink href={baseHref}>{baseLabel}</BreadcrumbLink>
         </BreadcrumbItem>
         {items.length > 1 && <BreadcrumbSeparator className="hidden md:block" />}
         {items.slice(1).map((item, idx) => (

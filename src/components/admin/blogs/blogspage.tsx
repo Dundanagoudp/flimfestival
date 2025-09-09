@@ -11,6 +11,7 @@ import { getAllBlogs, deleteBlog, getAllCategories } from "@/services/blogsServi
 import { Plus, Edit, Trash2, Eye, Search, FileText, Link as LinkIcon, Calendar, ExternalLink, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/context/auth-context"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +26,8 @@ import DynamicButton from "@/components/common/DynamicButton"
 import DynamicPagination from "@/components/common/DynamicPagination"
 
 export default function BlogsPage() {
+  const { userRole } = useAuth()
+  const canDelete = userRole === "admin"
   const [blogs, setBlogs] = useState<BlogPost[]>([])
   const [categories, setCategories] = useState<BlogCategory[]>([])
   const [loading, setLoading] = useState(true)
@@ -82,6 +85,7 @@ export default function BlogsPage() {
   }
 
   const handleDeleteClick = (blog: BlogPost) => {
+    if (!canDelete) return
     setSelectedBlog(blog)
     setDeleteDialogOpen(true)
   }
@@ -354,8 +358,9 @@ export default function BlogsPage() {
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuItem 
-                              className="text-red-600" 
-                              onClick={() => handleDeleteClick(blog)}
+                              className={`text-red-600 ${!canDelete ? 'opacity-50 cursor-not-allowed' : ''}`}
+                              onClick={() => canDelete && handleDeleteClick(blog)}
+                              disabled={!canDelete}
                             >
                               <Trash2 className="mr-2 h-4 w-4" /> 
                               Delete
