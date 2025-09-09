@@ -354,6 +354,8 @@ export default function GalleryPage() {
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={setCurrentPage}
+              totalItems={images?.length ?? 0}
+              itemsPerPage={imagesPerPage}
               maxVisiblePages={7}
             />
           </div>

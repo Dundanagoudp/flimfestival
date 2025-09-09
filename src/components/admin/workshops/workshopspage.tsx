@@ -16,9 +16,11 @@ import AddWorkshopModal from "./modules/popups/add-workshop-modal";
 import EditWorkshopModal from "./modules/popups/edit-workshop-modal";
 import DeleteWorkshopModal from "./modules/popups/delete-workshop-modal";
 import ViewWorkshopModal from "./modules/popups/view-workshop-modal";
+import { useAuth } from "@/context/auth-context";
 
 export default function WorkshopsPage() {
   const { showToast } = useToast();
+  const { userRole } = useAuth();
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,6 +36,11 @@ export default function WorkshopsPage() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selected, setSelected] = useState<Workshop | null>(null);
+
+  const canEdit = userRole === "admin" || userRole === "editor";
+  const canDelete = userRole === "admin";
+  // Add is allowed for everyone as requested
+  const canAdd = true;
 
   const loadWorkshops = async () => {
     setLoading(true);
@@ -88,11 +95,19 @@ export default function WorkshopsPage() {
   };
 
   const onEdit = (workshop: Workshop) => {
+    if (!canEdit) {
+      showToast("You don't have permission to edit workshops", "error");
+      return;
+    }
     setSelected(workshop);
     setIsEditOpen(true);
   };
 
   const onDelete = (workshop: Workshop) => {
+    if (!canDelete) {
+      showToast("You don't have permission to delete workshops", "error");
+      return;
+    }
     setSelected(workshop);
     setIsDeleteOpen(true);
   };
@@ -126,7 +141,13 @@ export default function WorkshopsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Workshops Management</h1>
         </div>
         <DynamicButton
-          onClick={() => setIsAddOpen(true)}
+          onClick={() => {
+            if (!canAdd) {
+              showToast("You don't have permission to add workshops", "error");
+              return;
+            }
+            setIsAddOpen(true);
+          }}
           icon={<Plus className="h-4 w-4" />}
           iconPosition="left"
         >
@@ -195,6 +216,8 @@ export default function WorkshopsPage() {
         onView={onView}
         onEdit={onEdit}
         onDelete={onDelete}
+        canEdit={canEdit}
+        canDelete={canDelete}
       />
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

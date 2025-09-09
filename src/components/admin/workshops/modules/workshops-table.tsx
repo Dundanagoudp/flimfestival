@@ -20,6 +20,8 @@ interface WorkshopsTableProps {
   onView: (workshop: Workshop) => void;
   onEdit: (workshop: Workshop) => void;
   onDelete: (workshop: Workshop) => void;
+  canEdit?: boolean;
+  canDelete?: boolean;
 }
 
 export default function WorkshopsTable({
@@ -33,6 +35,8 @@ export default function WorkshopsTable({
   onView,
   onEdit,
   onDelete,
+  canEdit = false,
+  canDelete = false,
 }: WorkshopsTableProps) {
   return (
     <div className="bg-white rounded-md border shadow-sm">
@@ -71,7 +75,6 @@ export default function WorkshopsTable({
               <TableRow className="bg-gray-50/70">
                 <TableHead className="whitespace-nowrap">Name</TableHead>
                 <TableHead className="whitespace-nowrap">Description</TableHead>
-                <TableHead className="whitespace-nowrap">Event</TableHead>
                 <TableHead className="whitespace-nowrap">Registration</TableHead>
                 <TableHead className="whitespace-nowrap">Created</TableHead>
                 <TableHead className="text-right whitespace-nowrap">Actions</TableHead>
@@ -80,13 +83,13 @@ export default function WorkshopsTable({
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                  <TableCell colSpan={5} className="text-center py-8 text-gray-500">
                     Loading workshops...
                   </TableCell>
                 </TableRow>
               ) : items.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                  <TableCell colSpan={5} className="text-center py-8 text-gray-500">
                     No workshops found
                   </TableCell>
                 </TableRow>
@@ -107,11 +110,6 @@ export default function WorkshopsTable({
                       <div className="truncate" title={w.about}>
                         {w.about}
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">
-                        Event {w.eventRef.slice(-6)}
-                      </span>
                     </TableCell>
                     <TableCell>
                       <Tooltip>
@@ -155,12 +153,13 @@ export default function WorkshopsTable({
                             variant="outline"
                             size="icon"
                             className="h-9 w-9 rounded-full"
-                            onClick={() => onEdit(w)}
+                            disabled={!canEdit}
+                            onClick={() => canEdit && onEdit(w)}
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Edit</TooltipContent>
+                        <TooltipContent>{canEdit ? "Edit" : "No permission"}</TooltipContent>
                       </Tooltip>
 
                       <Tooltip>
@@ -170,12 +169,13 @@ export default function WorkshopsTable({
                             variant="outline"
                             size="icon"
                             className="h-9 w-9 rounded-full border-red-500 text-red-600 hover:bg-red-50"
-                            onClick={() => onDelete(w)}
+                            disabled={!canDelete}
+                            onClick={() => canDelete && onDelete(w)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Delete</TooltipContent>
+                        <TooltipContent>{canDelete ? "Delete" : "No permission"}</TooltipContent>
                       </Tooltip>
                     </TableCell>
                   </TableRow>

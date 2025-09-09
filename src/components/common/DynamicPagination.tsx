@@ -9,6 +9,7 @@ interface DynamicPaginationProps {
   itemsPerPage: number;
   className?: string;
   showItemsInfo?: boolean;
+  maxVisiblePages?: number;
 }
 
 export default function DynamicPagination({
@@ -19,6 +20,7 @@ export default function DynamicPagination({
   itemsPerPage,
   className = "",
   showItemsInfo = true,
+  maxVisiblePages = 5,
 }: DynamicPaginationProps) {
   if (totalPages <= 1) return null;
 
@@ -27,7 +29,7 @@ export default function DynamicPagination({
 
   const getVisiblePages = () => {
     const pages: number[] = [];
-    const maxVisible = 5;
+    const maxVisible = Math.max(1, maxVisiblePages);
 
     if (totalPages <= maxVisible) {
       // Show all pages if total is 5 or less

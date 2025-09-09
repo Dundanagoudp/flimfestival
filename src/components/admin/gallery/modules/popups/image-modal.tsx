@@ -56,12 +56,7 @@ export default function ImageModal({ image, open, onOpenChange, yearValue }: Pro
                     <span className="text-gray-600">Year:</span>
                     <span className="font-medium">{yearValue || 'Unknown'}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Image ID:</span>
-                    <span className="font-mono text-xs bg-gray-200 px-2 py-1 rounded">
-                      {image._id.slice(-8)}
-                    </span>
-                  </div>
+                
                 </div>
               </div>
               
