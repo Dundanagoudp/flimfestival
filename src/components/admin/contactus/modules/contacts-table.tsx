@@ -5,64 +5,55 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import type { Workshop } from "@/types/workshop-Types";
+import type { AdminContactItem } from "@/types/adminContactTypes";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Eye, Pencil, Trash2, ExternalLink } from "lucide-react";
+import { Eye, Pencil, Trash2, Mail, Phone } from "lucide-react";
 
-interface WorkshopsTableProps {
-  items: Workshop[];
+interface ContactsTableProps {
+  items: AdminContactItem[];
   loading: boolean;
   searchTerm: string;
   onSearchChange: (val: string) => void;
-  filterEvent: string;
+  filterResolved: string;
   onFilterChange: (val: string) => void;
-  uniqueEvents: string[];
-  onView: (workshop: Workshop) => void;
-  onEdit: (workshop: Workshop) => void;
-  onDelete: (workshop: Workshop) => void;
-  canEdit?: boolean;
-  canDelete?: boolean;
+  onView: (item: AdminContactItem) => void;
+  onEdit: (item: AdminContactItem) => void;
+  onDelete: (item: AdminContactItem) => void;
 }
 
-export default function WorkshopsTable({
+export default function ContactsTable({
   items,
   loading,
   searchTerm,
   onSearchChange,
-  filterEvent,
+  filterResolved,
   onFilterChange,
-  uniqueEvents,
   onView,
   onEdit,
   onDelete,
-  canEdit = false,
-  canDelete = false,
-}: WorkshopsTableProps) {
+}: ContactsTableProps) {
   return (
     <div className="bg-white rounded-md border shadow-sm">
       <div className="p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="w-full sm:w-72">
           <Input
-            placeholder="Search by name, description, or URL"
+            placeholder="Search name, email, phone, subject, message"
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
           />
         </div>
         <div className="w-full sm:w-56">
           <Select
-            value={filterEvent}
+            value={filterResolved}
             onValueChange={(val) => onFilterChange(val)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Filter by event" />
+              <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Events</SelectItem>
-              {uniqueEvents.map((eventId) => (
-                <SelectItem key={eventId} value={eventId}>
-                  Event {eventId.slice(-6)}
-                </SelectItem>
-              ))}
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="true">Resolved</SelectItem>
+              <SelectItem value="false">Unresolved</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -74,8 +65,10 @@ export default function WorkshopsTable({
             <TableHeader>
               <TableRow className="bg-gray-50/70">
                 <TableHead className="whitespace-nowrap">Name</TableHead>
-                <TableHead className="whitespace-nowrap">Description</TableHead>
-                <TableHead className="whitespace-nowrap">Registration</TableHead>
+                <TableHead className="whitespace-nowrap">Contact</TableHead>
+                <TableHead className="whitespace-nowrap">Subject</TableHead>
+                <TableHead className="whitespace-nowrap">Message</TableHead>
+                <TableHead className="whitespace-nowrap">Resolved</TableHead>
                 <TableHead className="whitespace-nowrap">Created</TableHead>
                 <TableHead className="text-right whitespace-nowrap">Actions</TableHead>
               </TableRow>
@@ -83,53 +76,44 @@ export default function WorkshopsTable({
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-                    Loading workshops...
+                  <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                    Loading contacts...
                   </TableCell>
                 </TableRow>
               ) : items.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-                    No workshops found
+                  <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                    No contacts found
                   </TableCell>
                 </TableRow>
               ) : (
-                items.map((w, idx) => (
-                  <TableRow key={w._id} className={idx % 2 === 0 ? "" : "bg-gray-50/40"}>
-                    <TableCell className="font-medium">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span className="cursor-help">{w.name}</span>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <span className="text-xs">ID: {w._id.slice(-6)}</span>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TableCell>
-                    <TableCell className="max-w-xs">
-                      <div className="truncate" title={w.about}>
-                        {w.about}
+                items.map((c, idx) => (
+                  <TableRow key={c._id} className={idx % 2 === 0 ? "" : "bg-gray-50/40"}>
+                    <TableCell className="font-medium">{c.name}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-1 text-sm">
+                        <div className="flex items-center gap-2 text-gray-700">
+                          <Mail className="h-3.5 w-3.5" />
+                          <a className="underline" href={`mailto:${c.email}`}>{c.email}</a>
+                        </div>
+                        <div className="flex items-center gap-2 text-gray-700">
+                          <Phone className="h-3.5 w-3.5" />
+                          <a className="underline" href={`tel:${c.phone}`}>{c.phone}</a>
+                        </div>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-8"
-                            onClick={() => window.open(w.registrationFormUrl, '_blank')}
-                          >
-                            <ExternalLink className="h-3 w-3 mr-1" />
-                            Register
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <span className="text-xs">Open registration form</span>
-                        </TooltipContent>
-                      </Tooltip>
+                    <TableCell className="max-w-xs">
+                      <div className="truncate" title={c.subject}>{c.subject}</div>
                     </TableCell>
-                    <TableCell>{new Date(w.createdAt).toLocaleString()}</TableCell>
+                    <TableCell className="max-w-md">
+                      <div className="truncate" title={c.message}>{c.message}</div>
+                    </TableCell>
+                    <TableCell>
+                      <span className={`text-xs px-2 py-1 rounded-full ${c.resolved ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
+                        {c.resolved ? "Resolved" : "Unresolved"}
+                      </span>
+                    </TableCell>
+                    <TableCell>{new Date(c.createdAt).toLocaleString()}</TableCell>
                     <TableCell className="space-x-2 text-right whitespace-nowrap">
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -138,7 +122,7 @@ export default function WorkshopsTable({
                             variant="outline"
                             size="icon"
                             className="h-9 w-9 rounded-full"
-                            onClick={() => onView(w)}
+                            onClick={() => onView(c)}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -153,13 +137,12 @@ export default function WorkshopsTable({
                             variant="outline"
                             size="icon"
                             className="h-9 w-9 rounded-full"
-                            disabled={!canEdit}
-                            onClick={() => canEdit && onEdit(w)}
+                            onClick={() => onEdit(c)}
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>{canEdit ? "Edit" : "No permission"}</TooltipContent>
+                        <TooltipContent>Edit</TooltipContent>
                       </Tooltip>
 
                       <Tooltip>
@@ -169,13 +152,12 @@ export default function WorkshopsTable({
                             variant="outline"
                             size="icon"
                             className="h-9 w-9 rounded-full border-red-500 text-red-600 hover:bg-red-50"
-                            disabled={!canDelete}
-                            onClick={() => canDelete && onDelete(w)}
+                            onClick={() => onDelete(c)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>{canDelete ? "Delete" : "No permission"}</TooltipContent>
+                        <TooltipContent>Delete</TooltipContent>
                       </Tooltip>
                     </TableCell>
                   </TableRow>
@@ -188,3 +170,4 @@ export default function WorkshopsTable({
     </div>
   );
 }
+

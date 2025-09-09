@@ -22,12 +22,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { useAuth } from "@/context/auth-context"
 
 const fetchYears = async () => getYears()
 const fetchGuestsAll = async () => getAllGuests()
 const fetchGuestsByYear = async (yearId: string) => (await getGuestsByYearId(yearId)).guests
 
 export default function GuestsPage() {
+  const { userRole } = useAuth()
+  const canDelete = userRole === "admin"
   const { data: yearsData } = useSWR<Year[]>("/guest/years", fetchYears)
   const [yearFilter, setYearFilter] = useState<string>("all")
 
@@ -78,6 +81,7 @@ export default function GuestsPage() {
   }
 
   async function onDelete(g: Guest) {
+    if (!canDelete) return
     try {
       await deleteGuest(g._id)
       showToast("Guest deleted successfully", "success")
@@ -88,10 +92,12 @@ export default function GuestsPage() {
   }
 
   function confirmDelete(guest: Guest) {
+    if (!canDelete) return
     setDeleteDialog({ open: true, guest })
   }
 
   function handleDelete() {
+    if (!canDelete) return
     if (deleteDialog.guest) {
       onDelete(deleteDialog.guest)
       setDeleteDialog({ open: false, guest: null })
@@ -194,6 +200,7 @@ export default function GuestsPage() {
                         onClick={() => confirmDelete(g)} 
                         aria-label="Delete guest"
                         icon={<Trash2 className="size-4" />}
+                        disabled={!canDelete}
                       >
                         <span className="sr-only">Delete</span>
                       </DynamicButton>
@@ -254,6 +261,7 @@ export default function GuestsPage() {
                               variant="destructive" 
                               onClick={() => confirmDelete(g)}
                               icon={<Trash2 className="size-4" />}
+                              disabled={!canDelete}
                             >
                               Delete
                             </DynamicButton>
@@ -313,7 +321,7 @@ export default function GuestsPage() {
             <DynamicButton variant="outline" onClick={() => setDeleteDialog({ open: false, guest: null })}>
               Cancel
             </DynamicButton>
-            <DynamicButton onClick={handleDelete} variant="destructive">
+            <DynamicButton onClick={handleDelete} variant="destructive" disabled={!canDelete}>
               Delete
             </DynamicButton>
           </DialogFooter>

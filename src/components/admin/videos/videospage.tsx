@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input"
 import DynamicButton from "@/components/common/DynamicButton"
 import DynamicPagination from "@/components/common/DynamicPagination"
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog"
+import { useAuth } from "@/context/auth-context"
 
 // Helper to extract YouTube video ID
 function getYouTubeVideoId(url: string) {
@@ -40,6 +41,8 @@ export default function VideosPage() {
     video: null,
     loading: false
   })
+  const { userRole } = useAuth()
+  const canDelete = userRole === "admin"
 
   useEffect(() => {
     fetchAllData()
@@ -65,6 +68,10 @@ export default function VideosPage() {
   }
 
   const handleDeleteClick = (video: VideoBlog) => {
+    if (!canDelete) {
+      showToast("You don't have permission to delete videos", "error")
+      return
+    }
     setDeleteDialog({
       open: true,
       video,
@@ -160,6 +167,7 @@ export default function VideosPage() {
               variant="outline" 
               onClick={() => handleDeleteClick(video)}
               icon={<Trash2 className="h-3 w-3" />}
+              disabled={!canDelete}
             >
               Delete
             </DynamicButton>
@@ -215,10 +223,9 @@ export default function VideosPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
-      <div className="flex justify-between items-center mb-6">
-        <div>
+      <div className="flex justify-between items-center mb-2 mt-2">
+        <div className="flex items-center gap-3 ">
           <h1 className="text-2xl font-bold">Video Blog Management</h1>
-          <p className="text-gray-600 mt-1">Manage your video content</p>
         </div>
         <Button asChild>
           <Link href="/admin/dashboard/videos/add">

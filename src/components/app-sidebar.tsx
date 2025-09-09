@@ -34,6 +34,9 @@ import type { User } from "@/types/user-types"
 import { FaUsers } from "react-icons/fa6";
 import { FaAward } from "react-icons/fa";
 import { title } from "process"
+import { useAuth } from "@/context/auth-context"
+import { MdOutlineContactMail } from "react-icons/md";
+
 
 // Admin navigation data for film festival
 const adminNavData = {
@@ -51,6 +54,29 @@ const adminNavData = {
       icon: LayoutDashboard ,
       isActive: true,
       items: [],
+    },
+       {
+      title: "Events",
+      url: "/admin/events",
+      icon: Calendar,
+      items: [
+        {
+          title: "All Events",
+          url: "/admin/dashboard/events",
+        },
+        {
+          title: "Create Event",
+          url: "/admin/dashboard/events/create",
+        },
+        {
+          title: "Add Time Slot",
+          url: "/admin/dashboard/events/add-time",
+        },
+        {
+          title: "registrations",
+          url: "/admin/dashboard/events/registrations"
+        }
+      ],
     },
     {
       title: "Blogs",
@@ -101,29 +127,7 @@ const adminNavData = {
         }
       ]
     },
-    {
-      title: "Events",
-      url: "/admin/events",
-      icon: Calendar,
-      items: [
-        {
-          title: "All Events",
-          url: "/admin/dashboard/events",
-        },
-        {
-          title: "Create Event",
-          url: "/admin/dashboard/events/create",
-        },
-        {
-          title: "Add Time Slot",
-          url: "/admin/dashboard/events/add-time",
-        },
-        {
-          title: "registrations",
-          url: "/admin/dashboard/events/registrations"
-        }
-      ],
-    },
+
     {
       title: "Users",
       url: "/admin/dashboard/users",
@@ -200,6 +204,17 @@ const adminNavData = {
         }
       ],
     },
+    {
+      title: "Contact Us",
+      url: "/admin/dashboard/contact",
+      icon: MdOutlineContactMail ,
+      items: [
+        {
+          title: "All Messages",
+          url: "/admin/dashboard/contact",
+        }
+      ],
+    }
     
   ],
   projects: [
@@ -217,7 +232,7 @@ const userNavData = {
     {
       name: "Arunachal Film Festival",
       logo: Clapperboard,
-      plan: "User Panel",
+      plan: "Editor Panel",
     },
   ],
   navMain: [
@@ -237,6 +252,10 @@ const userNavData = {
           title: "All Blogs",
           url: "/admin/dashboard/blog",
         },
+        {
+          title: "Categories",
+          url: "/admin/dashboard/blog/category",
+        },
       ]
     },
     {
@@ -246,7 +265,11 @@ const userNavData = {
       items: [
         {
           title: "All Guests",
-          url: "/admin/dashboard/blogs/guests",
+          url: "/admin/dashboard/guests",
+        },
+        {
+          title: "years",
+          url: "/admin/dashboard/guests/year",
         }
       ]
     },
@@ -260,17 +283,6 @@ const userNavData = {
           url: "/admin/dashboard/gallery",
         }
       ]
-    },
-    {
-      title: "Events",
-      url: "/admin/events",
-      icon: Calendar,
-      items: [
-        {
-          title: "All Events",
-          url: "/admin/dashboard/events",
-        },
-      ],
     },
     {
       title: "Videos",
@@ -303,6 +315,10 @@ const userNavData = {
           title: "All Awards",
           url: "/admin/dashboard/award",
         },
+        {
+          title: "Categories",
+          url: "/admin/dashboard/award/categories",
+        },
       ],
     },
   ],
@@ -322,8 +338,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [userData, setUserData] = useState<User | null>(null)
   const [sidebarData, setSidebarData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const { userRole: ctxRole } = useAuth()
 
   useEffect(() => {
+    const roleFromContextOrCookie = ctxRole || getCookie("userRole")
+
+    if (roleFromContextOrCookie === "admin") {
+      setSidebarData(adminNavData)
+    } else {
+      setSidebarData(userNavData)
+    }
+
     const fetchUserData = async () => {
       try {
         setLoading(true)
@@ -333,42 +358,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           const user = profileResponse.data
           setUserData(user)
           setUserRole(user.role)
-          
-          // Set navigation data based on user role
-          if (user.role === "admin") {
-            setSidebarData(adminNavData)
-          } else {
-            setSidebarData(userNavData)
-          }
         } else {
-          // Fallback to cookie role if API fails
-          const role = getCookie("userRole")
-          setUserRole(role)
-          
-          if (role === "admin") {
-            setSidebarData(adminNavData)
-          } else {
-            setSidebarData(userNavData)
-          }
+          setUserRole(roleFromContextOrCookie)
         }
       } catch (error) {
-        console.error("Failed to fetch user profile:", error)
-        // Fallback to cookie role
-        const role = getCookie("userRole")
+        const role = roleFromContextOrCookie
         setUserRole(role)
-        
-        if (role === "admin") {
-          setSidebarData(adminNavData)
-        } else {
-          setSidebarData(userNavData)
-        }
       } finally {
         setLoading(false)
       }
     }
 
     fetchUserData()
-  }, [])
+  }, [ctxRole])
 
   const handleLogout = useCallback(async () => {
     try {
@@ -382,12 +384,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
   }, [router])
 
-  if (loading || !sidebarData || !userData) {
+  if (loading || !sidebarData) {
     return null
   }
 
   // Create user object for NavUser component
-  const userForNav = {
+  const userForNav = userData ? {
     name: userData.name,
     email: userData.email,
     avatar: "/placeholder.svg",
@@ -398,6 +400,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       .toUpperCase()
       .slice(0, 2),
     role: userData.role
+  } : {
+    name: (userRole || "User").toString(),
+    email: "",
+    avatar: "/placeholder.svg",
+    initials: (userRole || "U").slice(0,2).toUpperCase(),
+    role: userRole || "user"
   }
 
   return (

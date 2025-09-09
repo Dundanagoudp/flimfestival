@@ -86,10 +86,6 @@ export default function ViewWorkshopModal({ isOpen, onClose, workshop }: ViewWor
               </div>
             </div>
 
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <h4 className="text-sm font-medium text-gray-700 mb-2">Workshop ID</h4>
-              <p className="text-xs font-mono text-gray-600">{workshop._id}</p>
-            </div>
           </div>
         </div>
 

@@ -15,6 +15,7 @@ import { Award } from "@/types/awardTypes"
 import { useToast } from "@/components/ui/custom-toast"
 import DynamicButton from "@/components/common/DynamicButton"
 import { AlertTriangle, Trash2, Trophy } from "lucide-react"
+import { useAuth } from "@/context/auth-context"
 
 interface DeleteAwardDialogProps {
   open: boolean
@@ -26,8 +27,11 @@ interface DeleteAwardDialogProps {
 export function DeleteAwardDialog({ open, onOpenChange, award, onSuccess }: DeleteAwardDialogProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const { showToast } = useToast()
+  const { userRole } = useAuth()
+  const canDelete = userRole === "admin"
 
   const handleDelete = async () => {
+    if (!canDelete) return
     if (!award) return
     
     setIsDeleting(true)
@@ -123,7 +127,7 @@ export function DeleteAwardDialog({ open, onOpenChange, award, onSuccess }: Dele
             onClick={handleDelete}
             loading={isDeleting}
             loadingText="Deleting..."
-            disabled={isDeleting}
+            disabled={isDeleting || !canDelete}
           >
             <Trash2 className="mr-2 h-4 w-4" />
             Delete Award

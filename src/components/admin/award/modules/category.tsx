@@ -19,8 +19,11 @@ import DynamicPagination from "@/components/common/DynamicPagination"
 import { AddCategoryDialog } from "./popups/add-category-dialog"
 import { EditCategoryDialog } from "./popups/edit-category-dialog"
 import { DeleteCategoryDialog } from "./popups/delete-category-dialog"
+import { useAuth } from "@/context/auth-context"
 
 export default function CategoryPage() {
+  const { userRole } = useAuth()
+  const canDelete = userRole === "admin"
   const [categories, setCategories] = useState<AwardCategory[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
@@ -73,6 +76,7 @@ export default function CategoryPage() {
   }
 
   const handleDeleteCategory = (category: AwardCategory) => {
+    if (!canDelete) return
     setSelectedCategory(category)
     setDeleteDialogOpen(true)
   }
@@ -237,7 +241,6 @@ export default function CategoryPage() {
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center gap-2">
                         <h3 className="text-lg font-semibold">{category.name}</h3>
-                        <Badge variant="outline">ID: {category._id.slice(-8)}</Badge>
                       </div>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
@@ -262,6 +265,7 @@ export default function CategoryPage() {
                         variant="destructive"
                         size="sm"
                         onClick={() => handleDeleteCategory(category)}
+                        disabled={!canDelete}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

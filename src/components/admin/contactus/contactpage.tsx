@@ -2,157 +2,117 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { BookOpen, Plus, Calendar } from "lucide-react";
+import { BookOpen, CheckCircle2 } from "lucide-react";
 import DynamicPagination from "@/components/common/DynamicPagination";
-import DynamicButton from "@/components/common/DynamicButton";
 import { useToast } from "@/components/ui/custom-toast";
-import type { Workshop } from "@/types/workshop-Types";
-import {
-  getWorkshops,
-  deleteWorkshop,
-} from "@/services/workshop-Services";
-import WorkshopsTable from "./modules/workshops-table";
-import AddWorkshopModal from "./modules/popups/add-workshop-modal";
-import EditWorkshopModal from "./modules/popups/edit-workshop-modal";
-import DeleteWorkshopModal from "./modules/popups/delete-workshop-modal";
-import ViewWorkshopModal from "./modules/popups/view-workshop-modal";
-import { useAuth } from "@/context/auth-context";
+import type { AdminContactItem, UpdateAdminContactPayload } from "@/types/adminContactTypes";
+import { AdminContactService } from "@/services/adminContact";
+import ContactsTable from "./modules/contacts-table";
+import ViewContactModal from "./modules/popups/view-contact-modal";
+import EditContactModal from "./modules/popups/edit-contact-modal";
+import DeleteContactModal from "./modules/popups/delete-contact-modal";
 
-export default function WorkshopsPage() {
+export default function ContactPage() {
   const { showToast } = useToast();
-  const { userRole } = useAuth();
-  const [workshops, setWorkshops] = useState<Workshop[]>([]);
+  const [contacts, setContacts] = useState<AdminContactItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterEvent, setFilterEvent] = useState<string>("all");
+  const [filterResolved, setFilterResolved] = useState<string>("all");
 
   // Pagination (client-side)
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Modals
-  const [isAddOpen, setIsAddOpen] = useState(false);
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [selected, setSelected] = useState<Workshop | null>(null);
+  const [selected, setSelected] = useState<AdminContactItem | null>(null);
 
-  const canEdit = userRole === "admin" || userRole === "editor";
-  const canDelete = userRole === "admin";
-  // Add is allowed for everyone as requested
-  const canAdd = true;
-
-  const loadWorkshops = async () => {
+  const loadContacts = async () => {
     setLoading(true);
     try {
-      const data = await getWorkshops();
-      console.log("Workshops API Response:", data);
-      setWorkshops(data || []);
+      const data = await AdminContactService.getAllContacts();
+      setContacts(data || []);
     } catch (error) {
-      console.error("Error loading workshops:", error);
-      showToast("Failed to load workshops", "error");
-      // Set empty array on error
-      setWorkshops([]);
-    
+      console.error("Error loading contacts:", error);
+      showToast("Failed to load contacts", "error");
+      setContacts([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadWorkshops();
+    loadContacts();
   }, []);
 
   const filtered = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
-    return workshops.filter((w) => {
+    return contacts.filter((c) => {
       const matchesTerm = term
-        ? [w.name, w.about, w.registrationFormUrl]
+        ? [c.name, c.email, c.phone, c.subject, c.message]
             .filter(Boolean)
             .some((v) => String(v).toLowerCase().includes(term))
         : true;
-      const matchesEvent =
-        filterEvent === "all" ? true : w.eventRef === filterEvent;
-      return matchesTerm && matchesEvent;
+      const matchesResolved =
+        filterResolved === "all" ? true : String(c.resolved) === filterResolved;
+      return matchesTerm && matchesResolved;
     });
-  }, [workshops, searchTerm, filterEvent]);
+  }, [contacts, searchTerm, filterResolved]);
 
   const totalItems = filtered.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
   const pageStart = (currentPage - 1) * itemsPerPage;
   const pageItems = filtered.slice(pageStart, pageStart + itemsPerPage);
 
-  // Get unique events for filter
-  const uniqueEvents = useMemo(() => {
-    const events = workshops.map(w => w.eventRef).filter((value, index, self) => self.indexOf(value) === index);
-    return events;
-  }, [workshops]);
-
-  // Handlers
-  const onView = (workshop: Workshop) => {
-    setSelected(workshop);
+  const onView = (item: AdminContactItem) => {
+    setSelected(item);
     setIsViewOpen(true);
   };
 
-  const onEdit = (workshop: Workshop) => {
-    if (!canEdit) {
-      showToast("You don't have permission to edit workshops", "error");
-      return;
-    }
-    setSelected(workshop);
+  const onEdit = (item: AdminContactItem) => {
+    setSelected(item);
     setIsEditOpen(true);
   };
 
-  const onDelete = (workshop: Workshop) => {
-    if (!canDelete) {
-      showToast("You don't have permission to delete workshops", "error");
-      return;
-    }
-    setSelected(workshop);
+  const onDelete = (item: AdminContactItem) => {
+    setSelected(item);
     setIsDeleteOpen(true);
   };
 
   const confirmDelete = async () => {
     if (!selected) return;
     try {
-      await deleteWorkshop(selected._id);
-      showToast("Workshop deleted successfully", "success");
+      await AdminContactService.deleteContactById(selected._id);
+      showToast("Contact deleted successfully", "success");
       setIsDeleteOpen(false);
-      await loadWorkshops();
+      await loadContacts();
     } catch (e) {
-      showToast("Failed to delete workshop", "error");
+      showToast("Failed to delete contact", "error");
     }
   };
 
-  const handleAddSuccess = () => {
-    setIsAddOpen(false);
-    loadWorkshops();
+  const handleEditSubmit = async (payload: UpdateAdminContactPayload) => {
+    if (!selected) return;
+    try {
+      await AdminContactService.updateContactById(selected._id, payload);
+      showToast("Contact updated successfully", "success");
+      setIsEditOpen(false);
+      await loadContacts();
+    } catch (e) {
+      showToast("Failed to update contact", "error");
+    }
   };
 
-  const handleEditSuccess = () => {
-    setIsEditOpen(false);
-    loadWorkshops();
-  };
+  const resolvedCount = useMemo(() => contacts.filter(c => c.resolved).length, [contacts]);
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-5">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Workshops Management</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Contact Us Management</h1>
         </div>
-        <DynamicButton
-          onClick={() => {
-            if (!canAdd) {
-              showToast("You don't have permission to add workshops", "error");
-              return;
-            }
-            setIsAddOpen(true);
-          }}
-          icon={<Plus className="h-4 w-4" />}
-          iconPosition="left"
-        >
-          Add Workshop
-        </DynamicButton>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -163,8 +123,8 @@ export default function WorkshopsPage() {
                 <BookOpen className="h-5 w-5 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Total Workshops</p>
-                <p className="text-2xl font-semibold text-gray-900">{workshops.length}</p>
+                <p className="text-sm font-medium text-gray-500">Total Messages</p>
+                <p className="text-2xl font-semibold text-gray-900">{contacts.length}</p>
               </div>
             </div>
           </CardContent>
@@ -174,11 +134,11 @@ export default function WorkshopsPage() {
           <CardContent className="p-6">
             <div className="flex items-center">
               <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                <Calendar className="h-5 w-5 text-green-600" />
+                <CheckCircle2 className="h-5 w-5 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Active Events</p>
-                <p className="text-2xl font-semibold text-gray-900">{uniqueEvents.length}</p>
+                <p className="text-sm font-medium text-gray-500">Resolved</p>
+                <p className="text-2xl font-semibold text-gray-900">{resolvedCount}</p>
               </div>
             </div>
           </CardContent>
@@ -193,8 +153,8 @@ export default function WorkshopsPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">This Month</p>
                 <p className="text-2xl font-semibold text-gray-900">
-                  {workshops.filter(w => {
-                    const created = new Date(w.createdAt);
+                  {contacts.filter(c => {
+                    const created = new Date(c.createdAt);
                     const now = new Date();
                     return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
                   }).length}
@@ -205,19 +165,16 @@ export default function WorkshopsPage() {
         </Card>
       </div>
 
-      <WorkshopsTable
+      <ContactsTable
         items={pageItems}
         loading={loading}
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
-        filterEvent={filterEvent}
-        onFilterChange={setFilterEvent}
-        uniqueEvents={uniqueEvents}
+        filterResolved={filterResolved}
+        onFilterChange={setFilterResolved}
         onView={onView}
         onEdit={onEdit}
         onDelete={onDelete}
-        canEdit={canEdit}
-        canDelete={canDelete}
       />
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -249,31 +206,27 @@ export default function WorkshopsPage() {
       </div>
 
       {/* Modals */}
-      <AddWorkshopModal
-        isOpen={isAddOpen}
-        onClose={() => setIsAddOpen(false)}
-        onSuccess={handleAddSuccess}
-      />
-
-      <ViewWorkshopModal
+      <ViewContactModal
         isOpen={isViewOpen}
         onClose={() => setIsViewOpen(false)}
-        workshop={selected}
+        item={selected}
       />
 
-      <EditWorkshopModal
+      <EditContactModal
         isOpen={isEditOpen}
         onClose={() => setIsEditOpen(false)}
-        onSuccess={handleEditSuccess}
-        workshop={selected}
+        item={selected}
+        onSubmit={handleEditSubmit}
       />
 
-      <DeleteWorkshopModal
+      <DeleteContactModal
         isOpen={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
         onConfirm={confirmDelete}
-        workshop={selected}
+        item={selected}
       />
     </div>
   );
 }
+
+

@@ -15,6 +15,7 @@ import { AwardCategory } from "@/types/awardTypes"
 import { useToast } from "@/components/ui/custom-toast"
 import DynamicButton from "@/components/common/DynamicButton"
 import { AlertTriangle, Trash2 } from "lucide-react"
+import { useAuth } from "@/context/auth-context"
 
 interface DeleteCategoryDialogProps {
   open: boolean
@@ -26,8 +27,11 @@ interface DeleteCategoryDialogProps {
 export function DeleteCategoryDialog({ open, onOpenChange, category, onSuccess }: DeleteCategoryDialogProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const { showToast } = useToast()
+  const { userRole } = useAuth()
+  const canDelete = userRole === "admin"
 
   const handleDelete = async () => {
+    if (!canDelete) return
     if (!category) return
     
     setIsDeleting(true)
@@ -81,7 +85,7 @@ export function DeleteCategoryDialog({ open, onOpenChange, category, onSuccess }
             onClick={handleDelete}
             loading={isDeleting}
             loadingText="Deleting..."
-            disabled={isDeleting}
+            disabled={isDeleting || !canDelete}
           >
             <Trash2 className="mr-2 h-4 w-4" />
             Delete Category

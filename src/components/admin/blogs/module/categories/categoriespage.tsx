@@ -12,8 +12,11 @@ import { AddCategoryDialog } from "@/components/admin/blogs/module/popups/add-ca
 import { EditCategoryDialog } from "@/components/admin/blogs/module/popups/edit-category-dialog"
 import { DeleteCategoryDialog } from "@/components/admin/blogs/module/popups/delete-category-dialog"
 import DynamicButton from "@/components/common/DynamicButton"
+import { useAuth } from "@/context/auth-context"
 
 export default function CategoriesPage() {
+  const { userRole } = useAuth()
+  const canDelete = userRole === "admin"
   const [categories, setCategories] = useState<BlogCategory[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -53,6 +56,7 @@ export default function CategoriesPage() {
   }
 
   const handleDeleteCategory = (category: BlogCategory) => {
+    if (!canDelete) return
     setSelectedCategory(category)
     setDeleteDialogOpen(true)
   }
@@ -164,6 +168,7 @@ export default function CategoriesPage() {
                                 onClick={() => handleDeleteCategory(category)}
                                 className="text-destructive hover:text-destructive"
                                 icon={<Trash2 className="h-4 w-4" />}
+                                disabled={!canDelete}
                               >
                                 Delete
                               </DynamicButton>
@@ -204,6 +209,7 @@ export default function CategoriesPage() {
                               onClick={() => handleDeleteCategory(category)}
                               className="text-destructive hover:text-destructive"
                               icon={<Trash2 className="h-4 w-4" />}
+                              disabled={!canDelete}
                             >
                               Delete
                             </DynamicButton>

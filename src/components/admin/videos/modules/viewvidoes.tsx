@@ -13,6 +13,7 @@ import type { VideoBlog } from "@/types/videosTypes"
 import { useToast } from "@/components/ui/custom-toast"
 import DynamicButton from "@/components/common/DynamicButton"
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog"
+import { useAuth } from "@/context/auth-context"
 
 export default function VideoDetailPage() {
   const params = useParams() as { id?: string }
@@ -29,6 +30,8 @@ export default function VideoDetailPage() {
     open: false,
     loading: false
   })
+  const { userRole } = useAuth()
+  const canDelete = userRole === "admin"
 
   useEffect(() => {
     const fetchVideo = async () => {
@@ -52,6 +55,10 @@ export default function VideoDetailPage() {
   }, [id])
 
   const handleDeleteClick = () => {
+    if (!canDelete) {
+      showToast("You don't have permission to delete videos", "error")
+      return
+    }
     setDeleteDialog({
       open: true,
       loading: false
@@ -156,7 +163,7 @@ export default function VideoDetailPage() {
           </Link>
         </Button>
         <div className="flex-1">
-          <div className="flex items-center gap-3 mb-3">
+          <div className="flex items-center gap-3 flex-wrap mb-3">
             {video.videoType === "youtube" ? (
               <div className="bg-red-100 p-2 rounded-lg">
                 <Youtube className="h-6 w-6 text-red-600" />
@@ -172,26 +179,26 @@ export default function VideoDetailPage() {
             >
               {video.videoType === "youtube" ? "YouTube Video" : "Uploaded Video"}
             </Badge>
-          </div>
-          <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-3">
-            {video.title}
-          </h1>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Calendar className="h-4 w-4" />
-            <span>
-              Added on{" "}
-              {new Date(video.addedAt).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </span>
+            <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              {video.title}
+            </h1>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Calendar className="h-4 w-4" />
+              <span>
+                Added on{" "}
+                {new Date(video.addedAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </span>
+            </div>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={handleShare} className="bg-white/80 backdrop-blur-sm">
+          <Button variant="outline" onClick={handleShare} className="bg:white/80 backdrop-blur-sm">
             <Share2 className="h-4 w-4 mr-2" />
             Share
           </Button>
@@ -205,6 +212,7 @@ export default function VideoDetailPage() {
             variant="destructive" 
             onClick={handleDeleteClick}
             icon={<Trash2 className="h-4 w-4 mr-2" />}
+            disabled={!canDelete}
           >
             Delete
           </DynamicButton>
@@ -218,7 +226,7 @@ export default function VideoDetailPage() {
           <Card className="border-0 shadow-xl overflow-hidden bg-black">
             <CardContent className="p-0">
               {video.videoType === "youtube" && video.youtubeUrl && (
-                <div className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow mb-6">
+                <div className="flex flex-col items-center justify-center p-6 bg:white rounded-lg shadow mb-6">
                   <div className="aspect-video w-full max-w-2xl bg-gray-100 rounded-lg overflow-hidden mb-4">
                     <img
                       src={`https://img.youtube.com/vi/${getYouTubeVideoId(video.youtubeUrl)}/hqdefault.jpg`}
@@ -382,6 +390,7 @@ export default function VideoDetailPage() {
                 onClick={handleDeleteClick}
                 className="w-full justify-start text-red-600 hover:text-red-700 bg-white/80 hover:bg-red-50 border-red-200"
                 icon={<Trash2 className="h-4 w-4 mr-2" />}
+                disabled={!canDelete}
               >
                 Delete Video
               </DynamicButton>

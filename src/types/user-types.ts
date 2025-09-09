@@ -2,7 +2,7 @@ export interface User {
   _id: string
   name: string
   email: string
-  role: "admin" | "user"
+  role: "admin" | "editor"
   password?: string
   __v?: number
 }
@@ -12,7 +12,7 @@ export interface CreateUserData {
   email: string
   password: string
   confirmPassword: string
-  role?: "admin" | "user"
+  role?: "admin" | "editor"
 }
 
 export interface EditUserData {
@@ -20,7 +20,7 @@ export interface EditUserData {
   email: string
   password?: string
   confirmPassword?: string
-  role: "admin" | "user"
+  role: "admin" | "editor"
 }
 
 export interface ApiResponse<T> {
