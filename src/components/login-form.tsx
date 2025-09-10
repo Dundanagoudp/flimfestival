@@ -68,7 +68,7 @@ export function LoginForm({
                   Welcome Back
                 </h1>
                 <p className="text-muted-foreground text-sm font-montserrat">
-                  Sign in to your account to continue
+                  Login in to your account to continue
                 </p>
               </div>
               
