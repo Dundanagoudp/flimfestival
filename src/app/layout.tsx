@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: "Arunachal Film Festival",
   description: "Arunachal Film Festival",
   icons: {
-    icon: "/logofavicon.jpg",
+    icon: "/govLogo.png",
   },
 };
 
