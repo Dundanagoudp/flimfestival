@@ -6,10 +6,8 @@ import { Navbar } from "../Home/navbar/Navbar";
 export const ContactUs = () => {
   return (
     <>
-      <div className="sticky top-0 z-50 w-full">
-        <Navbar />
-      </div>
-      <div className="-mt-[5rem]" style={{ backgroundColor: "#EEEEEE" }}>
+     
+      <div className="-mt-[10rem]" style={{ backgroundColor: "#EEEEEE" }}>
         <HeroSection />
         <ContactForm />
       </div>

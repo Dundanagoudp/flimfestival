@@ -10,14 +10,14 @@ import type {
 
 // NOTE: routes match what you shared (including the misspelling in DELETE)
 const routes = {
-  create: "/registration/createRegistration",
-  all: "/registration/getAllRegistration",
-  one: (id: string) => `/registration/getRegistrationById/${encodeURIComponent(id)}`,
-  update: (id: string) => `/registration/updateRegistrationById/${encodeURIComponent(id)}`,
-  delete: (id: string) => `/registration/deleteRegistartionById/${encodeURIComponent(id)}`, // <-- as in your router
+  create: "contactus/createContactUs",
+  all: "contactus/getAllContactUs",
+  one: (id: string) => `contactus/getContactUsById/${encodeURIComponent(id)}`,
+  update: (id: string) => `contactus/updateContactUsById/${encodeURIComponent(id)}`,
+  delete: (id: string) => `contactus/deleteContactUsById/${encodeURIComponent(id)}`, // <-- as in your router
 };
 
-async function createRegistration(
+ async function createRegistration(
   payload: ContactForm
 ): Promise<ContactCreateResponse> {
   const { data } = await apiClient.post<ContactCreateResponse>(routes.create, payload);
