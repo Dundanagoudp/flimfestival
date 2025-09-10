@@ -1,19 +1,20 @@
 "use client";
-
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import ContactService from "@/services/contactServices";
-import type { ContactForm as ContactFormType } from "@/types/contact.types";
+import type { Contact, ContactForm } from "@/types/contactTypes";
+import { useToast } from "@/components/ui/custom-toast";
 
 const PHONE_PREFIX = "+91";
 
 export default function ContactForm() {
-  const [form, setForm] = useState<ContactFormType>({
+  const [form, setForm] = useState<ContactForm>({
     name: "",
     email: "",
     phone: PHONE_PREFIX, // default prefix
     message: "",
   });
+  const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -26,37 +27,40 @@ export default function ContactForm() {
   }, [notice]);
 
   const onChange =
-    (key: keyof ContactFormType) =>
+    (key: keyof Contact) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setForm((f) => ({ ...f, [key]: e.target.value }));
     };
 
-  // Specialized phone handler: always enforces +91 + 10 digits
+  // Fixed phone handler
   const onPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
 
-    // keep only digits
-    let digits = raw.replace(/[^\d]/g, "");
-
-    // If user pasted with 91 included, drop the country code copy
-    if (digits.startsWith("91")) {
-      digits = digits.slice(2);
+    // If the value doesn't start with the prefix, we'll force it
+    if (!raw.startsWith(PHONE_PREFIX)) {
+      // Extract digits from anywhere in the input
+      const digits = raw.replace(/[^\d]/g, "");
+      // Format with prefix and limit to 10 digits after prefix
+      const formatted = PHONE_PREFIX + digits.slice(0, 10);
+      setForm((f) => ({ ...f, phone: formatted }));
+    } else {
+      // If it starts with the prefix, we can process normally
+      // Get everything after the prefix
+      const afterPrefix = raw.slice(PHONE_PREFIX.length);
+      // Keep only digits
+      let digits = afterPrefix.replace(/[^\d]/g, "");
+      // limit to 10 digits
+      digits = digits.slice(0, 10);
+      const formatted = PHONE_PREFIX + digits;
+      setForm((f) => ({ ...f, phone: formatted }));
     }
-
-    // limit to 10 digits
-    digits = digits.slice(0, 10);
-
-    const formatted = PHONE_PREFIX + digits;
-    setForm((f) => ({ ...f, phone: formatted }));
   };
 
-  function validate(f: ContactFormType) {
+  function validate(f: ContactForm): string | null {
     if (!f.name.trim() || f.name.trim().length < 2) return "Please enter your full name.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) return "Please enter a valid email.";
-
     // Require "+91" followed by exactly 10 digits
     if (!/^\+91\d{10}$/.test(f.phone)) return "Phone must be +91 followed by 10 digits.";
-
     if (!f.message.trim()) return "Please write a short message.";
     return null;
   }
@@ -69,13 +73,16 @@ export default function ContactForm() {
       setNotice({ type: "error", text: error });
       return;
     }
-
     try {
       setLoading(true);
       await ContactService.createRegistration(form);
+
+      toast.showToast("Thanks! We’ll get back to you shortly.", "success");
       setNotice({ type: "success", text: "Thanks! We’ll get back to you shortly." });
       setForm({ name: "", email: "", phone: PHONE_PREFIX, message: "" });
     } catch (err: any) {
+      console.log("err", err);
+      toast.showToast("Something went wrong. Please try again.", "error");
       const msg =
         err?.response?.data?.message ||
         err?.message ||
@@ -95,7 +102,6 @@ export default function ContactForm() {
             If there is anything you would like to talk about, please feel free to contact us.
           </h2>
         </div>
-
         {/* 3 info items */}
         <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
           {/* Location */}
@@ -112,7 +118,6 @@ export default function ContactForm() {
               </p>
             </div>
           </div>
-
           {/* Phone */}
           <div className="flex items-start gap-4 border-y md:border-y-0 md:border-x md:px-6 border-border/70 py-6 md:py-8">
             <span className="inline-flex h-10 w-10 flex-none items-center justify-center rounded-full bg-primary text-primary-foreground">
@@ -125,7 +130,6 @@ export default function ContactForm() {
               <p className="mt-1 text-sm text-muted-foreground">+(084) 123 - 456 88</p>
             </div>
           </div>
-
           {/* Email */}
           <div className="flex items-start gap-4 border-y md:border-y-0 md:border-x md:px-6 md:last:border-r border-border/70 py-6 md:py-8">
             <span className="inline-flex h-10 w-10 flex-none items-center justify-center rounded-full bg-primary text-primary-foreground">
@@ -139,14 +143,13 @@ export default function ContactForm() {
             </div>
           </div>
         </div>
-
         {/* Image + Form */}
         <div className="mt-12 grid items-start gap-8 lg:grid-cols-2">
           {/* Left image */}
           <div className="rounded-2xl bg-card p-1 shadow-sm">
             <div className="overflow-hidden rounded-xl">
               <Image
-                src="https://images.unsplash.com/photo-1558470598-a5dda9640f54?q=80&w=1470&auto=format&fit=crop"
+                src="/video.png"
                 alt="Studio / event photo"
                 width={1200}
                 height={800}
@@ -155,7 +158,6 @@ export default function ContactForm() {
               />
             </div>
           </div>
-
           {/* Form card */}
           <div className="rounded-2xl bg-card shadow-sm">
             <div className="rounded-2xl border border-border/70 bg-card p-6 md:p-8">
@@ -165,7 +167,6 @@ export default function ContactForm() {
               <p className="mt-2 text-sm text-muted-foreground">
                 Fill all information details to consult with us to get services from us
               </p>
-
               {/* Notice */}
               {notice && (
                 <div
@@ -178,7 +179,6 @@ export default function ContactForm() {
                   {notice.text}
                 </div>
               )}
-
               <form className="mt-8" onSubmit={handleSubmit}>
                 {/* Underline-only inputs */}
                 <div className="grid gap-6 sm:grid-cols-2">
@@ -203,7 +203,6 @@ export default function ContactForm() {
                     />
                   </div>
                 </div>
-
                 <div className="mt-6">
                   <input
                     type="tel"
@@ -222,7 +221,6 @@ export default function ContactForm() {
                     className="w-full bg-transparent px-1 pb-2 pt-1 text-sm outline-none placeholder:text-muted-foreground/80 border-0 border-b border-input focus:border-b-transparent focus:ring-2 focus:ring-ring"
                   />
                 </div>
-
                 <div className="mt-6">
                   <textarea
                     rows={5}
@@ -232,7 +230,6 @@ export default function ContactForm() {
                     className="w-full resize-y bg-transparent px-1 pb-2 pt-1 text-sm outline-none placeholder:text-muted-foreground/80 border-0 border-b border-input focus:border-b-transparent focus:ring-2 focus:ring-ring"
                   />
                 </div>
-
                 {/* Button row */}
                 <div className="mt-8">
                   <button

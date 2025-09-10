@@ -9,6 +9,7 @@ import { Calendar, MapPin, Clock, Users } from 'lucide-react';
 import { LoadingSpinner } from '@/components/common/LoaderSpinner';
 import HeroEvent from './HeroEvent';
 import Reveal from '@/components/common/Reveal';
+import { useRouter } from 'next/navigation';
 
 
 type TimeSlot = {
@@ -24,6 +25,7 @@ type TimeSlot = {
 
 
 export default function ViewEvent() {
+    const router = useRouter();
     const [events, setEvents] = useState<EventItem[]>([]);
     const [selectedEvent, setSelectedEvent] = useState<GetFullEventResponse | null>(null);
     const [loading, setLoading] = useState(false);
@@ -72,24 +74,9 @@ export default function ViewEvent() {
       setActiveEventId(eventId);
     };
 
-    const handleRegister = async (eventId: string, eventName: string) => {
-      setRegistering(eventId);
-      try {
-        // TODO: Implement registration logic here
-        // This could be a call to a registration service
-        console.log(`Registering for event: ${eventName} (${eventId})`);
-        
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Show success message (you can replace this with a toast notification)
-        alert(`Successfully registered for ${eventName}!`);
-      } catch (error) {
-        console.error('Registration failed:', error);
-        alert('Registration failed. Please try again.');
-      } finally {
-        setRegistering(null);
-      }
+    const handleRegister = (eventId: string, eventName: string) => {
+      // Redirect to registration page
+      router.push('/events/register');
     };
     if (loading) {
       return (
