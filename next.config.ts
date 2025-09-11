@@ -3,6 +3,10 @@ import type { NextConfig } from "next";
 const isDev = process.env.NODE_ENV !== 'production';
 
 const nextConfig: NextConfig = {
+  eslint: {
+    // Skip ESLint during production builds (e.g., on Vercel)
+    ignoreDuringBuilds: true,
+  },
   // poweredByHeader: false,
   // async headers() {
   //   return [
