@@ -33,7 +33,6 @@ export async function getYears(): Promise<YearsResponse> {
     const { data } = await apiClient.get<YearsResponse>(`${BASE}/years`)
     return data
   } catch (error: any) {
-    console.error("Error getting years:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get years")
   }
 }
@@ -43,7 +42,6 @@ export async function createYear(input: CreateOrUpdateYearInput): Promise<YearMu
     const { data } = await apiClient.post<YearMutationResponse>(`${BASE}/createYear`, input)
     return data
   } catch (error: any) {
-    console.error("Error creating year:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to create year")
   }
 }
@@ -53,7 +51,6 @@ export async function updateYear(id: string, input: CreateOrUpdateYearInput): Pr
     const { data } = await apiClient.put<YearMutationResponse>(`${BASE}/years/${id}`, input)
     return data
   } catch (error: any) {
-    console.error("Error updating year:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to update year")
   }
 }
@@ -63,7 +60,6 @@ export async function deleteYear(id: string): Promise<MessageResponse> {
     const { data } = await apiClient.delete<MessageResponse>(`${BASE}/years/${id}`)
     return data
   } catch (error: any) {
-    console.error("Error deleting year:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to delete year")
   }
 }
@@ -89,7 +85,6 @@ export async function addGuest(input: AddGuestInput): Promise<GuestMutationRespo
     const { data } = await apiClient.post<GuestMutationResponse>(`${BASE}/addguests`, fd)
     return data
   } catch (error: any) {
-    console.error("Error adding guest:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to add guest")
   }
 }
@@ -114,7 +109,6 @@ export async function updateGuest(id: string, input: UpdateGuestInput): Promise<
     const { data } = await apiClient.put<GuestMutationResponse>(`${BASE}/guests/${id}`, fd)
     return data
   } catch (error: any) {
-    console.error("Error updating guest:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to update guest")
   }
 }
@@ -124,7 +118,6 @@ export async function getAllGuests(): Promise<AllGuestsResponse> {
     const { data } = await apiClient.get<AllGuestsResponse>(`${BASE}/allguests`)
     return data
   } catch (error: any) {
-    console.error("Error getting all guests:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get all guests")
   }
 }
@@ -134,7 +127,6 @@ export async function getGuestsYearwise(): Promise<GuestsYearwiseResponse> {
     const { data } = await apiClient.get<GuestsYearwiseResponse>(`${BASE}/guests-yearwise`)
     return data
   } catch (error: any) {
-    console.error("Error getting guests yearwise:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get guests yearwise")
   }
 }
@@ -144,7 +136,6 @@ export async function getGuestsByYearId(yearId: string): Promise<GuestsByYearRes
     const { data } = await apiClient.get<GuestsByYearResponse>(`${BASE}/guests/year/${yearId}`)
     return data
   } catch (error: any) {
-    console.error("Error getting guests by year:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get guests by year")
   }
 }
@@ -155,7 +146,6 @@ export async function getGuestById(id: string): Promise<Guest> {
     const { data } = await apiClient.get<Guest>(`${BASE}/guests/${id}`)
     return data
   } catch (error: any) {
-    console.error("Error getting guest by id:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get guest")
   }
 }
@@ -165,7 +155,6 @@ export async function deleteGuest(id: string): Promise<MessageResponse> {
     const { data } = await apiClient.delete<MessageResponse>(`${BASE}/guests/${id}`)
     return data
   } catch (error: any) {
-    console.error("Error deleting guest:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to delete guest")
   }
 }

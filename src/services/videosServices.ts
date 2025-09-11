@@ -31,7 +31,6 @@ export async function addVideoBlog(payload: any) {
     const { data } = await apiClient.post<VideoBlog>(`${BASE}/addVideoBlog`, formData)
     return { success: true, data }
   } catch (error: any) {
-    console.error("Error adding video:", error)
     return { 
       success: false, 
       error: error?.response?.data?.message || error?.message || "Failed to add video" 
@@ -51,7 +50,6 @@ export async function addYouTubeVideo(payload: CreateYouTubeVideoPayload) {
     const { data } = await apiClient.post<VideoBlog>(`${BASE}/addVideoBlog`, formData)
     return { success: true, data }
   } catch (error: any) {
-    console.error("Error adding YouTube video:", error)
     return { 
       success: false, 
       error: error?.response?.data?.message || error?.message || "Failed to add YouTube video" 
@@ -71,7 +69,6 @@ export async function addUploadedVideo(payload: CreateUploadedVideoPayload) {
     const { data } = await apiClient.post<VideoBlog>(`${BASE}/addVideoBlog`, formData)
     return { success: true, data }
   } catch (error: any) {
-    console.error("Error adding uploaded video:", error)
     return { 
       success: false, 
       error: error?.response?.data?.message || error?.message || "Failed to add uploaded video" 
@@ -92,7 +89,6 @@ export async function updateVideoBlog(id: string, payload: any) {
     const { data } = await apiClient.put<{ message: string; videoBlog: VideoBlog }>(`${BASE}/updateVideo/${id}`, formData)
     return { success: true, data }
   } catch (error: any) {
-    console.error("Error updating video:", error)
     return { 
       success: false, 
       error: error?.response?.data?.message || error?.message || "Failed to update video" 
@@ -113,7 +109,6 @@ export async function updateVideo(id: string, payload: UpdateVideoPayload) {
     const { data } = await apiClient.put<{ message: string; videoBlog: VideoBlog }>(`${BASE}/updateVideo/${id}`, formData)
     return { success: true, data }
   } catch (error: any) {
-    console.error("Error updating video:", error)
     return { 
       success: false, 
       error: error?.response?.data?.message || error?.message || "Failed to update video" 
@@ -126,7 +121,6 @@ export async function getVideoBlog() {
     const { data } = await apiClient.get<GetAllVideosResponse>(`${BASE}/getVideoBlog`)
     return { success: true, data }
   } catch (error: any) {
-    console.error("Error fetching all videos:", error)
     return { 
       success: false, 
       error: error?.response?.data?.message || error?.message || "Failed to fetch videos" 
@@ -139,7 +133,6 @@ export async function getAllVideos() {
     const { data } = await apiClient.get<GetAllVideosResponse>(`${BASE}/getVideoBlog`)
     return { success: true, data }
   } catch (error: any) {
-    console.error("Error fetching all videos:", error)
     return { 
       success: false, 
       error: error?.response?.data?.message || error?.message || "Failed to fetch videos" 
@@ -152,7 +145,6 @@ export async function getYoutubeVideos() {
     const { data } = await apiClient.get<GetYouTubeVideosResponse>(`${BASE}/getYoutubeVideo`)
     return { success: true, data }
   } catch (error: any) {
-    console.error("Error fetching YouTube videos:", error)
     return { 
       success: false, 
       error: error?.response?.data?.message || error?.message || "Failed to fetch YouTube videos" 
@@ -165,7 +157,6 @@ export async function getYouTubeVideos() {
     const { data } = await apiClient.get<GetYouTubeVideosResponse>(`${BASE}/getYoutubeVideo`)
     return { success: true, data }
   } catch (error: any) {
-    console.error("Error fetching YouTube videos:", error)
     return { 
       success: false, 
       error: error?.response?.data?.message || error?.message || "Failed to fetch YouTube videos" 
@@ -178,7 +169,6 @@ export async function getRawVideos() {
     const { data } = await apiClient.get<GetUploadedVideosResponse>(`${BASE}/getuploadedVideo`)
     return { success: true, data }
   } catch (error: any) {
-    console.error("Error fetching uploaded videos:", error)
     return { 
       success: false, 
       error: error?.response?.data?.message || error?.message || "Failed to fetch uploaded videos" 
@@ -191,7 +181,6 @@ export async function getUploadedVideos() {
     const { data } = await apiClient.get<GetUploadedVideosResponse>(`${BASE}/getuploadedVideo`)
     return { success: true, data }
   } catch (error: any) {
-    console.error("Error fetching uploaded videos:", error)
     return { 
       success: false, 
       error: error?.response?.data?.message || error?.message || "Failed to fetch uploaded videos" 
@@ -204,7 +193,6 @@ export async function getVideoById(id: string) {
     const { data } = await apiClient.get<VideoBlog>(`${BASE}/getVideoById/${id}`)
     return { success: true, data }
   } catch (error: any) {
-    console.error("Error fetching video by id:", error)
     return { 
       success: false, 
       error: error?.response?.data?.message || error?.message || "Failed to fetch video by id" 
@@ -217,7 +205,6 @@ export async function deleteVideoBlog(id: string) {
     const { data } = await apiClient.delete<SimpleMessageResponse>(`${BASE}/deleteVideo/${id}`)
     return { success: true, data }
   } catch (error: any) {
-    console.error("Error deleting video:", error)
     return { 
       success: false, 
       error: error?.response?.data?.message || error?.message || "Failed to delete video" 
@@ -230,7 +217,6 @@ export async function deleteVideo(id: string) {
     const { data } = await apiClient.delete<SimpleMessageResponse>(`${BASE}/deleteVideo/${id}`)
     return { success: true, data }
   } catch (error: any) {
-    console.error("Error deleting video:", error)
     return { 
       success: false, 
       error: error?.response?.data?.message || error?.message || "Failed to delete video" 

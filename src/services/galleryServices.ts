@@ -20,7 +20,6 @@ export async function createYear(payload: CreateYearPayload) {
     const { data } = await apiClient.post<YearCreateResponse>(`${BASE}/gallerycreateYear`, payload)
     return data
   } catch (error: any) {
-    console.error("Error creating year:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to create year")
   }
 }
@@ -30,7 +29,6 @@ export async function updateYear(id: string, payload: UpdateYearPayload) {
     const { data } = await apiClient.put<SimpleMessageResponse & { item?: any }>(`${BASE}/updateyear/${id}`, payload)
     return data
   } catch (error: any) {
-    console.error("Error updating year:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to update year")
   }
 }
@@ -40,7 +38,6 @@ export async function getAllYears() {
     const { data } = await apiClient.get<YearsResponse>(`${BASE}/getallyear`)
     return data
   } catch (error: any) {
-    console.error("Error getting years:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get years")
   }
 }
@@ -50,7 +47,6 @@ export async function deleteYear(id: string) {
     const { data } = await apiClient.delete<SimpleMessageResponse>(`${BASE}/deleteyear/${id}`)
     return data
   } catch (error: any) {
-    console.error("Error deleting year:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to delete year")
   }
 }
@@ -66,7 +62,6 @@ export async function addImages(yearId: string, files: File[]) {
     const { data } = await apiClient.post<AddImagesResponse>(`${BASE}/addimages`, fd)
     return data
   } catch (error: any) {
-    console.error("Error adding images:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to add images")
   }
 }
@@ -81,7 +76,6 @@ export async function getAllGalleryByYear(yearId: string) {
     })
     return data
   } catch (error: any) {
-    console.error("Error getting gallery by year:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get gallery by year")
   }
 }
@@ -91,7 +85,6 @@ export async function deleteImage(imageId: string) {
     const { data } = await apiClient.delete<SimpleMessageResponse>(`${BASE}/deletegallery/${imageId}`)
     return data
   } catch (error: any) {
-    console.error("Error deleting image:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to delete image")
   }
 }
@@ -102,7 +95,6 @@ export async function bulkDeleteImages(imageIds: string[]) {
     const { data } = await apiClient.delete<SimpleMessageResponse>(`${BASE}/bulkdeleteimages`, { data: body })
     return data
   } catch (error: any) {
-    console.error("Error bulk deleting images:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to bulk delete images")
   }
 }
@@ -113,7 +105,6 @@ export async function getGalleryYearwise() {
     const { data } = await apiClient.get<YearwiseResponse>(`${BASE}/gallery-yearwise`)
     return data
   } catch (error: any) {
-    console.error("Error getting gallery yearwise:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get gallery yearwise")
   }
 }
@@ -123,7 +114,6 @@ export async function getVideoHome(): Promise<GetAllMediaResponse> {
     const response = await apiClient.get<GetAllMediaResponse>("/Homepage");
     return response.data;
   } catch (error: any) {
-    console.error("Error getting video home:", error);
     throw new Error(
       error?.response?.data?.message ||
         error?.message ||

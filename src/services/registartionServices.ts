@@ -17,7 +17,6 @@ export async function getAllRegistrations(page: number = 1, limit: number = 10) 
     });
     return data;
   } catch (error: any) {
-    console.error("Error fetching registrations:", error);
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get registrations");
   }
 }
@@ -28,7 +27,6 @@ export async function getRegistrationById(id: string) {
     const { data } = await apiClient.get<RegistrationItem>(`${BASE}/getRegistrationById/${id}`);
     return data;
   } catch (error: any) {
-    console.error("Error fetching registration:", error);
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get registration");
   }
 }
@@ -39,7 +37,6 @@ export async function createRegistration(registrationData: RegistrationData) {
     const { data } = await apiClient.post<RegistrationResponse>(`${BASE}/createRegistration`, registrationData);
     return data;
   } catch (error: any) {
-    console.error("Error creating registration:", error);
     throw new Error(error?.response?.data?.message || error?.message || "Failed to create registration");
   }
 }
@@ -50,7 +47,6 @@ export async function updateRegistrationById(id: string, payload: UpdateRegistra
     const { data } = await apiClient.put<RegistrationItem>(`${BASE}/updateRegistrationById/${id}`, payload);
     return data;
   } catch (error: any) {
-    console.error("Error updating registration:", error);
     throw new Error(error?.response?.data?.message || error?.message || "Failed to update registration");
   }
 }
@@ -74,7 +70,6 @@ export async function markAsContacted(id: string) {
     });
     return data;
   } catch (error: any) {
-    console.error("Error marking registration as contacted:", error);
     throw new Error(error?.response?.data?.message || error?.message || "Failed to mark as contacted");
   }
 }
@@ -87,7 +82,6 @@ export async function markAsNotContacted(id: string) {
     });
     return data;
   } catch (error: any) {
-    console.error("Error marking registration as not contacted:", error);
     throw new Error(error?.response?.data?.message || error?.message || "Failed to mark as not contacted");
   }
 }

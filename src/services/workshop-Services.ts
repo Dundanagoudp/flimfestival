@@ -18,7 +18,6 @@ export async function getWorkshops(): Promise<GetWorkshopsResponse> {
     const { data } = await apiClient.get<GetWorkshopsResponse>(`${BASE}/getWorkshop`);
     return data;
   } catch (error: any) {
-    console.error("Error fetching workshops:", error);
     throw new Error(
       error?.response?.data?.message || error?.message || "Failed to get workshops"
     );
@@ -31,7 +30,6 @@ export async function getWorkshopById(workshopId: string): Promise<Workshop | nu
     const workshops = await getWorkshops();
     return workshops.find((w) => w._id === workshopId) || null;
   } catch (error: any) {
-    console.error("Error fetching workshop by ID:", error);
     throw new Error(
       error?.response?.data?.message || error?.message || "Failed to get workshop"
     );
@@ -68,7 +66,6 @@ export async function addWorkshop(
     );
     return data;
   } catch (error: any) {
-    console.error("Error creating workshop:", error);
     throw new Error(
       error?.response?.data?.message || error?.message || "Failed to create workshop"
     );
@@ -106,7 +103,6 @@ export async function updateWorkshop(
     );
     return data;
   } catch (error: any) {
-    console.error("Error updating workshop:", error);
     throw new Error(
       error?.response?.data?.message || error?.message || "Failed to update workshop"
     );
@@ -121,7 +117,6 @@ export async function deleteWorkshop(workshopId: string): Promise<DeleteWorkshop
     );
     return data;
   } catch (error: any) {
-    console.error("Error deleting workshop:", error);
     throw new Error(
       error?.response?.data?.message || error?.message || "Failed to delete workshop"
     );
@@ -134,7 +129,6 @@ export async function getWorkshopsByEvent(eventId: string): Promise<Workshop[]> 
     const workshops = await getWorkshops();
     return workshops.filter((w) => w.eventRef === eventId);
   } catch (error: any) {
-    console.error("Error fetching workshops by event:", error);
     throw new Error(
       error?.response?.data?.message || error?.message || "Failed to get workshops by event"
     );
@@ -147,7 +141,6 @@ export async function getTotalWorkshops(): Promise<number> {
     const workshops = await getWorkshops();
     return workshops.length;
   } catch (error: any) {
-    console.error("Error fetching total workshops:", error);
     throw new Error(
       error?.response?.data?.message || error?.message || "Failed to get total workshops"
     );
