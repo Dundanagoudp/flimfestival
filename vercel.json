@@ -1,14 +1,4 @@
 {
   "version": 2,
-  "rewrites": [
-    { "source": "/attendeessay/:path*", "destination": "/attendeessay/:path*" },
-    { "source": "/registration/:path*", "destination": "/registration/:path*" },
-    { "source": "/blogs/:path*", "destination": "/blogs/:path*" },
-    { "source": "/welcome/:path*", "destination": "/welcome/:path*" },
-    { "source": "/images/:path*", "destination": "/images/:path*" },
-    { "source": "/gallery/:path*", "destination": "/gallery/:path*" },
-    { "source": "/testimonials/:path*", "destination": "/testimonials/:path*" },
-    { "source": "/schedule/:path*", "destination": "/schedule/:path*" }
-  ],
   "framework": "nextjs"
 }
