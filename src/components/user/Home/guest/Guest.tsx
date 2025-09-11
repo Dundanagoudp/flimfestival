@@ -1,7 +1,9 @@
 'use client'
 import React, {  useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { ArrowRight } from 'lucide-react'
 import { getAllGuests } from '@/services/guestService'
+import Link from 'next/link'
 function Guest() {
  const [guestData, setGuestData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -38,13 +40,14 @@ function Guest() {
           <div className='flex justify-between items-center'>
             <h1 className='text-4xl font-bold'>Guest</h1>
             <div className="flex items-center gap-2">
-              <Button className="rounded-full bg-primary text-black hover:bg-yellow-300">
-                View Schedule
-              </Button>
-              <span
-                aria-hidden
-                className="inline-block h-4 w-4 rounded-full bg-primary"
-              />
+              <Link href={"/guests"}>
+                <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
+                  View Guest
+                </Button>
+              </Link>
+              <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary animate-pulse hover:animate-bounce cursor-pointer">
+                <ArrowRight className="h-3 w-3 text-black" />
+              </span>
             </div>
           </div>
           

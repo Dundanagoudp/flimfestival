@@ -123,8 +123,8 @@ export async function getStats() {
 
 export async function getIntroduction() {
   try {
-    const response = await apiClient.get<AboutIntroduction>(`${BASE}/introduction`)
-    return response.data
+    const { data } = await apiClient.get<{ success: boolean; message: string; data: AboutIntroduction }>(`${BASE}/introduction`)
+    return data
   } catch (error) {
     console.log(error)
     throw error

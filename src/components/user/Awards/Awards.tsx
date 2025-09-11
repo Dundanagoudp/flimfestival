@@ -12,7 +12,7 @@ export const Awards = () => {
       <div className="-mt-[10rem]" style={{ backgroundColor: "#EEEEEE" }}>
       <HeroSection />
       <AwardsPage />
-      <ContentPage />
+      {/* <ContentPage /> */}
       <SubmitFormPage />
       </div>
     </>

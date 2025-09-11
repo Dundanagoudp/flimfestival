@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { ArrowRight } from "lucide-react";
 import { getEvent, getFullEvent } from '@/services/eventsService';
 import { EventItem, EventDayItem, TimeEntry, GetFullEventResponse } from '@/types/eventsTypes';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -148,23 +149,28 @@ export default function ViewEvent() {
                   
                   {/* Registration Button */}
                   <div className="ml-6">
-                    <Button
-                      onClick={() => handleRegister(selectedEvent.event._id, selectedEvent.event.name)}
-                      disabled={registering === selectedEvent.event._id}
-                      className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                    >
-                      {registering === selectedEvent.event._id ? (
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          Registering...
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <Users className="w-5 h-5" />
-                          Register Now
-                        </div>
-                      )}
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        onClick={() => handleRegister(selectedEvent.event._id, selectedEvent.event.name)}
+                        disabled={registering === selectedEvent.event._id}
+                        className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                      >
+                        {registering === selectedEvent.event._id ? (
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            Registering...
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <Users className="w-5 h-5" />
+                            Register Now
+                          </div>
+                        )}
+                      </Button>
+                      <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary animate-pulse hover:animate-bounce cursor-pointer">
+                        <ArrowRight className="h-3 w-3 text-white" />
+                      </span>
+                    </div>
                     <p className="text-xs text-gray-500 mt-2 text-center">Free Registration</p>
                   </div>
                 </div>

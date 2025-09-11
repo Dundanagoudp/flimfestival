@@ -30,7 +30,7 @@ export default function GuestContent() {
         setLoading(true);
         setError(null);
         const res = await getGuestsYearwise();
-
+        console.log("response of guests", res);
         const payload = Array.isArray(res)
           ? res
           : Array.isArray((res as any)?.data)
@@ -48,9 +48,12 @@ export default function GuestContent() {
           .sort((a: number, b: number) => b - a);
 
         setActiveYear(ys[0] ?? new Date().getFullYear());
-      } catch (e: any) {
+      }
+      catch (e: any) {
+        console.error("Failed to fetch guests:", e);
         setError(e?.message || "Failed to load guests");
-      } finally {
+      }
+      finally {
         if (mounted) setLoading(false);
       }
     })();
@@ -147,7 +150,7 @@ export default function GuestContent() {
             : filtered.map((g) => (
                 <Link
                   key={g.id}
-                  href={`/guest/guests/${g.id}`}
+                  href={`/guests/${g.id}`}
                   className="group relative overflow-hidden rounded-2xl bg-card shadow-sm ring-1 ring-border/70 focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <div className="relative aspect-[4/5] w-full">
