@@ -1,5 +1,6 @@
 import axios from "axios"
 import Cookies from "js-cookie"
+import { getAuthToken } from "@/utils/auth"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 if (!API_BASE_URL) {
@@ -21,10 +22,20 @@ const apiClient = axios.create({
 // Add request interceptors for authentication tokens
 apiClient.interceptors.request.use(
   (config) => {
-    const token = Cookies.get("token")
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+    // Prefer our helper which tries multiple cookie names
+    let token = getAuthToken()
+
+    // Fallback to js-cookie direct read
+    if (!token) token = Cookies.get("token") || null
+
+    // Final fallback: localStorage (in case cookies were blocked/cleared)
+    if (!token && typeof window !== "undefined") {
+      try {
+        token = window.localStorage.getItem("token")
+      } catch {}
     }
+
+    if (token) config.headers.Authorization = `Bearer ${token}`
 
     // Let the browser set the proper multipart boundary for FormData
     if (config.data instanceof FormData) {
