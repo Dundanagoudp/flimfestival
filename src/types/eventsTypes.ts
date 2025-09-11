@@ -97,6 +97,60 @@ export interface GetFullEventResponse {
   event: EventItem
   days: EventDayItem[]
 }
+export interface TimeSlot {
+  _id: string
+  event_ref: string
+  day_ref: {
+    _id: string
+    event_ref: string
+    dayNumber: number
+    name: string
+    description: string
+    createdAt: string
+    updatedAt: string
+    __v: number
+    image?: string
+  }
+  startTime: string
+  endTime: string
+  title: string
+  description: string
+  type: string
+  location: string
+  __v: number
+}
 
+export interface EventDay {
+  _id: string
+  event_ref: string
+  dayNumber: number
+  name: string
+  description: string
+  createdAt: string
+  updatedAt: string
+  __v: number
+  image?: string
+  timeSlots: TimeSlot[]
+}
+
+export interface Event {
+  _id: string
+  name: string
+  description: string
+  year: number
+  month: number
+  startDate: string
+  endDate: string
+  totalDays: number
+  location: string
+  updatedAt: string
+  __v: number
+  image?: string
+}
+
+export interface LatestEventResponse {
+  event: Event
+  days: EventDay[]
+}
 export type GetTotalEventResponse = { totalEvents: number } | number
 

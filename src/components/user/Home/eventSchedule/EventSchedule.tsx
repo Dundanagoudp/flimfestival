@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getTotalEvent } from "@/services/eventsService";
+import { getlatestEvent, getTotalEvent } from "@/services/eventsService";
 import Link from "next/link";
 import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 import { getWorkshops } from "@/services/workshopService";
@@ -39,16 +39,16 @@ export default function EventSchedule() {
   const [workshopData, setWorkshopData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Get the most recent event (first in items array)
-  const currentEvent = eventData?.items?.[0];
+  // Get the event data directly from the response
+  const currentEvent = eventData;
 
   useEffect(() => {
     const fetchEvent = async () => {
       setLoading(true);
       try {
-        const response = await getTotalEvent();
+        const response = await getlatestEvent();
         setEventData(response);
-        console.log("response of Event", response);
+        console.log(" Latest Event", response);
       } catch (err: any) {
         console.log(err);
         setLoading(false);
@@ -159,8 +159,8 @@ export default function EventSchedule() {
                 <div className="h-72 overflow-hidden ">
                   <ScrollArea className="h-full ">
                     <div className="flex flex-col gap-8 pr-4 items-center">
-                      {currentEvent?.days?.[selectedDay]?.times?.length > 0
-                        ? currentEvent.days[selectedDay].times.map(
+                      {currentEvent?.days?.[selectedDay]?.timeSlots?.length > 0
+                        ? currentEvent.days[selectedDay].timeSlots.map(
                             (timeSlot: any, index: number) => (
                               <Item
                                 key={timeSlot._id || index}

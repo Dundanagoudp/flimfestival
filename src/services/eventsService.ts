@@ -9,6 +9,7 @@ import {
   GetEventsResponse,
   GetFullEventResponse,
   GetTimesResponse,
+  LatestEventResponse,
   SimpleMessageResponse,
   UpdateEventDayPayload,
   UpdateTimePayload,
@@ -243,5 +244,22 @@ export async  function registerEvent(registrationData: RegistrationData){
   }
   catch(err:any){
     throw new Error(err?.response?.data?.message || err?.message || "Failed to register for event")
+  }
+}
+
+export async function getlatestEvent() {
+  try {
+    const { data } = await apiClient.get(`${BASE}/today-or-latest`)
+    return data as number | { totalEvents: number }
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to get total events")
+  }
+}
+export async function getLatestEvent(): Promise<LatestEventResponse> {
+  try {
+    const { data } = await apiClient.get<LatestEventResponse>(`${BASE}/today-or-latest`)
+    return data
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to get latest event")
   }
 }
