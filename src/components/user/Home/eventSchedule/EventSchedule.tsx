@@ -8,7 +8,6 @@ import Link from "next/link";
 import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 import { getWorkshops } from "@/services/workshopService";
 import { getLatestEvent } from "@/services/eventsService";
-import { Skeleton } from "@/components/ui/skeleton";
 
 
 type ScheduleItemProps = {
@@ -81,179 +80,134 @@ export default function EventSchedule() {
 
 
   return (
-   <>
-  <div className="px-10 py-10">
-    <div className="grid grid-cols-1 lg:grid-cols-[30%_70%]">
-      <div></div>
-      {/* Right side About content */}
-      <div className="flex flex-col justify-center">
-        <section className="space-y-4">
-          <h2 className="text-4xl font-bold">Events Schedule</h2>
-          <p className="text-3xl text-[#989898] leading-relaxed">
-            We've been perfecting our steps for over 15 years to assure success for every single client we create for.
-          </p>
-          <div className="flex items-center gap-2">
-            <Link href="/events">
-              <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
-                View Schedule
-              </Button>
-            </Link>
-            <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary animate-pulse hover:animate-bounce cursor-pointer">
-              <ArrowRight className="h-3 w-3 text-black" />
-            </span>
-          </div>
-        </section>
-      </div>
-    </div>
-  </div>
+    <>
+      <div className="px-10 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[30%_70%]  ">
+          <div></div>
 
-  {/* Skeleton for the entire event schedule section */}
-  {!currentEvent ? (
-    <div className="bg-white p-4 shadow-md border-t-10 border-r-10 border-b-10 border-[#343434] w-[95%] rounded-r-[10px] min-h-[400px]">
-      <div className="p-6 md:p-8">
-        {/* Skeleton for header */}
-        <div className="space-y-4">
-          <Skeleton className="h-10 w-64" />
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-6 w-96" />
-        </div>
-
-        {/* Skeleton for timeline and content */}
-        <div className="flex justify-around items-center min-h-[300px] mt-8">
-          {/* Skeleton for timeline */}
-          <div className="flex-shrink-0">
-            <div className="h-full flex items-center">
-              <div className="flex flex-col items-center gap-6">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <Skeleton key={index} className="h-9 w-9 rounded-full" />
-                ))}
+          {/* Right side About content */}
+          <div className="flex flex-col justify-center">
+            <section className="space-y-4">
+              <h2 className="text-4xl font-bold ">Events Schedule</h2>
+              <p className="text-3xl text-[#989898] leading-relaxed">
+                We've been perfecting our steps for over 15 years to assure
+                success for every single client we create for.
+              </p>
+              <div className="flex items-center gap-2">
+                 <Link href="/events" >
+                  <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
+                    View Schedule
+                  </Button>
+                 </Link>
+                 <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary animate-pulse hover:animate-bounce cursor-pointer">
+                   <ArrowRight className="h-3 w-3 text-black" />
+                 </span>
               </div>
-            </div>
-          </div>
-
-          {/* Skeleton for time slots */}
-          <div className="flex-1 max-w-md">
-            <div className="h-72 overflow-hidden">
-              <div className="flex flex-col gap-8 pr-4 items-center">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <div key={index} className="flex flex-col space-y-3 w-full">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-6 w-full" />
-                    <Skeleton className="h-4 w-48" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Skeleton for image */}
-          <div className="w-[30%] flex-shrink-0">
-            <Skeleton className="aspect-[4/3] w-full rounded-xl" />
+            </section>
           </div>
         </div>
       </div>
-    </div>
-  ) : (
-    <section
-      aria-label={`Event schedule for ${currentEvent?.days?.[selectedDay]?.name}`}
-      className="bg-white p-4 shadow-md border-t-10 border-r-10 border-b-10 border-[#343434] w-[95%] rounded-r-[10px] min-h-[400px]"
-    >
-      <div className="p-6 md:p-8">
-        <div>
-          {/* Left: Day + Date */}
-          <header className="text-left">
-            <h1 className="text-4xl font-semibold text-h1rimary">
-              {currentEvent?.days?.[selectedDay]?.name || `Day ${selectedDay + 1}`}
-            </h1>
-            <h2 className="text-4xl font-bold">
-              {currentEvent?.event?.name || "Event"}
-            </h2>
-            <p className="text-lg font-semibold">
-              {currentEvent?.days?.[selectedDay]?.description || "No description available"}
-            </p>
-          </header>
-        </div>
-
-        {/* Middle: Timeline + Items */}
-        <div className="flex justify-around items-center min-h-[300px]">
-          {/* Timeline column */}
-          <div className="flex-shrink-0">
-            <div className="h-full flex items-center">
-              <ol className="flex flex-col items-center gap-6">
-                {currentEvent?.days?.map((day: any, dayIndex: number) => (
-                  <li key={day._id}>
-                    <button
-                      onClick={() => setSelectedDay(dayIndex)}
-                      className={`flex h-9 w-9 items-center justify-center rounded-full font-semibold text-4xl transition-colors cursor-pointer ${
-                        selectedDay === dayIndex
-                          ? "bg-primary text-black hover:bg-yellow-300"
-                          : "bg-zinc-200 text-[#EEEEEE] hover:bg-zinc-300"
-                      }`}
-                    >
-                      {dayIndex + 1}
-                    </button>
-                  </li>
-                ))}
-              </ol>
+      <section
+        aria-label={`Event schedule for ${currentEvent?.days?.[selectedDay]?.name}`}
+        className="bg-white p-4 shadow-md border-t-10 border-r-10 border-b-10 border-[#343434] w-[95%] rounded-r-[10px] min-h-[400px]"
+      >
+        <div className=" p-6 md:p-8">
+          <div className="">
+            <div>
+              {/* Left: Day + Date */}
+              <header className="text-left">
+                <h1 className="text-4xl font-semibold text-h1rimary">
+                  {currentEvent?.days?.[selectedDay]?.name ||
+                    `Day ${selectedDay + 1}`}
+                </h1>
+                <h2 className="text-4xl font-bold">
+                  {currentEvent?.event?.name || "Event"}
+                </h2>
+                <p className="text-lg font-semibold">
+                  {currentEvent?.days?.[selectedDay]?.description ||
+                    "No description available"}
+                </p>
+              </header>
             </div>
-          </div>
 
-          {/* Items column */}
-          <div className="flex-1 max-w-md">
-            <div className="h-72 overflow-hidden">
-              <ScrollArea className="h-full">
-                <div className="flex flex-col gap-8 pr-4 items-center">
-                  {currentEvent?.days?.[selectedDay]?.timeSlots?.length > 0 ? (
-                    currentEvent.days[selectedDay].timeSlots.map(
-                      (timeSlot: any, index: number) => (
-                        <Item
-                          key={timeSlot._id || index}
-                          time={`${timeSlot.startTime} - ${timeSlot.endTime}`}
-                          title={timeSlot.title}
-                          subtitle={timeSlot.location}
-                          active={index === 0}
-                        />
-                      )
-                    )
-                  ) : (
-                    Array.from({ length: 3 }, (_, index) => (
-                      <Item
-                        key={`placeholder-${index}`}
-                        time={index === 0 ? "Loading..." : ""}
-                        title={index === 0 ? "Loading events..." : ""}
-                        subtitle=""
-                        active={index === 0}
-                      />
-                    ))
-                  )}
+            {/* Middle: Timeline + Items */}
+            <div className="flex justify-around items-center min-h-[300px]">
+              {/* Timeline column */}
+              <div className="flex-shrink-0">
+                <div className="h-full flex items-center">
+                  <ol className="flex flex-col items-center gap-6">
+                    {/* Always show 4 timeline items for consistency */}
+                    {currentEvent?.days?.map((day: any, dayIndex: number) => (
+                      <li key={day._id}>
+                        <button
+                          onClick={() => setSelectedDay(dayIndex)}
+                          className={`flex h-9 w-9 items-center justify-center rounded-full font-semibold text-4xl transition-colors cursor-pointer ${
+                            selectedDay === dayIndex
+                              ? "bg-primary text-black hover:bg-yellow-300"
+                              : "bg-zinc-200 text-[#EEEEEE] hover:bg-zinc-300"
+                          }`}
+                        >
+                          {dayIndex + 1}
+                        </button>
+                      </li>
+                    ))}
+                  </ol>
                 </div>
-              </ScrollArea>
+              </div>
+
+              {/* Items column */}
+              <div className="flex-1 max-w-md ">
+                <div className="h-72 overflow-hidden ">
+                  <ScrollArea className="h-full ">
+                    <div className="flex flex-col gap-8 pr-4 items-center">
+                      {currentEvent?.days?.[selectedDay]?.timeSlots?.length > 0
+                        ? currentEvent.days[selectedDay].timeSlots.map(
+                            (timeSlot: any, index: number) => (
+                              <Item
+                                key={timeSlot._id || index}
+                                time={`${timeSlot.startTime} - ${timeSlot.endTime}`}
+                                title={timeSlot.title}
+                                subtitle={timeSlot.location}
+                                active={index === 0}
+                              />
+                            )
+                          )
+                        : // Show placeholder items to maintain consistent height
+                          Array.from({ length: 3 }, (_, index) => (
+                            <Item
+                              key={`placeholder-${index}`}
+                              time={index === 0 ? "00:00" : ""}
+                              title={index === 0 ? "No Event scheduled" : ""}
+                              subtitle=""
+                              active={index === 0}
+                            />
+                          ))}
+                    </div>
+                  </ScrollArea>
+                </div>
+              </div>
+
+              {/* Image column */}
+              <div className="w-[30%] flex-shrink-0">
+                <div className="aspect-[4/3] w-full">
+                  <img
+                    src={
+                      currentEvent?.days?.[selectedDay]?.image ||
+                      currentEvent?.event?.image ||
+                      "/fallback.png"
+                    }
+                    alt={
+                      currentEvent?.days?.[selectedDay]?.description ||
+                      "Event preview"
+                    }
+                    className="w-full h-full rounded-xl border border-zinc-200 object-cover shadow-sm"
+                  />
+                </div>
+              </div>
             </div>
           </div>
-
-          {/* Image column */}
-          <div className="w-[30%] flex-shrink-0">
-            {!currentEvent?.days?.[selectedDay]?.image ? (
-              <Skeleton className="aspect-[4/3] w-full rounded-xl" />
-            ) : (
-              <img
-                src={
-                  currentEvent?.days?.[selectedDay]?.image ||
-                  currentEvent?.event?.image ||
-                  "/fallback.png"
-                }
-                alt={
-                  currentEvent?.days?.[selectedDay]?.description ||
-                  "Event preview"
-                }
-                className="w-full h-full rounded-xl border border-zinc-200 object-cover shadow-sm"
-              />
-            )}
-          </div>
         </div>
-      </div>
-    </section>
-  )}
-</>
+      </section>
+    </>
   );
 }
