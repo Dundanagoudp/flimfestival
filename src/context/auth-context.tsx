@@ -68,6 +68,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Clear all auth cookies
       deleteCookie("userRole");
       Cookies.remove("token");
+      // Clear localStorage fallback token
+      try {
+        if (typeof window !== "undefined") {
+          window.localStorage.removeItem("token");
+        }
+      } catch {}
       
       setUserRole(null);
       router.push("/login");
@@ -76,6 +82,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Even if API call fails, clear local state
       deleteCookie("userRole");
       Cookies.remove("token");
+      try {
+        if (typeof window !== "undefined") {
+          window.localStorage.removeItem("token");
+        }
+      } catch {}
       setUserRole(null);
       router.push("/login");
     }
