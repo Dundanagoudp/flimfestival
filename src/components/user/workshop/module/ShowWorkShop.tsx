@@ -8,6 +8,7 @@ import { getWorkshops } from "@/services/workshopService";
 import Link from "next/link";
 import Image from "next/image";
 import Reveal from "@/components/common/Reveal";
+import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 
 export default function ShowWorkShop() {
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
@@ -31,7 +32,7 @@ export default function ShowWorkShop() {
   }, []);
 
   if (loading) {
-    return <div className="p-6 text-center">Loading workshops...</div>;
+    return <LoadingSpinner />;
   }
 
   if (workshops.length === 0) {

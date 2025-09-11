@@ -5,6 +5,7 @@ import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
 import { getGuestsYearwise } from "@/services/guestService";
 import type { Guest } from "@/types/guestTypes";
+import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 
 type YearNum = number;
 type GuestRole = "Judge" | "Guest" | "Speaker";
@@ -96,7 +97,9 @@ export default function GuestContent() {
     () => (activeYear ? allGuests.filter((g) => g.year === activeYear) : []),
     [allGuests, activeYear]
   );
-
+if (loading) {
+  return <LoadingSpinner />;
+}
   return (
     <section className="bg-[oklch(0.97_0_0)]">
       <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
