@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import { getAllGuests } from '@/services/guestService'
 import Link from 'next/link'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Autoplay } from 'swiper/modules'
+import 'swiper/css'
 function Guest() {
  const [guestData, setGuestData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -51,8 +54,53 @@ function Guest() {
             </div>
           </div>
           
+          {/* Mobile: Swiper carousel */}
+          <div className="px-1 sm:px-4 sm:hidden mt-6 md:mt-10">
+            {displayGuests.length > 0 ? (
+              <div className="w-full overflow-hidden rounded-lg">
+                <Swiper
+                  modules={[Autoplay]}
+                  spaceBetween={12}
+                  slidesPerView={1.1}
+                  autoplay={{ delay: 3000, disableOnInteraction: false }}
+                  loop
+                  speed={650}
+                >
+                  {displayGuests.map((guest) => (
+                    <SwiperSlide key={guest._id}>
+                      <div className="relative cursor-pointer group transform transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl">
+                        <img
+                          src={guest.photo || "/video.png"}
+                          alt={guest.name || 'Guest'}
+                          className="w-full h-56 rounded-lg object-cover transition-all duration-300 ease-out group-hover:brightness-110"
+                          loading="lazy"
+                          decoding="async"
+                          sizes="100vw"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = "/video.png";
+                          }}
+                        />
+                        <div className="absolute inset-0 rounded-lg pointer-events-none bg-gradient-to-t from-black/50 to-transparent"></div>
+                        <div className="absolute left-3 bottom-3 text-white pointer-events-none">
+                          <h4 className="text-base font-semibold truncate max-w-[85%]">{guest.name}</h4>
+                          <p className="text-xs opacity-90">{guest.role}</p>
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-base">No guests available</p>
+              </div>
+            )}
+          </div>
+
+          {/* Tablet/Desktop: Grid layout */}
           <div className="px-1 sm:px-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mt-6 md:mt-10">
+            <div className="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mt-6 md:mt-10">
               {displayGuests.length > 0 && (
                 <>
                   {/* Featured guest (top-left, larger) */}
@@ -110,7 +158,7 @@ function Guest() {
                       <img
                         src={displayGuests[2].photo || "/video.png"}
                         alt={displayGuests[2].name}
-                        className="w-full h-56 sm:h-64 md:h-72 lg:h-96 rounded-lg object-cover transition-all duration-300 ease-out group-hover:brightness-110"
+                        className="w-full h-56 sm:h-64 md:h-72 lg:h-96 rounded-lg object-fill transition-all duration-300 ease-out group-hover:brightness-110"
                         loading="lazy"
                         decoding="async"
                         sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
@@ -133,7 +181,7 @@ function Guest() {
                       <img
                         src={guest.photo || "/video.png"}
                         alt={guest.name}
-                        className="w-full h-56 sm:h-64 md:h-72 lg:h-80 rounded-lg object-cover transition-all duration-300 ease-out group-hover:brightness-110"
+                        className="w-full h-56 sm:h-64 md:h-72 lg:h-80 rounded-lg object-fill transition-all duration-300 ease-out group-hover:brightness-110"
                         loading="lazy"
                         decoding="async"
                         sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
