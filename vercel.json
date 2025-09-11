@@ -1,37 +1,14 @@
 {
   "version": 2,
-  "framework": "nextjs",
-  "buildCommand": "next build",
-  "outputDirectory": ".next",
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "no-referrer" },
-        {
-          "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=(), usb=(), payment=(), clipboard-read=(), clipboard-write=(), accelerometer=(), autoplay=(), encrypted-media=(), fullscreen=(self), gyroscope=(), magnetometer=(), midi=(), picture-in-picture=()"
-        },
-        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains; preload" },
-        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
-        { "key": "Cross-Origin-Resource-Policy", "value": "same-origin" },
-        { "key": "X-DNS-Prefetch-Control", "value": "off" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" }
-      ]
-    },
-    {
-      "source": "/_next/static/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
-    },
-    {
-      "source": "/(.*)\\.(svg|png|jpg|jpeg|gif|webp|ico|mp4|mp3|woff|woff2|ttf|eot)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=86400" }
-      ]
-    }
-  ]
+  "rewrites": [
+    { "source": "/attendeessay/:path*", "destination": "/attendeessay/:path*" },
+    { "source": "/registration/:path*", "destination": "/registration/:path*" },
+    { "source": "/blogs/:path*", "destination": "/blogs/:path*" },
+    { "source": "/welcome/:path*", "destination": "/welcome/:path*" },
+    { "source": "/images/:path*", "destination": "/images/:path*" },
+    { "source": "/gallery/:path*", "destination": "/gallery/:path*" },
+    { "source": "/testimonials/:path*", "destination": "/testimonials/:path*" },
+    { "source": "/schedule/:path*", "destination": "/schedule/:path*" }
+  ],
+  "framework": "nextjs"
 }

@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
     // Skip ESLint during production builds (e.g., on Vercel)
     ignoreDuringBuilds: true,
   },
+  // Build a serverless/standalone output rather than attempting static export
+  output: 'standalone',
   // poweredByHeader: false,
   // async headers() {
   //   return [
