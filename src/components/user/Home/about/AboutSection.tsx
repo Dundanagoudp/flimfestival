@@ -82,7 +82,7 @@ export default function AboutSection() {
       try {
         const response = await getIntroduction();
         console.log("response of Introduction", response);
-        setIntroduction(response.data);
+        setIntroduction(response);
       } catch (error) {
         console.log("error", error);
         setLoading(false);
