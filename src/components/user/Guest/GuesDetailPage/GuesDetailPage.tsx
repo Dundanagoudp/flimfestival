@@ -175,7 +175,7 @@ export default function GuestDetailPage() {
               : suggestions.map((g) => (
                   <Link
                     key={g.id}
-                    href={`/guest/guests/${g.id}`}
+                    href={`/guests/${g.id}`}
                     className="group relative overflow-hidden rounded-2xl bg-card shadow-sm ring-1 ring-border/70 focus:outline-none focus:ring-2 focus:ring-primary"
                     prefetch
                   >

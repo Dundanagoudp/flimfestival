@@ -1,5 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 export default function Contact() {
   return (
     <section className="w-full bg-[#eeeeee]">
@@ -52,10 +54,14 @@ export default function Contact() {
 
             {/* Call to action + small decorative circle */}
             <div className="mt-6 flex items-center gap-3">
-              <Button className="rounded-full bg-primary px-6 py-2 text-black shadow-sm hover:bg-yellow-300">
-                Contact Us
-              </Button>
-              <span aria-hidden className="inline-block h-5 w-5 rounded-full bg-primary shadow-sm" />
+              <Link href="/contactus">
+                <Button className="rounded-full bg-primary px-6 py-2 text-black shadow-sm hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
+                  Contact Us
+                </Button>
+              </Link>
+              <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary animate-pulse hover:animate-bounce cursor-pointer">
+                <ArrowRight className="h-3 w-3 text-black" />
+              </span>
             </div>
           </div>
         </div>

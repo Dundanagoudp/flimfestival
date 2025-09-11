@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
+import { ArrowRight } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { getLatestBlogs } from '@/services/blogsServices';
 import { format } from 'date-fns';
@@ -61,10 +62,13 @@ const items = latestBlogs.slice(0, 3);
         </div>
         <div className="flex items-center gap-3">
           <Link href={'/blogs'}>
-          <Button className="rounded-full bg-primary text-black hover:bg-yellow-300">
-            View All Post
-          </Button></Link>
-          <span aria-hidden className="inline-block h-3 w-3 rounded-full bg-primary" />
+            <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
+              View All Post
+            </Button>
+          </Link>
+          <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary animate-pulse hover:animate-bounce cursor-pointer">
+            <ArrowRight className="h-3 w-3 text-black" />
+          </span>
         </div>
       </div>
       {/* center title */}

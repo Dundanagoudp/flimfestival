@@ -31,11 +31,11 @@ export default function Footer() {
 
             <nav className="flex flex-col gap-2 text-sm">
               <Link href="/" className="text-gray-300 hover:text-white">Home</Link>
-              <Link href="/about" className="text-gray-300 hover:text-white">About</Link>
+              <Link href="/aboutus" className="text-gray-300 hover:text-white">About</Link>
               <Link href="/screenings" className="text-gray-300 hover:text-white">Screenings</Link>
               <Link href="/digital-archive" className="text-gray-300 hover:text-white">Digital Archive</Link>
-              <Link href="/news" className="text-gray-300 hover:text-white">News</Link>
-              <Link href="/contact" className="text-gray-300 hover:text-white">Contact</Link>
+              <Link href="/blogs" className="text-gray-300 hover:text-white">News</Link>
+              <Link href="/contactus" className="text-gray-300 hover:text-white">Contact</Link>
             </nav>
           </div>
 

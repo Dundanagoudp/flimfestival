@@ -2,6 +2,7 @@
 'use client'
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 
@@ -62,13 +63,13 @@ export default function Gallery() {
 
               <div className="flex items-center gap-2 mt-5">
                 <Link href={'/gallery'}>
-                <Button className="rounded-full bg-primary text-black hover:bg-yellow-300">
-                  View More
-                </Button></Link>
-                <span
-                  aria-hidden
-                  className="inline-block h-4 w-4 rounded-full bg-primary"
-                />
+                  <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
+                    View More
+                  </Button>
+                </Link>
+                <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary animate-pulse hover:animate-bounce cursor-pointer">
+                  <ArrowRight className="h-3 w-3 text-black" />
+                </span>
               </div>
             </div>
 
