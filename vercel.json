@@ -3,18 +3,6 @@
   "framework": "nextjs",
   "buildCommand": "next build",
   "outputDirectory": ".next",
-  "redirects": [
-    {
-      "source": "http://:path*",
-      "destination": "https://:path*",
-      "permanent": true
-    },
-    {
-      "source": "https://www.:path*",
-      "destination": "https://:path*",
-      "permanent": true
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
