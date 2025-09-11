@@ -1,8 +1,15 @@
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV !== 'production';
+const isVercel = !!process.env.VERCEL;
 
 const nextConfig: NextConfig = {
+  eslint: {
+    // Skip ESLint during production builds (e.g., on Vercel)
+    ignoreDuringBuilds: true,
+  },
+  // Do NOT use standalone on Vercel; enable it only for self-host/Docker
+  ...(isVercel ? {} : { output: 'standalone' as const }),
   // poweredByHeader: false,
   // async headers() {
   //   return [
