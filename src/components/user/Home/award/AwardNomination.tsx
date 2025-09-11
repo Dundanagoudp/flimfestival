@@ -117,7 +117,54 @@ export default function AwardNomination() {
             </div>
 
             {/* Documentary Films Carousel */}
-            <div className="px-4 py-6">
+            {/* Mobile-only Swiper */}
+            <div className="px-4 py-6 sm:hidden">
+              {(() => {
+                const documentaryImages = getImagesByCategory("documentary");
+                return (
+                  <Swiper
+                    modules={[Autoplay]}
+                    spaceBetween={12}
+                    slidesPerView={1.1}
+                    centeredSlides={false}
+                    loop={documentaryImages.length > 1}
+                    autoplay={
+                      documentaryImages.length > 1
+                        ? { delay: 3000, disableOnInteraction: false }
+                        : false
+                    }
+                    speed={650}
+                    className="gallery-swiper"
+                  >
+                    {loading
+                      ? Array.from({
+                          length: Math.max(documentaryImages.length, 4),
+                        }).map((_, i) => (
+                          <SwiperSlide key={`doc-m-skel-${i}`}>
+                            <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 overflow-hidden shadow-sm">
+                              <Skeleton className="w-full h-full" />
+                            </div>
+                          </SwiperSlide>
+                        ))
+                      : documentaryImages.map((img, idx) => (
+                          <SwiperSlide key={`doc-m-${idx}`}>
+                            <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 overflow-hidden shadow-sm">
+                              <img
+                                src={img}
+                                alt={`documentary ${idx + 1}`}
+                                className="w-full h-full object-cover"
+                                draggable="false"
+                              />
+                            </div>
+                          </SwiperSlide>
+                        ))}
+                  </Swiper>
+                );
+              })()}
+            </div>
+
+            {/* Tablet/Desktop Swiper */}
+            <div className="px-4 py-6 hidden sm:block">
               {(() => {
                 const documentaryImages = getImagesByCategory("documentary");
                 const swiperConfig = getSwiperConfig(documentaryImages);
@@ -187,7 +234,54 @@ export default function AwardNomination() {
             </div>
 
             {/* Short Films Carousel */}
-            <div className="px-4 py-6">
+            {/* Mobile-only Swiper */}
+            <div className="px-4 py-6 sm:hidden">
+              {(() => {
+                const shortFilmImages = getImagesByCategory("short_film");
+                return (
+                  <Swiper
+                    modules={[Autoplay]}
+                    spaceBetween={12}
+                    slidesPerView={1.1}
+                    centeredSlides={false}
+                    loop={shortFilmImages.length > 1}
+                    autoplay={
+                      shortFilmImages.length > 1
+                        ? { delay: 3000, disableOnInteraction: false, reverseDirection: true }
+                        : false
+                    }
+                    speed={650}
+                    className="gallery-swiper"
+                  >
+                    {loading
+                      ? Array.from({
+                          length: Math.max(shortFilmImages.length, 4),
+                        }).map((_, i) => (
+                          <SwiperSlide key={`short-m-skel-${i}`}>
+                            <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 overflow-hidden shadow-sm">
+                              <Skeleton className="w-full h-full" />
+                            </div>
+                          </SwiperSlide>
+                        ))
+                      : shortFilmImages.map((img, idx) => (
+                          <SwiperSlide key={`short-m-${idx}`}>
+                            <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 overflow-hidden shadow-sm">
+                              <img
+                                src={img}
+                                alt={`short film ${idx + 1}`}
+                                className="w-full h-full object-cover"
+                                draggable="false"
+                              />
+                            </div>
+                          </SwiperSlide>
+                        ))}
+                  </Swiper>
+                );
+              })()}
+            </div>
+
+            {/* Tablet/Desktop Swiper */}
+            <div className="px-4 py-6 hidden sm:block">
               {(() => {
                 const shortFilmImages = getImagesByCategory("short_film");
                 const swiperConfig = getSwiperConfig(shortFilmImages);
@@ -207,7 +301,7 @@ export default function AwardNomination() {
                       typeof swiperConfig.autoplay === "object"
                         ? {
                             ...swiperConfig.autoplay,
-                            reverseDirection: true, // Autoplay moves from right to left
+                            reverseDirection: true,
                           }
                         : false
                     }
