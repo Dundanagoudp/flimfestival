@@ -92,10 +92,10 @@ export default function AwardNomination() {
   return (
     <div>
       <main className="w-full px-4" style={{ backgroundColor: "#ffffff" }}>
-        <div className="px-10 py-10">
+        <div className="px-4 md:px-10 py-10">
           {/* Best Documentary Film Section */}
           <div className="space-y-10" data-section-type="documentary">
-            <div className="flex justify-between">
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <h1 className="text-lg font-bold text-primary">
                   Arunachal Film Festival
@@ -140,19 +140,21 @@ export default function AwardNomination() {
                           length: Math.max(documentaryImages.length, 4),
                         }).map((_, i) => (
                           <SwiperSlide key={`doc-skel-${i}`}>
-                            <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 overflow-hidden shadow-sm">
+                            <div className="w-full h-44 sm:h-56 md:h-64 lg:h-72 rounded-[10px] bg-gray-100 border border-gray-200 overflow-hidden shadow-sm">
                               <Skeleton className="w-full h-full" />
                             </div>
                           </SwiperSlide>
                         ))
                       : documentaryImages.map((img, idx) => (
                           <SwiperSlide key={`doc-${idx}`}>
-                            <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 hover:scale-105 transition-all duration-300 overflow-hidden shadow-sm">
+                            <div className="w-full h-44 sm:h-56 md:h-64 lg:h-72 rounded-[10px] bg-gray-100 border border-gray-200 hover:scale-105 transition-all duration-300 overflow-hidden shadow-sm">
                               <img
                                 src={img}
                                 alt={`documentary ${idx + 1}`}
                                 className="w-full h-full object-cover"
                                 draggable="false"
+                                loading="lazy"
+                                decoding="async"
                               />
                             </div>
                           </SwiperSlide>
@@ -165,7 +167,7 @@ export default function AwardNomination() {
 
           {/* Best Short Film Section */}
           <div className="space-y-10" data-section-type="short_film">
-            <div className="flex justify-between">
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <h1 className="text-lg font-bold text-primary">
                   Arunachal Film Festival
@@ -218,19 +220,21 @@ export default function AwardNomination() {
                           length: Math.max(shortFilmImages.length, 4),
                         }).map((_, i) => (
                           <SwiperSlide key={`short-skel-${i}`}>
-                            <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 overflow-hidden shadow-sm">
+                            <div className="w-full h-44 sm:h-56 md:h-64 lg:h-72 rounded-[10px] bg-gray-100 border border-gray-200 overflow-hidden shadow-sm">
                               <Skeleton className="w-full h-full" />
                             </div>
                           </SwiperSlide>
                         ))
                       : shortFilmImages.map((img, idx) => (
                           <SwiperSlide key={`short-${idx}`}>
-                            <div className="w-full h-[277px] rounded-[10px] bg-gray-100 hover:scale-105 transition-all duration-300 border border-gray-200 overflow-hidden shadow-sm">
+                            <div className="w-full h-44 sm:h-56 md:h-64 lg:h-72 rounded-[10px] bg-gray-100 hover:scale-105 transition-all duration-300 border border-gray-200 overflow-hidden shadow-sm">
                               <img
                                 src={img}
                                 alt={`short film ${idx + 1}`}
                                 className="w-full h-full object-cover"
                                 draggable="false"
+                                loading="lazy"
+                                decoding="async"
                               />
                             </div>
                           </SwiperSlide>
