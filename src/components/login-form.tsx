@@ -38,6 +38,12 @@ export function LoginForm({
       
       // Store token and user role in cookies
       Cookies.set("token", res.token, { sameSite: "lax" })
+      // Also persist to localStorage for axios fallback
+      try {
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem("token", res.token)
+        }
+      } catch {}
       if (res.data?.user?.role) {
         Cookies.set("userRole", res.data.user.role, { sameSite: "lax" })
         // Update auth context
