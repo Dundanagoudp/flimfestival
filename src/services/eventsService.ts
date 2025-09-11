@@ -38,7 +38,6 @@ export async function addEvent(payload: CreateEventPayload & { imageFile?: File 
     const { data } = await apiClient.post<CreateEventResponse>(`${BASE}/addEvent`, json)
     return data
   } catch (error: any) {
-    console.error("Error creating event:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to create event")
   }
 }
@@ -73,7 +72,6 @@ export async function updateEvent(
     )
     return data
   } catch (error: any) {
-    console.error("Error updating event:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to update event")
   }
 }
@@ -84,7 +82,6 @@ export async function getEvent() {
     const { data } = await apiClient.get<GetEventsResponse>(`${BASE}/getEvent`)
     return data
   } catch (error: any) {
-    console.error("Error fetching events:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get events")
   }
 }
@@ -101,7 +98,6 @@ export async function getTotalEvent() {
     const { data } = await apiClient.get(`${BASE}/totalEvent`)
     return data as number | { totalEvents: number }
   } catch (error: any) {
-    console.error("Error fetching total events:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get total events")
   }
 }
@@ -114,7 +110,6 @@ export async function getEventDay(eventId: string) {
     })
     return data
   } catch (error: any) {
-    console.error("Error fetching event days:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get event days")
   }
 }
@@ -125,7 +120,6 @@ export async function updateEventDay(eventDayId: string, payload: UpdateEventDay
     const { data } = await apiClient.put<SimpleMessageResponse>(`${BASE}/updateEventDay/${eventDayId}`, payload)
     return data
   } catch (error: any) {
-    console.error("Error updating event day:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to update event day")
   }
 }
@@ -141,7 +135,6 @@ export async function updateEventDayWithImage(eventDayId: string, image: File) {
     }>(`${BASE}/updateEventDayWithImage/${eventDayId}`, form)
     return data
   } catch (error: any) {
-    console.error("Error updating event day image:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to update day image")
   }
 }
@@ -157,7 +150,6 @@ export async function uploadEventDayImage(eventDayId: string, image: File) {
     )
     return data
   } catch (error: any) {
-    console.error("Error uploading event day image:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to upload day image")
   }
 }
@@ -171,7 +163,6 @@ export async function addTime(eventId: string, eventDay_ref: string, payload: Ad
     )
     return data
   } catch (error: any) {
-    console.error("Error adding time entry:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to add time entry")
   }
 }
@@ -185,7 +176,6 @@ export async function updateTime(day_ref: string, timeId: string, payload: Updat
     )
     return data
   } catch (error: any) {
-    console.error("Error updating time entry:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to update time entry")
   }
 }
@@ -196,7 +186,6 @@ export async function deleteTime(timeId: string) {
     const { data } = await apiClient.delete<SimpleMessageResponse>(`${BASE}/deleteTime/${timeId}`)
     return data
   } catch (error: any) {
-    console.error("Error deleting time entry:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to delete time entry")
   }
 }
@@ -212,7 +201,6 @@ export async function deleteEvent(eventId: string) {
     }>(`${BASE}/deleteEvent/${eventId}`)
     return data
   } catch (error: any) {
-    console.error("Error deleting event:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to delete event")
   }
 }
@@ -223,7 +211,6 @@ export async function getTime() {
     const { data } = await apiClient.get<GetTimesResponse>(`${BASE}/getTime`)
     return data
   } catch (error: any) {
-    console.error("Error fetching times:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get times")
   }
 }
@@ -236,7 +223,6 @@ export async function getFullEvent(eventId: string) {
     })
     return data
   } catch (error: any) {
-    console.error("Error fetching full event details:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get full event details")
   }
 }
@@ -247,7 +233,6 @@ export async function deleteEventDayImage(eventDayId: string) {
     const { data } = await apiClient.delete<SimpleMessageResponse>(`${BASE}/deleteEventDayImage/${eventDayId}`)
     return data
   } catch (error: any) {
-    console.error("Error deleting event day image:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to delete event day image")
   }
 }
@@ -257,7 +242,6 @@ export async  function registerEvent(registrationData: RegistrationData){
  return response.data
   }
   catch(err:any){
-    console.error("Error registering for event:", err)
     throw new Error(err?.response?.data?.message || err?.message || "Failed to register for event")
   }
 }

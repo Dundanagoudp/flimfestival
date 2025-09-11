@@ -24,7 +24,6 @@ export async function createCategory(payload: CreateCategoryPayload) {
     const { data } = await apiClient.post<CategoryCreateResponse>(`${BASE}/categoryCreate`, payload)
     return data
   } catch (error: any) {
-    console.error("Error creating category:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to create category")
   }
 }
@@ -34,7 +33,6 @@ export async function getAllCategories() {
     const { data } = await apiClient.get<GetAllCategoriesResponse>(`${BASE}/getallcategory`)
     return data
   } catch (error: any) {
-    console.error("Error getting categories:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get categories")
   }
 }
@@ -44,7 +42,6 @@ export async function updateCategory(id: string, payload: UpdateCategoryPayload)
     const { data } = await apiClient.put<CategoryCreateResponse>(`${BASE}/updatecategory/${id}`, payload)
     return data
   } catch (error: any) {
-    console.error("Error updating category:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to update category")
   }
 }
@@ -54,7 +51,6 @@ export async function deleteCategory(id: string) {
     const { data } = await apiClient.delete<SimpleMessageResponse>(`${BASE}/deletecategory/${id}`)
     return data
   } catch (error: any) {
-    console.error("Error deleting category:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to delete category")
   }
 }
@@ -81,7 +77,6 @@ export async function createBlog(payload: CreateBlogPayload) {
     const { data } = await apiClient.post<BlogPost>(`${BASE}/createblog`, formData)
     return data
   } catch (error: any) {
-    console.error("Error creating blog:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to create blog")
   }
 }
@@ -91,7 +86,6 @@ export async function getAllBlogs() {
     const { data } = await apiClient.get<GetAllBlogsResponse>(`${BASE}/getallblogs`)
     return data
   } catch (error: any) {
-    console.error("Error getting all blogs:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get all blogs")
   }
 }
@@ -101,7 +95,6 @@ export async function getContentBlogs() {
     const { data } = await apiClient.get<GetContentBlogsResponse>(`${BASE}/contentblogs/posts`)
     return data
   } catch (error: any) {
-    console.error("Error getting content blogs:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get content blogs")
   }
 }
@@ -111,7 +104,6 @@ export async function getLinkBlogs() {
     const { data } = await apiClient.get<GetLinkBlogsResponse>(`${BASE}/linkblogs/posts`)
     return data
   } catch (error: any) {
-    console.error("Error getting link blogs:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get link blogs")
   }
 }
@@ -121,7 +113,6 @@ export async function getLatestBlogs() {
     const { data } = await apiClient.get<GetLatestBlogsResponse>(`${BASE}/getlatest`)
     return data
   } catch (error: any) {
-    console.error("Error getting latest blogs:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get latest blogs")
   }
 }
@@ -131,7 +122,6 @@ export async function getSingleBlog(id: string) {
     const { data } = await apiClient.get<SingleBlogResponse>(`${BASE}/singleblog/${id}`)
     return data
   } catch (error: any) {
-    console.error("Error getting single blog:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get single blog")
   }
 }
@@ -164,7 +154,6 @@ export async function updateBlog(id: string, payload: UpdateBlogPayload) {
     const { data } = await apiClient.put<BlogPost>(`${BASE}/updateblogs/${id}`, formData)
     return data
   } catch (error: any) {
-    console.error("Error updating blog:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to update blog")
   }
 }
@@ -174,7 +163,6 @@ export async function deleteBlog(id: string) {
     const { data } = await apiClient.delete<SimpleMessageResponse>(`${BASE}/deleteblog/${id}`)
     return data
   } catch (error: any) {
-    console.error("Error deleting blog:", error)
     throw new Error(error?.response?.data?.message || error?.message || "Failed to delete blog")
   }
 }

@@ -10,7 +10,6 @@ export async function getWorkshops(): Promise<Workshop[]> {
         return Array.isArray(payload) ? payload as Workshop[] : payload.data;
     }
     catch(error: any){
-        console.error("Error fetching workshops:", error);
         throw new Error(error?.response?.data?.message || error?.message || "Failed to fetch workshops");
     }
 };

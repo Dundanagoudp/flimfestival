@@ -112,7 +112,7 @@ export async function getStats() {
     }>("/aboutus/statistics")
     return response.data.data
   } catch (error) {
-    console.log(error)
+    
     throw error
 
   }
@@ -126,7 +126,7 @@ export async function getIntroduction() {
     const response = await apiClient.get<AboutIntroduction>(`${BASE}/introduction`)
     return response.data
   } catch (error) {
-    console.log(error)
+    
     throw error
   }
 }
