@@ -36,10 +36,10 @@ function Guest() {
   return (
       <div>
       <main className="w-full px-4">
-        <div className="px-10 py-10">
-          <div className='flex justify-between items-center'>
-            <h1 className='text-4xl font-bold'>Guest</h1>
-            <div className="flex items-center gap-2">
+        <div className="px-4 md:px-10 py-8 md:py-10">
+          <div className='flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center'>
+            <h1 className='text-2xl sm:text-3xl md:text-4xl font-bold'>Guest</h1>
+            <div className="flex items-center gap-2 sm:gap-3">
               <Link href={"/guests"}>
                 <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
                   View Guest
@@ -51,20 +51,23 @@ function Guest() {
             </div>
           </div>
           
-          <div className="px-4">
-            <div className="grid grid-cols-3 gap-4 mt-10">
+          <div className="px-1 sm:px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mt-6 md:mt-10">
               {displayGuests.length > 0 && (
                 <>
                   {/* Featured guest (top-left, larger) */}
 
                   <div className="relative cursor-pointer group transform transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl ">
                     <img
-                      src={displayGuests[0]?.photo || "video.png"}
+                      src={displayGuests[0]?.photo || "/video.png"}
                       alt={displayGuests[0]?.name || "Featured Guest"}
-                      className="w-full h-72 md:h-80 lg:h-96 rounded-lg object-fill transition-all duration-300 ease-out group-hover:brightness-110"
+                      className="w-full h-56 sm:h-64 md:h-72 lg:h-96 rounded-lg object-cover transition-all duration-300 ease-out group-hover:brightness-110"
+                      loading="lazy"
+                      decoding="async"
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        target.src = "video.png"; // Fallback image
+                        target.src = "/video.png"; // Fallback image
                       }}
                     />
                     {/* Gradient & text overlay */}
@@ -83,12 +86,15 @@ function Guest() {
                   {displayGuests[1] && (
                     <div className="relative cursor-pointer group transform transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl">
                       <img
-                        src={displayGuests[1].photo || "video.png"}
+                        src={displayGuests[1].photo || "/video.png"}
                         alt={displayGuests[1].name}
-                        className="w-full h-72 md:h-80 lg:h-96 rounded-lg object-fill transition-all duration-300 ease-out group-hover:brightness-110"
+                        className="w-full h-56 sm:h-64 md:h-72 lg:h-96 rounded-lg object-cover transition-all duration-300 ease-out group-hover:brightness-110"
+                        loading="lazy"
+                        decoding="async"
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.src = "video.png";
+                          target.src = "/video.png";
                         }}
                       />
                       <div className="absolute inset-0 rounded-lg pointer-events-none bg-gradient-to-t from-black/40 to-transparent"></div>
@@ -102,12 +108,15 @@ function Guest() {
                   {displayGuests[2] && (
                     <div className="relative cursor-pointer group transform transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl">
                       <img
-                        src={displayGuests[2].photo || "video.png"}
+                        src={displayGuests[2].photo || "/video.png"}
                         alt={displayGuests[2].name}
-                        className="w-full h-72 md:h-80 lg:h-96 rounded-lg object-fill transition-all duration-300 ease-out group-hover:brightness-110"
+                        className="w-full h-56 sm:h-64 md:h-72 lg:h-96 rounded-lg object-cover transition-all duration-300 ease-out group-hover:brightness-110"
+                        loading="lazy"
+                        decoding="async"
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.src = "video.png";
+                          target.src = "/video.png";
                         }}
                       />
                       <div className="absolute inset-0 rounded-lg pointer-events-none bg-gradient-to-t from-black/40 to-transparent"></div>
@@ -119,15 +128,18 @@ function Guest() {
                   )}
 
                   {/* Bottom row - 3 thumbnails */}
-                  {displayGuests.slice(3, 6).map((guest, index) => (
+                  {displayGuests.slice(3, 6).map((guest) => (
                     <div key={guest._id} className="relative cursor-pointer group transform transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl">
                       <img
-                        src={guest.photo || "video.png"}
+                        src={guest.photo || "/video.png"}
                         alt={guest.name}
-                        className="w-full h-72 md:h-80 lg:h-96 rounded-lg object-fill transition-all duration-300 ease-out group-hover:brightness-110"
+                        className="w-full h-56 sm:h-64 md:h-72 lg:h-80 rounded-lg object-cover transition-all duration-300 ease-out group-hover:brightness-110"
+                        loading="lazy"
+                        decoding="async"
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.src = "video.png";
+                          target.src = "/video.png";
                         }}
                       />
                       <div className="absolute inset-0 rounded-lg pointer-events-none bg-gradient-to-t from-black/40 to-transparent"></div>
@@ -142,7 +154,7 @@ function Guest() {
 
               {/* Fallback for when there are no guests */}
               {displayGuests.length === 0 && (
-                <div className="col-span-3 text-center py-20">
+                <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-16 md:py-20">
                   <p className="text-lg text-gray-500">No guests available</p>
                 </div>
               )}
