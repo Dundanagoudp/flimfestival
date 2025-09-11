@@ -124,9 +124,8 @@ export async function getStats() {
 export async function getIntroduction() {
   try {
     const { data } = await apiClient.get<{ success: boolean; message: string; data: AboutIntroduction }>(`${BASE}/introduction`)
-    return data
+    return data.data
   } catch (error) {
-    
     throw error
   }
 }

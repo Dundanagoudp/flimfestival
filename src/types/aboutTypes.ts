@@ -46,15 +46,11 @@ export interface UpdateStatisticsPayload {
 
 // About Us - Introduction Types
 export interface AboutIntroduction {
-  success: boolean
-  message: string
-  data: {
   id?: string
   _id?: string
   title: string
   description: string
   image: string
-}
 }
 
 export interface CreateIntroductionPayload {
