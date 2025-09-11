@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   Breadcrumb,
@@ -14,14 +14,35 @@ import { getCookie } from "@/lib/cookies";
 
 export function DynamicBreadcrumb() {
   const pathname = usePathname();
-  const { userRole } = useAuth();
-  const role = userRole || getCookie("userRole");
+  const { userRole, isLoading } = useAuth();
+  const [mounted, setMounted] = useState(false);
+  
+  // Ensure component is mounted before determining role to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  // During SSR and initial render, use a consistent default
+  const role = mounted ? (userRole || getCookie("userRole")) : null;
   const baseLabel = role === "admin" ? "Admin Panel" : "Editor Panel";
   const baseHref = "/admin/dashboard";
   const segments = pathname.replace(/^\/+/g, '').split('/');
   
   // Only show breadcrumb for admin routes
   if (segments[0] !== 'admin') return null;
+  
+  // Show loading state during initial render to prevent hydration mismatch
+  if (!mounted || isLoading) {
+    return (
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem className="hidden md:block">
+            <BreadcrumbLink href="/admin/dashboard">Loading...</BreadcrumbLink>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+    );
+  }
   
   // Hide dynamic ID-like segments from breadcrumb (e.g., numeric IDs, 24-char hex IDs)
   const isIdLike = (seg: string) => /^(?:[0-9]+|[0-9a-fA-F]{24})$/.test(seg);
