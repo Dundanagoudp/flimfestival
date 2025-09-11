@@ -24,7 +24,6 @@ export async function createAwardCategory(payload: CreateCategoryPayload): Promi
     const { data } = await apiClient.post<CategoryCreateResponse>(`${BASE}/categoryCreate`, payload)
     return data
   } catch (error: any) {
-    console.error("Error creating award category:", error)
     const errorMessage = error?.response?.data?.message || error?.message || "Failed to create award category"
     throw new Error(errorMessage)
   }
@@ -35,7 +34,6 @@ export async function getAllAwardCategories(): Promise<GetAllCategoriesResponse>
     const { data } = await apiClient.get<GetAllCategoriesResponse>(`${BASE}/getAllCategories`)
     return data
   } catch (error: any) {
-    console.error("Error getting all award categories:", error)
     const errorMessage = error?.response?.data?.message || error?.message || "Failed to get award categories"
     throw new Error(errorMessage)
   }
@@ -46,7 +44,6 @@ export async function getNomination(): Promise<GetAllNominationResponse> {
     const { data } = await apiClient.get(`/nominations`)
     return data
   } catch (error: any) {
-    console.error("Error getting all nomination:", error)
     const errorMessage = error?.response?.data?.message || error?.message || "Failed to get all nomination"
     throw new Error(errorMessage)
   }
@@ -61,7 +58,6 @@ export async function updateAwardCategory(id: string, payload: UpdateCategoryPay
     const { data } = await apiClient.put<CategoryCreateResponse>(`${BASE}/updateCategory/${id}`, payload)
     return data
   } catch (error: any) {
-    console.error("Error updating award category:", error)
     const errorMessage = error?.response?.data?.message || error?.message || "Failed to update award category"
     throw new Error(errorMessage)
   }
@@ -76,7 +72,6 @@ export async function deleteAwardCategory(id: string): Promise<SimpleMessageResp
     const { data } = await apiClient.delete<SimpleMessageResponse>(`${BASE}/deleteCategory/${id}`)
     return data
   } catch (error: any) {
-    console.error("Error deleting award category:", error)
     const errorMessage = error?.response?.data?.message || error?.message || "Failed to delete award category"
     throw new Error(errorMessage)
   }
@@ -110,7 +105,6 @@ export async function createAward(payload: CreateAwardPayload): Promise<AwardCre
     const { data } = await apiClient.post<AwardCreateResponse>(`${BASE}/createAwards`, formData)
     return data
   } catch (error: any) {
-    console.error("Error creating award:", error)
     const errorMessage = error?.response?.data?.message || error?.message || "Failed to create award"
     throw new Error(errorMessage)
   }
@@ -122,7 +116,6 @@ export async function getAllAwards(): Promise<GetAllAwardsResponse> {
     const { data } = await apiClient.get<GetAllAwardsResponse>(`${BASE}/getAllAwards`)
     return data
   } catch (error: any) {
-    console.error("Error getting all awards:", error)
     const errorMessage = error?.response?.data?.message || error?.message || "Failed to get all awards"
     throw new Error(errorMessage)
   }
@@ -138,7 +131,6 @@ export async function getAwardById(id: string): Promise<GetAwardByIdResponse> {
     const { data } = await apiClient.get<GetAwardByIdResponse>(`${BASE}/getAwardsById/${id}`)
     return data
   } catch (error: any) {
-    console.error("Error getting award by ID:", error)
     const errorMessage = error?.response?.data?.message || error?.message || "Failed to get award by ID"
     throw new Error(errorMessage)
   }
@@ -176,7 +168,6 @@ export async function updateAward(id: string, payload: UpdateAwardPayload): Prom
     const { data } = await apiClient.put<AwardUpdateResponse>(`${BASE}/updateAwards/${id}`, formData)
     return data
   } catch (error: any) {
-    console.error("Error updating award:", error)
     const errorMessage = error?.response?.data?.message || error?.message || "Failed to update award"
     throw new Error(errorMessage)
   }
@@ -192,7 +183,6 @@ export async function deleteAward(id: string): Promise<AwardDeleteResponse> {
     const { data } = await apiClient.delete<AwardDeleteResponse>(`${BASE}/deleteAwards/${id}`)
     return data
   } catch (error: any) {
-    console.error("Error deleting award:", error)
     const errorMessage = error?.response?.data?.message || error?.message || "Failed to delete award"
     throw new Error(errorMessage)
   }
