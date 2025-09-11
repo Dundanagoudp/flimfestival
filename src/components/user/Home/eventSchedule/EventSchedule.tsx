@@ -3,10 +3,11 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getlatestEvent, getTotalEvent } from "@/services/eventsService";
+
 import Link from "next/link";
 import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 import { getWorkshops } from "@/services/workshopService";
+import { getLatestEvent } from "@/services/eventsService";
 
 
 type ScheduleItemProps = {
@@ -46,7 +47,7 @@ export default function EventSchedule() {
     const fetchEvent = async () => {
       setLoading(true);
       try {
-        const response = await getlatestEvent();
+        const response = await getLatestEvent();
         setEventData(response);
         console.log(" Latest Event", response);
       } catch (err: any) {
