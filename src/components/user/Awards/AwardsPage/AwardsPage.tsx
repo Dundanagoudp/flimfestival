@@ -4,6 +4,7 @@ import Image from "next/image";
 import React, { useEffect, useMemo, useState } from "react";
 import { getAllAwards, getCategoryNameMap } from "@/services/awardService";
 import type { Award } from "@/types/awardTypes";
+import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 
 /** A single "Short Documentary Rules & Regulations" block */
 function RulesSection({
@@ -106,10 +107,12 @@ export default function AwardsPage() {
   const [awards, setAwards] = useState<Award[] | null>(null);
   const [catMap, setCatMap] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let mounted = true;
     (async () => {
+      setLoading(true);
       try {
         const [awardsRes, cats] = await Promise.all([getAllAwards(), getCategoryNameMap()]);
         if (!mounted) return;
@@ -118,6 +121,9 @@ export default function AwardsPage() {
       } catch (e: any) {
         if (!mounted) return;
         setError(e?.message || "Failed to load awards");
+      }
+      finally{
+        setLoading(false);
       }
     })();
     return () => {
@@ -136,7 +142,9 @@ export default function AwardsPage() {
       </section>
     );
   }
-
+if (loading) {
+  return <LoadingSpinner />;
+}
   if (!awards) {
     // Skeleton
     return (

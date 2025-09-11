@@ -9,6 +9,7 @@ import type {
   GalleryImage,
 } from "@/types/galleryTypes";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 
 type YearId = string;
 
@@ -83,6 +84,9 @@ export default function GalleryPage() {
     const y = years.find((yy) => yy._id === activeYearId);
     return y?.value;
   }, [years, activeYearId]);
+  if(loading && loadingYears){
+    return <LoadingSpinner />;
+  }
 
   return (
     <section className="bg-[oklch(0.97_0_0)]">

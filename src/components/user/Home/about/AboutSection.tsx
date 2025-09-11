@@ -102,10 +102,10 @@ export default function AboutSection() {
           {/* Right side About content */}
           <div className="flex flex-col justify-center">
             <section className="space-y-4">
-              <h2 className="text-4xl font-bold">
+              <h2 className="text-3xl font-bold">
                 {(introduction as any)?.title}
               </h2>
-              <p className="text-3xl text-[#989898] leading-[2.5rem] text-justify">
+              <p className="text-xl text-[#989898] leading-[2.5rem] text-justify">
                 {(introduction as any)?.description}
               </p>
               <div className="flex items-center gap-2 group">
