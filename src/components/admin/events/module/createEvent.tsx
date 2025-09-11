@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar, Loader2, Save } from "lucide-react"
 import { useToast } from "@/components/ui/custom-toast"
 import { addEvent } from "@/services/eventsService"
@@ -37,7 +38,14 @@ export default function CreateEventForm() {
     const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "year" || name === "month" ? Number.parseInt(value) || 0 : value,
+      [name]: name === "year" ? Number.parseInt(value) || 0 : value,
+    }))
+  }
+
+  const handleMonthChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      month: Number.parseInt(value),
     }))
   }
 
@@ -107,7 +115,25 @@ export default function CreateEventForm() {
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="month">Month *</Label>
-              <Input id="month" name="month" type="number" value={formData.month} onChange={handleChange} min="1" max="12" required disabled={isLoading} />
+              <Select value={formData.month.toString()} onValueChange={handleMonthChange} disabled={isLoading}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select month" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">January</SelectItem>
+                  <SelectItem value="2">February</SelectItem>
+                  <SelectItem value="3">March</SelectItem>
+                  <SelectItem value="4">April</SelectItem>
+                  <SelectItem value="5">May</SelectItem>
+                  <SelectItem value="6">June</SelectItem>
+                  <SelectItem value="7">July</SelectItem>
+                  <SelectItem value="8">August</SelectItem>
+                  <SelectItem value="9">September</SelectItem>
+                  <SelectItem value="10">October</SelectItem>
+                  <SelectItem value="11">November</SelectItem>
+                  <SelectItem value="12">December</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="startDate">Start Date *</Label>

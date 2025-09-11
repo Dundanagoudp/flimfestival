@@ -25,6 +25,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export default function EventsMainpage() {
   const { showToast } = useToast()
@@ -50,6 +60,8 @@ export default function EventsMainpage() {
   const [selectedDay, setSelectedDay] = useState<EventDayItem | null>(null)
   const [viewModalOpen, setViewModalOpen] = useState(false)
   const [viewEventId, setViewEventId] = useState<string | null>(null)
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
+  const [eventToDelete, setEventToDelete] = useState<EventItem | null>(null)
 
   useEffect(() => {
     void bootstrap()
@@ -133,13 +145,20 @@ export default function EventsMainpage() {
 
   const totalSessions = useMemo(() => days.reduce((sum, d) => sum + (d.times?.length ?? 0), 0), [days])
 
-  async function handleDeleteEvent(eventId: string) {
-    if (!confirm("Are you sure you want to delete this event?")) return
-    setIsDeleting(eventId)
+  function handleDeleteEventClick(event: EventItem) {
+    setEventToDelete(event)
+    setDeleteConfirmOpen(true)
+  }
+
+  async function handleDeleteEvent() {
+    if (!eventToDelete) return
+    setIsDeleting(eventToDelete._id)
     try {
-      const res = await deleteEvent(eventId)
-      showToast(res.message ?? "Deleted", "success")
+      const res = await deleteEvent(eventToDelete._id)
+      showToast(res.message ?? "Event deleted successfully", "success")
       await bootstrap()
+      setDeleteConfirmOpen(false)
+      setEventToDelete(null)
     } catch (err: any) {
       showToast(err?.message ?? "Failed to delete event", "error")
     } finally {
@@ -377,7 +396,7 @@ export default function EventsMainpage() {
                     <DropdownMenuItem asChild>
                         <Link href={`/admin/dashboard/events/add-time`} className="flex items-center">Add Time Slot</Link>
                     </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => handleDeleteEvent(currentEvent._id)}>
+                      <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => handleDeleteEventClick(currentEvent)}>
                       <Trash2 className="mr-2 h-4 w-4" /> Delete Event
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -647,6 +666,51 @@ export default function EventsMainpage() {
         onClose={() => { setViewModalOpen(false); setViewEventId(null) }}
         eventId={viewEventId}
       />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Trash2 className="h-5 w-5 text-red-600" />
+              Delete Event
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-base">
+              Are you sure you want to delete the event <strong>"{eventToDelete?.name}"</strong>? 
+              <br /><br />
+              This action cannot be undone. This will permanently delete the event and all associated data including:
+              <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
+                <li>Event details and information</li>
+                <li>All event days and sessions</li>
+                <li>Uploaded images and media</li>
+                <li>Time slots and schedules</li>
+              </ul>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting !== null}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteEvent}
+              disabled={isDeleting !== null}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            >
+              {isDeleting !== null ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete Event
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
