@@ -33,7 +33,7 @@ export default function StatsCards() {
 
   if (loading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, index) => (
           <Card key={index}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -90,7 +90,7 @@ export default function StatsCards() {
   ]
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat, index) => {
         const IconComponent = stat.icon
         return (
@@ -100,7 +100,7 @@ export default function StatsCards() {
               <IconComponent className={`h-4 w-4 ${stat.color}`} />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
+              <div className="text-xl sm:text-2xl font-bold">{stat.value}</div>
               <p className="text-xs text-muted-foreground">
                 <span className={stat.trend === "up" ? "text-green-600" : "text-red-600"}>
                   {stat.change}

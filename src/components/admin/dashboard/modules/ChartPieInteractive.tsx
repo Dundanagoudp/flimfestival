@@ -122,7 +122,7 @@ export default function ChartPieInteractive() {
         </div>
         <Select value={activeCategory} onValueChange={setActiveCategory}>
           <SelectTrigger
-            className="ml-auto h-7 w-[130px] rounded-lg pl-2.5"
+            className="ml-auto h-7 w-[100px] sm:w-[130px] rounded-lg pl-2.5"
             aria-label="Select a value"
           >
             <SelectValue placeholder="Select category" />
@@ -160,7 +160,7 @@ export default function ChartPieInteractive() {
         <ChartContainer
           id={id}
           config={chartConfig}
-          className="mx-auto aspect-square w-full max-w-[200px]"
+          className="mx-auto aspect-square w-full max-w-[160px] sm:max-w-[200px]"
         >
           <RechartsPieChart>
             <ChartTooltip
