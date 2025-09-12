@@ -89,7 +89,7 @@ export default function ChartRadarGridFill() {
       <CardContent className="pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[200px]"
+          className="mx-auto aspect-square max-h-[160px] sm:max-h-[200px]"
         >
           <RadarChart data={transformedData}>
             <ChartTooltip
@@ -97,7 +97,7 @@ export default function ChartRadarGridFill() {
               content={<ChartTooltipContent hideLabel />}
             />
             <PolarGrid className="fill-(--color-contentCreated) opacity-20" />
-            <PolarAngleAxis dataKey="month" />
+            <PolarAngleAxis dataKey="month" fontSize={12} />
             <Radar
               dataKey="contentCreated"
               fill="var(--color-contentCreated)"

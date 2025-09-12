@@ -96,17 +96,17 @@ export default function QuickActions() {
             return (
               <div 
                 key={index} 
-                className="flex items-center justify-between rounded-lg border p-3 hover:bg-gray-50 cursor-pointer transition-colors"
+                className="flex items-center justify-between rounded-lg border p-2 sm:p-3 hover:bg-gray-50 cursor-pointer transition-colors"
                 onClick={() => {
                   // You can add navigation logic here
                   console.log('Navigate to:', action.route)
                 }}
               >
-                <div>
-                  <p className="font-medium">{action.title}</p>
-                  <p className="text-sm text-muted-foreground">{action.description}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm sm:text-base truncate">{action.title}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground truncate">{action.description}</p>
                 </div>
-                <IconComponent className="h-4 w-4 text-muted-foreground" />
+                <IconComponent className="h-4 w-4 text-muted-foreground flex-shrink-0 ml-2" />
               </div>
             )
           })}

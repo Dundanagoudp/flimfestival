@@ -156,13 +156,13 @@ export default function AddBlogPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+    <div className="flex flex-1 flex-col gap-4 p-3 pt-0 sm:gap-6 sm:p-6">
       <Card className="w-full">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold mb-6">
+          <CardTitle className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
             Create New Blog
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm sm:text-base">
             Add new blog posts, articles, or external links.
           </CardDescription>
         </CardHeader>
@@ -170,26 +170,26 @@ export default function AddBlogPage() {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-6"
+              className="space-y-4 sm:space-y-6"
             >
               <FormField
                 control={form.control}
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Category</FormLabel>
                     <FormControl>
                       {loading ? (
                         <div className="flex items-center gap-2">
                           <Loader2 className="h-4 w-4 animate-spin" />
-                          <span>Loading categories...</span>
+                          <span className="text-sm sm:text-base">Loading categories...</span>
                         </div>
                       ) : (
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
                         >
-                          <SelectTrigger>
+                          <SelectTrigger className="text-sm sm:text-base">
                             <SelectValue placeholder="Select a category" />
                           </SelectTrigger>
                           <SelectContent>
@@ -197,6 +197,7 @@ export default function AddBlogPage() {
                               <SelectItem
                                 key={category._id}
                                 value={category._id}
+                                className="text-sm sm:text-base"
                               >
                                 {category.name}
                               </SelectItem>
@@ -215,9 +216,9 @@ export default function AddBlogPage() {
                 name="contentType"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel>Content Type</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Content Type</FormLabel>
                     <FormControl>
-                      <div className="flex items-center space-x-6">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-6">
                         <div className="flex items-center space-x-2">
                           <input
                             type="radio"
@@ -227,7 +228,7 @@ export default function AddBlogPage() {
                             onChange={(e) => field.onChange(e.target.value)}
                             className="h-4 w-4"
                           />
-                          <Label htmlFor="blog">Blog Post</Label>
+                          <Label htmlFor="blog" className="text-sm sm:text-base">Blog Post</Label>
                         </div>
                         <div className="flex items-center space-x-2">
                           <input
@@ -238,7 +239,7 @@ export default function AddBlogPage() {
                             onChange={(e) => field.onChange(e.target.value)}
                             className="h-4 w-4"
                           />
-                          <Label htmlFor="link">External Link</Label>
+                          <Label htmlFor="link" className="text-sm sm:text-base">External Link</Label>
                         </div>
                       </div>
                     </FormControl>
@@ -252,9 +253,9 @@ export default function AddBlogPage() {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter title" {...field} />
+                      <Input placeholder="Enter title" {...field} className="text-sm sm:text-base" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -266,9 +267,9 @@ export default function AddBlogPage() {
                 name="author"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Author</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Author</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter author name" {...field} />
+                      <Input placeholder="Enter author name" {...field} className="text-sm sm:text-base" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -281,11 +282,11 @@ export default function AddBlogPage() {
                   name="contents"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Content</FormLabel>
+                      <FormLabel className="text-sm sm:text-base">Content</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Write your blog content here..."
-                          className="min-h-[200px]"
+                          className="min-h-[150px] sm:min-h-[200px] text-sm sm:text-base"
                           {...field}
                         />
                       </FormControl>
@@ -299,10 +300,11 @@ export default function AddBlogPage() {
                   name="link"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Link URL</FormLabel>
+                      <FormLabel className="text-sm sm:text-base">Link URL</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="https://example.com"
+                          className="text-sm sm:text-base"
                           {...field}
                         />
                       </FormControl>
@@ -317,12 +319,12 @@ export default function AddBlogPage() {
                 name="publishedDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Published Date</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Published Date</FormLabel>
                     <FormControl>
                       <Input
                         type="date"
                         {...field}
-                        className="w-[240px]"
+                        className="w-full sm:w-[240px] text-sm sm:text-base"
                       />
                     </FormControl>
                     <FormMessage />
@@ -331,8 +333,8 @@ export default function AddBlogPage() {
               />
 
               <div className="space-y-2">
-                <Label>Featured Image</Label>
-                <div className="flex items-center gap-4">
+                <Label className="text-sm sm:text-base">Featured Image</Label>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -344,11 +346,12 @@ export default function AddBlogPage() {
                     type="button"
                     variant="outline"
                     onClick={triggerFileInput}
+                    className="w-full sm:w-auto"
                   >
                     Upload Image
                   </DynamicButton>
                   {previewImage && (
-                    <div className="w-20 h-20 rounded-md overflow-hidden border">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-md overflow-hidden border">
                       <img
                         src={previewImage}
                         alt="Preview"
@@ -357,12 +360,12 @@ export default function AddBlogPage() {
                     </div>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Upload a featured image for your post
                 </p>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <DynamicButton 
                   type="submit" 
                   loading={isSubmitting}
@@ -374,19 +377,8 @@ export default function AddBlogPage() {
                 <DynamicButton 
                   type="button" 
                   variant="outline"
-                  onClick={() => {
-                    const isValid = form.trigger();
-                    console.log("Form validation result:", isValid);
-                    console.log("Current form values:", form.getValues());
-                    console.log("Form errors:", form.formState.errors);
-                  }}
-                >
-                  Test Validation
-                </DynamicButton>
-                <DynamicButton 
-                  type="button" 
-                  variant="outline"
                   onClick={() => router.push("/admin/dashboard/blog")}
+                  className="w-full sm:w-auto"
                 >
                   Cancel
                 </DynamicButton>

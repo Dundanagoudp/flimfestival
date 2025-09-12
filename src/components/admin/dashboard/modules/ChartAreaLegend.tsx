@@ -94,13 +94,13 @@ export default function ChartAreaLegend() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[200px]">
+        <ChartContainer config={chartConfig} className="h-[180px] sm:h-[200px]">
           <AreaChart
             accessibilityLayer
             data={transformedData}
             margin={{
-              left: 12,
-              right: 12,
+              left: 8,
+              right: 8,
             }}
           >
             <CartesianGrid vertical={false} />
@@ -110,6 +110,7 @@ export default function ChartAreaLegend() {
               axisLine={false}
               tickMargin={8}
               tickFormatter={(value) => value.slice(0, 3)}
+              fontSize={12}
             />
             <ChartTooltip
               cursor={false}

@@ -33,7 +33,7 @@ export default function ManagementWidgets() {
 
   if (loading) {
     return (
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
         {[...Array(2)].map((_, index) => (
           <Card key={index}>
             <CardHeader>
@@ -75,25 +75,25 @@ export default function ManagementWidgets() {
   ]
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
       {/* Content Management */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle className="flex items-center justify-between text-sm sm:text-base">
             Content Management
             <BarChart3 className="h-4 w-4" />
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3 sm:space-y-4">
           {contentStats.map((stat, index) => {
             const IconComponent = stat.icon
             return (
               <div key={index} className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <IconComponent className={`h-4 w-4 ${stat.color}`} />
-                  <span className="text-sm font-medium">{stat.label}</span>
+                  <span className="text-xs sm:text-sm font-medium">{stat.label}</span>
                 </div>
-                <span className="text-sm font-bold">{stat.value}</span>
+                <span className="text-xs sm:text-sm font-bold">{stat.value}</span>
               </div>
             )
           })}
@@ -103,21 +103,21 @@ export default function ManagementWidgets() {
       {/* Activity Management */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle className="flex items-center justify-between text-sm sm:text-base">
             Activity Management
             <BarChart3 className="h-4 w-4" />
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3 sm:space-y-4">
           {submissionStats.map((stat, index) => {
             const IconComponent = stat.icon
             return (
               <div key={index} className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <IconComponent className={`h-4 w-4 ${stat.color}`} />
-                  <span className="text-sm font-medium">{stat.label}</span>
+                  <span className="text-xs sm:text-sm font-medium">{stat.label}</span>
                 </div>
-                <span className="text-sm font-bold">{stat.value}</span>
+                <span className="text-xs sm:text-sm font-bold">{stat.value}</span>
               </div>
             )
           })}

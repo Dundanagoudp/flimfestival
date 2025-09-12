@@ -105,7 +105,7 @@ export default function ChartBarMixed() {
         <CardDescription>{chartData.period || "January - June 2024"}</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[250px]">
+        <ChartContainer config={chartConfig} className="h-[200px] sm:h-[250px]">
           <BarChart
             accessibilityLayer
             data={transformedData}
@@ -118,8 +118,9 @@ export default function ChartBarMixed() {
               dataKey="category"
               type="category"
               tickLine={false}
-              tickMargin={10}
+              tickMargin={8}
               axisLine={false}
+              fontSize={12}
               tickFormatter={(value) =>
                 chartConfig[value as keyof typeof chartConfig]?.label || value
               }
