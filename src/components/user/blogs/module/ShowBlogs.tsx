@@ -12,12 +12,13 @@ import { Skeleton } from '@/components/ui/skeleton'
 export default function ShowBlogs() {
   const [blogs, setBlogs] = useState<BlogPost[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState<"blog" | "link">("blog")
 
   useEffect(() => {
     const fetchBlogs = async () => {
       setIsLoading(true)
       const response = await getAllBlogs()
-
+      console.log("response of blogs", response)
       setBlogs(response)
       setIsLoading(false)
     }
@@ -47,8 +48,32 @@ export default function ShowBlogs() {
       </div>
     ) : (
       // Actual Content Layout
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {blogs.map((blog, index) => {
+      <>
+        <div className="flex justify-center mb-8">
+          <div className="flex bg-gray-100 rounded-lg p-1">
+            {(["blog", "link"] as const).map((tab) => {
+              const isActive = activeTab === tab
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-md font-medium transition-all duration-200 ${
+                    isActive
+                      ? "bg-primary text-white shadow-sm"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
+                  }`}
+                >
+                  <span>{tab === "blog" ? "Blog" : "Link"}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {blogs
+          .filter((b) => b.contentType === activeTab)
+          .map((blog, index) => {
           const categoryName = typeof blog.category === 'string' ? blog.category : blog.category?.name;
           return (
             <Reveal key={blog._id} pop y={16} delay={0.05 + index * 0.06}>
@@ -72,15 +97,27 @@ export default function ShowBlogs() {
                   </div>
                 </CardContent>
                 <CardFooter className="px-4 pt-0 flex justify-end">
-                  <Button asChild size="sm" className="w-1/2">
-                    <Link href={`/blogs/${blog._id}`}>Read More</Link>
-                  </Button>
+                  {blog.contentType === 'blog' ? (
+                    <Button asChild size="sm" className="w-1/2">
+                      <Link href={`/blogs/${blog._id}`}>Read More</Link>
+                    </Button>
+                  ) : (
+                    <Button asChild size="sm" className="w-1/2">
+                      <a href={blog.link || '#'} target="_blank" rel="noopener noreferrer">Open Link</a>
+                    </Button>
+                  )}
                 </CardFooter>
               </Card>
             </Reveal>
           );
         })}
+        {blogs.filter((b) => b.contentType === activeTab).length === 0 && (
+          <div className="col-span-full flex justify-center items-center py-20">
+            <p className="text-gray-500 text-lg">No {activeTab === 'blog' ? 'blog posts' : 'links'} available</p>
+          </div>
+        )}
       </div>
+      </>
     )}
   </div>
 </main>
