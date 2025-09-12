@@ -64,6 +64,7 @@ export default function VideoSection() {
               <video
                 src={video}
                 controls
+                className="w-full max-w-[1140px] rounded-[10px] object-cover h-[220px] sm:h-[360px] md:h-[480px] lg:h-[539px]"
                 style={{
                   width: "1140px",
                   height: "539px",
