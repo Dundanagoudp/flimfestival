@@ -136,7 +136,7 @@ export default function EventSchedule() {
               <div className="flex-shrink-0 mb-4 md:mb-0">
                 <div className="h-full flex items-center">
                   <ol className="flex flex-row md:flex-col items-center gap-4 md:gap-6">
-                    {currentEvent?.days?.map((day: any, dayIndex: number) => (
+                    {currentEvent?.days?.slice(0, 3).map((day: any, dayIndex: number) => (
                       <li key={day._id}>
                         <button
                           onClick={() => setSelectedDay(dayIndex)}
