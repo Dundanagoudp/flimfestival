@@ -60,8 +60,8 @@ export default function Footer() {
 
             {/* contact */}
             <div className="text-center lg:text-left mt-10">
-              <p className="text-white text-2xl">arunachallitfest@gmail.com</p>
-              <p className="mt-2 text-white font-bold text-4xl">+ (91) 87945-63027</p>
+              <p className="text-white text-xl">arunachallitfest@gmail.com</p>
+              <p className="mt-2 text-white font-bold text-xl">+ (91) 87945-63027</p>
 
              
             </div>
