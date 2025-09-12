@@ -77,7 +77,7 @@ export default function Gallery() {
         </div>
       </main>
       
-      <div className="w-full overflow-hidden rounded-[20px]">
+      <div className="w-full px-6 sm:px-0 overflow-hidden rounded-[20px]">
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>

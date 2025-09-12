@@ -69,6 +69,7 @@ export default function BlogsAndMedia() {
           <div className="flex justify-center items-center my-8">
             <h1 className="sm:text-6xl text-3xl font-extrabold text-center">
               Blogs and Media
+              
             </h1>
           </div>
           {/* Mobile-only CTA under title */}

@@ -37,23 +37,7 @@ export default function EventSchedule() {
   const [selectedDay, setSelectedDay] = useState<number>(0);
   const [workshopData, setWorkshopData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isMobile, setIsMobile] = useState<boolean>(false);
-
-  // Effect to determine if the device is mobile
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth <= 768); // Adjust the threshold as needed
-    };
-
-    // Initial check
-    checkIfMobile();
-
-    // Event listener for window resize
-    window.addEventListener("resize", checkIfMobile);
-
-    // Cleanup event listener on component unmount
-    return () => window.removeEventListener("resize", checkIfMobile);
-  }, []);
+  
 
   // Get the event data directly from the response
   const currentEvent = eventData;
@@ -91,6 +75,11 @@ export default function EventSchedule() {
     };
     void fetchWorkshops();
   }, []);
+
+  const imageUrl =
+    currentEvent?.days?.[selectedDay]?.image ||
+    currentEvent?.event?.image ||
+    "/event.png";
 
   return (
     <>
@@ -194,25 +183,32 @@ export default function EventSchedule() {
                   </ScrollArea>
                 </div>
               </div>
-              {/* Image column */}
-              {!isMobile && (
-                <div className="w-full md:w-[30%] flex-shrink-0 hidden md:block">
-                  <div className="aspect-[4/3] w-full">
-                    <img
-                      src={
-                        currentEvent?.days?.[selectedDay]?.image ||
-                        currentEvent?.event?.image ||
-                        "/fallback.png"
-                      }
-                      alt={
-                        currentEvent?.days?.[selectedDay]?.description ||
-                        "Event preview"
-                      }
-                      className="w-full h-full rounded-xl border border-zinc-200 object-cover shadow-sm"
-                    />
-                  </div>
+              {/* Mobile image */}
+              <div className="w-full md:hidden mt-6">
+                <div className="aspect-[4/3] w-full">
+                  <img
+                    src={imageUrl}
+                    alt={
+                      currentEvent?.days?.[selectedDay]?.description ||
+                      "Event preview"
+                    }
+                    className="w-full h-full rounded-xl border border-zinc-200 object-cover shadow-sm"
+                  />
                 </div>
-              )}
+              </div>
+              {/* Image column */}
+              <div className="w-full md:w-[30%] flex-shrink-0 hidden md:block">
+                <div className="aspect-[4/3] w-full">
+                  <img
+                    src={imageUrl}
+                    alt={
+                      currentEvent?.days?.[selectedDay]?.description ||
+                      "Event preview"
+                    }
+                    className="w-full h-full rounded-xl border border-zinc-200 object-cover shadow-sm"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>

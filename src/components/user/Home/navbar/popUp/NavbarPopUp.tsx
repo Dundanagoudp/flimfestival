@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { X } from "lucide-react";
+import { X, ChevronDown } from "lucide-react";
 
 interface MenuLink {
   title: string;
@@ -28,6 +28,30 @@ export function MegaMenu({ open, onClose, menu }: MegaMenuProps) {
     if (open) document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
+
+  // Lock body scroll while the menu is open
+  React.useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = originalOverflow;
+    }
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [open]);
+
+  // Track expanded sections for mobile accordion
+  const [expandedSections, setExpandedSections] = React.useState<Set<number>>(new Set());
+  const toggleSection = (index: number) => {
+    setExpandedSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
 
   if (!open) return null;
 
@@ -64,9 +88,50 @@ export function MegaMenu({ open, onClose, menu }: MegaMenuProps) {
           <div className={`rounded-xl bg-[#1b1b1b] border border-gray-800 shadow-2xl p-4 sm:p-6 transition-all duration-500 ease-out delay-100 ${
             open ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'
           }`}>
-            
+            {/* Mobile: Accordion layout */}
+            <div className="sm:hidden">
+              <ul className="list-none m-0 p-0 divide-y divide-gray-800">
+                {menu.map((section, index) => {
+                  const isExpanded = expandedSections.has(index);
+                  const contentId = `mega-accordion-panel-${index}`;
+                  return (
+                    <li key={section.heading} className="py-1">
+                      <button
+                        type="button"
+                        onClick={() => toggleSection(index)}
+                        aria-expanded={isExpanded}
+                        aria-controls={contentId}
+                        className="w-full flex items-center justify-between py-3 text-left"
+                      >
+                        <span className="text-sm font-semibold text-yellow-400">{section.heading}</span>
+                        <ChevronDown
+                          className={`h-4 w-4 text-gray-300 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                          aria-hidden="true"
+                        />
+                      </button>
+                      <div
+                        id={contentId}
+                        className={`overflow-hidden transition-[max-height] duration-300 ease-out ${isExpanded ? 'max-h-96' : 'max-h-0'}`}
+                      >
+                        <ul className="list-none m-0 p-0 space-y-1 pb-2">
+                          {section.links.map((link) => (
+                            <ListItem
+                              key={link.title}
+                              title={link.title}
+                              href={link.url || '#'}
+                              onClick={onClose}
+                            />
+                          ))}
+                        </ul>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
 
-            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-6 sm:gap-8">
+            {/* Desktop: Grid layout */}
+            <div className="hidden sm:flex sm:flex-row sm:flex-wrap gap-6 sm:gap-8">
               {menu.map((section, index) => (
                 <div
                   key={section.heading}

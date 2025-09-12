@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { getVideoHome } from '@/services/galleryServices';
-import { GetAllMediaResponse, MediaItem } from '@/types/HomeTypes';
+import { GetAllMediaResponse } from '@/types/HomeTypes';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 export default function VideoSection() {
@@ -13,8 +13,7 @@ export default function VideoSection() {
     const fetchVideo = async () => {
       try {
         const response : GetAllMediaResponse  = await getVideoHome();
-        const firstVideoUrl =response[0].video;
-        console.log("First video URL:", firstVideoUrl);
+        const firstVideoUrl = response?.[0]?.video;
         setVideo(firstVideoUrl || null);
        
       } catch (err: any) {
@@ -42,8 +41,8 @@ export default function VideoSection() {
 
           <div className="flex flex-col justify-center">
             <section className="space-y-4">
-              <h2 className="text-4xl font-bold text-[#FFFFFF]">About AFF</h2>
-              <p className="text-3xl text-[#989898] leading-relaxed">
+              <h2 className="sm:text-4xl text-2xl font-bold text-[#FFFFFF]">About AFF</h2>
+              <p className="sm:text-3xl text-xl text-[#989898] leading-relaxed">
                 Lorem Ipsum is simply dummy text of the printing and typesetting
                 industry.
                 <br />
@@ -64,13 +63,8 @@ export default function VideoSection() {
               <video
                 src={video}
                 controls
-                className="w-full max-w-[1140px] rounded-[10px] object-cover h-[220px] sm:h-[360px] md:h-[480px] lg:h-[539px]"
-                style={{
-                  width: "1140px",
-                  height: "539px",
-                  borderRadius: "10px",
-                  objectFit: "cover",
-                }}
+                playsInline
+                className="w-full max-w-[1140px] aspect-video rounded-[10px]"
               />
             ) : (
               <p className="text-white">No video found</p>
