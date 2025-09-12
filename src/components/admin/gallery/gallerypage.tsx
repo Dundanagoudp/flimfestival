@@ -207,93 +207,99 @@ export default function GalleryPage() {
   }
 
   return (
-    <main className="container mx-auto max-w-10xl space-y-6 p-4">
-      <header className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+    <main className="container mx-auto max-w-10xl space-y-4 p-3 sm:space-y-6 sm:p-4">
+      <header className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-pretty text-2xl font-semibold">Gallery</h1>
-          <p className="text-muted-foreground">View, manage, and organize images by year.</p>
+          <h1 className="text-pretty text-xl sm:text-2xl font-semibold">Gallery</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">View, manage, and organize images by year.</p>
         </div>
-        <div className="flex items-center gap-2">
-                     <DynamicButton onClick={(e) => goToUploadPage()} className="flex items-center gap-2">
-             <Upload className="mr-2 h-4 w-4" />
-             Upload Images
-           </DynamicButton>
-          <AddYearModal onCreated={refreshYears} />
+        <div className="flex w-full sm:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-2">
+          <DynamicButton onClick={(e) => goToUploadPage()} className="flex items-center gap-2 w-full sm:w-auto">
+            <Upload className="mr-2 h-4 w-4" />
+            Upload Images
+          </DynamicButton>
+          <div className="w-full sm:w-auto">
+            <AddYearModal onCreated={refreshYears} />
+          </div>
           {year ? (
             <>
-                             <DynamicButton size="sm" variant="outline" onClick={(e) => setUpdateOpen(true)}>
-                 <Pencil className="mr-2 h-4 w-4" /> Edit Year
-               </DynamicButton>
-               <DynamicButton size="sm" variant="destructive" onClick={(e) => {
-                 if (!canDelete) {
-                   showToast("You don't have permission to delete years", "error")
-                   return
-                 }
-                 setDeleteOpen(true)
-               }} disabled={!canDelete}>
-                 <Trash2 className="mr-2 h-4 w-4" /> Delete Year
-               </DynamicButton>
+              <div className="w-full sm:w-auto hidden sm:block">
+                <DynamicButton size="sm" variant="outline" onClick={(e) => setUpdateOpen(true)}>
+                  <Pencil className="mr-2 h-4 w-4" /> Edit Year
+                </DynamicButton>
+              </div>
+              <div className="w-full sm:w-auto hidden sm:block">
+                <DynamicButton size="sm" variant="destructive" onClick={(e) => {
+                  if (!canDelete) {
+                    showToast("You don't have permission to delete years", "error")
+                    return
+                  }
+                  setDeleteOpen(true)
+                }} disabled={!canDelete}>
+                  <Trash2 className="mr-2 h-4 w-4" /> Delete Year
+                </DynamicButton>
+              </div>
             </>
           ) : null}
         </div>
       </header>
 
-      <section className="grid gap-4 md:grid-cols-4">
+      <section className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-sm sm:text-base flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Total Years
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-semibold">
+          <CardContent className="text-xl sm:text-2xl font-semibold">
             {yearsLoading ? "..." : years?.length ?? 0}
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-sm sm:text-base flex items-center gap-2">
               <Images className="h-4 w-4" />
               Total Images
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-semibold">
+          <CardContent className="text-xl sm:text-2xl font-semibold">
             {imagesLoading ? "..." : images?.length ?? 0}
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-sm sm:text-base flex items-center gap-2">
               <FileImage className="h-4 w-4" />
               Latest Year
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-semibold">
+          <CardContent className="text-xl sm:text-2xl font-semibold">
             {yearsLoading ? "..." : years?.length ? Math.max(...years.map((y) => y.value)) : "-"}
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-sm sm:text-base flex items-center gap-2">
               <Checkbox className="h-4 w-4" />
               Selected
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-semibold">{selected.size}</CardContent>
+          <CardContent className="text-xl sm:text-2xl font-semibold">{selected.size}</CardContent>
         </Card>
       </section>
 
-      <section className="rounded-lg border p-4">
-        <h2 className="mb-3 text-lg font-semibold">Filters & Controls</h2>
-        <div className="grid gap-4 md:grid-cols-2">
+      <section className="rounded-lg border p-3 sm:p-4">
+        <h2 className="mb-2 sm:mb-3 text-base sm:text-lg font-semibold">Filters & Controls</h2>
+        <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
           <div className="grid gap-2">
-            <Label htmlFor="search">Search</Label>
-            <Input id="search" placeholder="Search by year label..." />
+            <Label htmlFor="search" className="text-sm sm:text-base">Search</Label>
+            <Input id="search" placeholder="Search by year label..." className="text-sm sm:text-base" />
           </div>
           <div className="grid gap-2">
-            <Label>Year</Label>
+            <Label className="text-sm sm:text-base">Year</Label>
             <Select value={selectedYearId ?? undefined} onValueChange={(v) => setSelectedYearId(v)}>
-              <SelectTrigger>
+              <SelectTrigger className="text-sm sm:text-base">
                 <SelectValue placeholder={yearsLoading ? "Loading..." : "Select year"} />
               </SelectTrigger>
               <SelectContent>
@@ -309,45 +315,45 @@ export default function GalleryPage() {
 
         <Separator className="my-4" />
 
-        <div className="flex items:center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Checkbox checked={!!allChecked} onCheckedChange={(v) => toggleAll(Boolean(v))} id="select-all" />
-            <Label htmlFor="select-all">Select All ({images?.length ?? 0})</Label>
+            <Label htmlFor="select-all" className="text-sm sm:text-base">Select All ({images?.length ?? 0})</Label>
             <Badge variant="secondary">{selected.size} selected</Badge>
           </div>
           <div className="flex items-center gap-2">
-                         <DynamicButton variant="destructive" size="sm" disabled={!selected.size || !canDelete} onClick={(e) => {
-               if (!canDelete) {
-                 showToast("You don't have permission to delete images", "error")
-                 return
-               }
-               handleBulkDelete()
-             }}>
-               <Trash2 className="mr-2 h-4 w-4" /> Delete Selected
-             </DynamicButton>
+            <DynamicButton variant="destructive" size="sm" disabled={!selected.size || !canDelete} onClick={(e) => {
+              if (!canDelete) {
+                showToast("You don't have permission to delete images", "error")
+                return
+              }
+              handleBulkDelete()
+            }} className="w-full sm:w-auto">
+              <Trash2 className="mr-2 h-4 w-4" /> Delete Selected
+            </DynamicButton>
           </div>
         </div>
       </section>
 
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold">
+          <h3 className="text-lg sm:text-xl font-semibold">
             {year ? `Year ${year.value}` : "No year selected"}{" "}
             {images ? (
-              <span className="ml-2 align-middle text-sm text-muted-foreground">{images.length} images</span>
+              <span className="ml-2 align-middle text-xs sm:text-sm text-muted-foreground">{images.length} images</span>
             ) : null}
           </h3>
           <div className="hidden sm:block">
             {year && (
-                             <DynamicButton onClick={(e) => goToUploadPage()} variant="outline" size="sm">
-                 <Plus className="mr-2 h-4 w-4" />
-                 Add Images
-               </DynamicButton>
+              <DynamicButton onClick={(e) => goToUploadPage()} variant="outline" size="sm">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Images
+              </DynamicButton>
             )}
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-5">
           {imagesLoading ? (
             Array.from({ length: 6 }).map((_, i) => <Card key={i} className="h-40 animate-pulse bg-muted/40" />)
           ) : paginatedImages && paginatedImages.length > 0 ? (
@@ -362,7 +368,7 @@ export default function GalleryPage() {
             ))
           ) : (
             <Card className="col-span-full">
-              <CardContent className="flex items-center gap-3 p-6 text-muted-foreground">
+              <CardContent className="flex items-center gap-3 p-4 sm:p-6 text-muted-foreground">
                 <Images className="h-5 w-5" />
                 <span>No images yet for this year. Use Upload Images to add images.</span>
               </CardContent>
@@ -372,7 +378,7 @@ export default function GalleryPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex justify-center mt-6">
+          <div className="flex justify-center mt-4 sm:mt-6">
             <DynamicPagination
               currentPage={currentPage}
               totalPages={totalPages}
