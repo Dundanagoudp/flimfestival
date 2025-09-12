@@ -11,6 +11,9 @@ import { Workshop } from "@/types/workShopTypes";
 import Image from "next/image";
 import { getIntroduction } from "@/services/aboutServices";
 import { AboutIntroduction } from "@/types/aboutTypes";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from 'swiper/modules';
+import 'swiper/css';
 
 function Feature({
   title,
@@ -36,21 +39,23 @@ function ImagePlaceholder() {
 function WorkshopCard({ workshop }: { workshop: Workshop }) {
   return (
 <Card
-  className="overflow-hidden rounded-[12px] shadow-sm 
-             transition-transform duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] 
-             hover:scale-[1.03] hover:shadow-lg"
+  className="overflow-hidden rounded-xl border border-black/5 bg-white shadow-sm 
+             transition-transform duration-500 ease-out hover:shadow-md hover:-translate-y-[2px]"
 >
-  <div className="relative w-full h-[220px] overflow-hidden">
+  <div className="relative w-full h-[160px] sm:h-[200px] lg:h-[220px] overflow-hidden">
     <Image
       src={workshop?.imageUrl || "/event.png"}
       alt={workshop?.name || "Workshop image"}
       fill
       sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
-      className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] hover:scale-110"
+      className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.19,1,0.22,1)] hover:scale-105"
     />
+    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
   </div>
   <div className="p-3">
-    <h3 className="text-base font-semibold truncate">{workshop?.name}</h3>
+    <h3 className="text-sm sm:text-base font-semibold tracking-tight text-slate-900 truncate">
+      {workshop?.name}
+    </h3>
   </div>
 </Card>
 
@@ -141,9 +146,47 @@ export default function AboutSection() {
           </Feature>
         </section> */}
 
-        {/* Workshops grid */}
+        {/* Workshops - Mobile (Swiper) */}
+        <div className="w-full mt-10 sm:hidden">
+          {loading ? (
+            <Swiper
+              modules={[Autoplay]}
+              spaceBetween={3}
+              slidesPerView={1.1}
+           
+              autoplay={{ delay: 3000, disableOnInteraction: false }}
+              loop
+              speed={650}
+            >
+              {Array.from({ length: 3 }).map((_, idx) => (
+                <SwiperSlide key={`wk-skel-${idx}`}>
+                  <ImagePlaceholder />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : workshopData.length > 0 ? (
+            <Swiper
+              modules={[Autoplay]}
+              spaceBetween={12}
+              slidesPerView={1.1}
+              autoplay={{ delay: 3000, disableOnInteraction: false }}
+              loop={workshopData.length > 1}
+              speed={650}
+            >
+              {workshopData.map((workshop) => (
+                <SwiperSlide key={workshop._id}>
+                  <WorkshopCard workshop={workshop} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <div className="px-1 py-6 text-center text-sm text-slate-500">No workshops available</div>
+          )}
+        </div>
+
+        {/* Workshops - Tablet/Desktop (Grid) */}
         <section
-          className="w-full mt-10 grid gap-6 
+          className="w-full mt-10 hidden sm:grid gap-6 
              grid-cols-1 sm:grid-cols-2 
              md:grid-cols-3 lg:grid-cols-4 
              auto-rows-auto"
@@ -151,13 +194,12 @@ export default function AboutSection() {
             gridTemplateColumns: `repeat(auto-fit, minmax(250px, 1fr))`,
           }}
         >
-
           {loading
             ? Array.from({ length: 4 }).map((_, idx) => (
-                <ImagePlaceholder  key={idx} />
+                <ImagePlaceholder key={idx} />
               ))
             : workshopData.map((workshop) => (
-                <WorkshopCard key={workshop._id} workshop={workshop}  />
+                <WorkshopCard key={workshop._id} workshop={workshop} />
               ))}
         </section>
 
@@ -188,8 +230,8 @@ export default function AboutSection() {
 
             {/* Master Class */}
             <section className="mt-4 space-y-4">
-              <h2 className="text-4xl font-bold">Master Class</h2>
-              <p className="text-3xl text-[#989898] leading-relaxed">
+              <h2 className="sm:text-4xl text-2xl font-bold">Master Class</h2>
+              <p className="sm:text-3xl text-xl text-[#989898] leading-relaxed">
                 Lorem Ipsum is simply dummy text of the printing and <br />
                 typesetting industry. Lorem Ipsum has been the industry standard
                 dummy text.
