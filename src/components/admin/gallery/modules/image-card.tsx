@@ -25,13 +25,13 @@ export default function ImageCard({ item, checked, onCheckedChange, onImageClick
   }
   
   return (
-    <Card className="relative overflow-hidden h-40 w-full bg-white border border-gray-200 hover:shadow-md transition-all duration-200 cursor-pointer group">
-      <div className="absolute left-2 top-2 z-10 rounded-full bg-white/90 p-1.5 shadow-sm border border-gray-200">
+    <Card className="relative overflow-hidden h-36 sm:h-40 w-full bg-white border border-gray-200 hover:shadow-md transition-all duration-200 cursor-pointer group">
+      <div className="absolute left-1.5 top-1.5 sm:left-2 sm:top-2 z-10 rounded-full bg-white/90 p-2 sm:p-1.5 shadow-sm border border-gray-200">
         <Checkbox
           checked={checked}
           onCheckedChange={(v) => onCheckedChange(item._id, Boolean(v))}
           aria-label="Select image"
-          className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+          className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 h-4 w-4"
         />
       </div>
       

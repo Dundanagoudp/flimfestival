@@ -282,27 +282,20 @@ export default function ImageUploadPage() {
           <div className="flex items-center gap-3">
             <DynamicButton 
               onClick={(e) => onUpload()} 
-              disabled={loading || !files?.length || !selectedYearId}
-              className="min-w-[140px]"
+              disabled={!files?.length || !selectedYearId}
+              loading={loading}
+              loadingText="Uploading..."
+              className="w-full sm:w-auto min-w-[140px]"
               size="lg"
             >
-              {loading ? (
-                <>
-                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  Uploading...
-                </>
-              ) : (
-                <>
-                  <Upload className="mr-2 h-4 w-4" />
-                  Upload Images
-                </>
-              )}
+              <Upload className="mr-2 h-4 w-4" />
+              Upload Images
             </DynamicButton>
             
             {(error || success) && (
-                           <DynamicButton variant="outline" onClick={(e) => clearMessages()}>
-               Clear
-             </DynamicButton>
+              <DynamicButton variant="outline" onClick={(e) => clearMessages()} className="w-full sm:w-auto">
+                Clear
+              </DynamicButton>
             )}
           </div>
         </CardContent>

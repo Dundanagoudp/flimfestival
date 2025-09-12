@@ -72,11 +72,11 @@ export default function UploadImages({ yearId, onDone }: Props) {
           multiple 
           accept="image/*" 
           onChange={handleFileChange}
-          className="max-w-xs"
+          className="w-full sm:max-w-xs"
         />
-                 <DynamicButton onClick={(e) => onUpload()} disabled={loading || !files?.length}>
-           {loading ? "Uploading..." : "Upload"}
-         </DynamicButton>
+        <DynamicButton onClick={(e) => onUpload()} disabled={loading || !files?.length} className="w-full sm:w-auto">
+          {loading ? "Uploading..." : "Upload"}
+        </DynamicButton>
       </div>
       {files && (
         <div className="text-xs text-muted-foreground">
