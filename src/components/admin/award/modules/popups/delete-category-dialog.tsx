@@ -55,13 +55,13 @@ export function DeleteCategoryDialog({ open, onOpenChange, category, onSuccess }
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-[95vw] max-w-[425px] mx-auto">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            <DialogTitle>Delete Category</DialogTitle>
+            <DialogTitle className="text-lg sm:text-xl">Delete Category</DialogTitle>
           </div>
-          <DialogDescription>
+          <DialogDescription className="text-sm sm:text-base">
             Are you sure you want to delete the category "{category.name}"? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
@@ -70,12 +70,13 @@ export function DeleteCategoryDialog({ open, onOpenChange, category, onSuccess }
 
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
           <Button
             type="button"
             variant="outline"
             onClick={handleClose}
             disabled={isDeleting}
+            className="w-full sm:w-auto order-2 sm:order-1"
           >
             Cancel
           </Button>
@@ -86,6 +87,7 @@ export function DeleteCategoryDialog({ open, onOpenChange, category, onSuccess }
             loading={isDeleting}
             loadingText="Deleting..."
             disabled={isDeleting || !canDelete}
+            className="w-full sm:w-auto order-1 sm:order-2"
           >
             <Trash2 className="mr-2 h-4 w-4" />
             Delete Category

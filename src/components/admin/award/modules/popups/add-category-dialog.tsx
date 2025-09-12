@@ -71,10 +71,10 @@ export function AddCategoryDialog({ open, onOpenChange, onSuccess }: AddCategory
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-[95vw] max-w-[425px] mx-auto">
         <DialogHeader>
-          <DialogTitle>Add New Category</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-lg sm:text-xl">Add New Category</DialogTitle>
+          <DialogDescription className="text-sm sm:text-base">
             Create a new award category to organize your awards.
           </DialogDescription>
         </DialogHeader>
@@ -85,24 +85,26 @@ export function AddCategoryDialog({ open, onOpenChange, onSuccess }: AddCategory
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category Name</FormLabel>
+                  <FormLabel className="text-sm sm:text-base">Category Name</FormLabel>
                   <FormControl>
                     <Input 
                       placeholder="Enter category name..." 
                       {...field} 
                       disabled={isSubmitting}
+                      className="text-sm sm:text-base"
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <DialogFooter>
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleClose}
                 disabled={isSubmitting}
+                className="w-full sm:w-auto order-2 sm:order-1"
               >
                 Cancel
               </Button>
@@ -111,6 +113,7 @@ export function AddCategoryDialog({ open, onOpenChange, onSuccess }: AddCategory
                 loading={isSubmitting}
                 loadingText="Creating..."
                 disabled={isSubmitting}
+                className="w-full sm:w-auto order-1 sm:order-2"
               >
                 Create Category
               </DynamicButton>
