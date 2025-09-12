@@ -39,10 +39,10 @@ export function MegaMenu({ open, onClose, menu }: MegaMenuProps) {
       onClick={onClose}
       aria-hidden={!open}
     >
-      {/* Floating Close Icon */}
+      {/* Floating Close Icon (all breakpoints) */}
       <button
         onClick={onClose}
-        className={`absolute top-5 right-8 rounded-full bg-primary p-2 shadow-md hover:bg-yellow-400 hover:shadow-lg hover:scale-110 active:scale-95 transition-all duration-300 ease-out ${
+        className={`inline-flex items-center justify-center absolute top-5 right-8 z-50 rounded-full bg-primary p-2 shadow-md hover:bg-yellow-400 hover:shadow-lg hover:scale-110 active:scale-95 transition-all duration-300 ease-out ${
           open ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-2'
         }`}
         aria-label="Close menu"
@@ -52,22 +52,25 @@ export function MegaMenu({ open, onClose, menu }: MegaMenuProps) {
 
       {/* stop click from closing when interacting with the panel */}
       <div
-        className={`absolute top-20 right-0 h-full w-1/2 transition-transform duration-400 ease-out ${
+        className={`absolute right-0 top-0 h-full w-full sm:top-20 sm:w-2/3 md:w-1/2 transition-transform duration-400 ease-out ${
           open ? 'translate-x-0' : 'translate-x-full'
-        }`}
+        } overflow-y-auto`}
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
       >
         <div className="">
           {/* panel that matches the dark mega menu design */}
-          <div className={`rounded-xl bg-[#1b1b1b] border border-gray-800 shadow-2xl p-6 transition-all duration-500 ease-out delay-100 ${
+          <div className={`rounded-xl bg-[#1b1b1b] border border-gray-800 shadow-2xl p-4 sm:p-6 transition-all duration-500 ease-out delay-100 ${
             open ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'
           }`}>
+            
 
-            <div className="flex flex-wrap gap-8">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-6 sm:gap-8">
               {menu.map((section, index) => (
                 <div
                   key={section.heading}
-                  className={`min-w-[160px] flex-1 transition-all duration-500 ease-out ${
+                  className={`min-w-[160px] flex-1 w-full sm:w-auto transition-all duration-500 ease-out ${
                     open ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                   }`}
                   style={{

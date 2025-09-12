@@ -24,14 +24,14 @@ export default function YearAward() {
     <main className="w-full px-4" style={{ backgroundColor: "#ffffff" }}>
     <div className="px-10 py-10">
       <h1 className="text-2xl">Arunachal Film Festival</h1>
-      <h1 className="text-6xl font-bold">Awards</h1>
+      <h1 className="md:text-6xl text-4xl font-bold">Awards</h1>
     </div>
     <div className="swiper-container px-10">
       <Swiper
-        modules={[Navigation, Pagination]}
+        modules={[ Pagination]}
         spaceBetween={30}
         slidesPerView={1}
-        navigation
+        
         pagination={{ clickable: true }}
         onSlideChange={() => {}}
         onSwiper={() => {}}

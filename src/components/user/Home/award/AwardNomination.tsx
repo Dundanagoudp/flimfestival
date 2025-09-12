@@ -78,7 +78,7 @@ export default function AwardNomination() {
           spaceBetween: 12,
         },
         768: {
-          slidesPerView: getSlidesPerView(3),
+          slidesPerView: getSlidesPerView(4),
           spaceBetween: 14,
         },
         1024: {
@@ -91,20 +91,34 @@ export default function AwardNomination() {
 
   return (
     <div>
-      <main className="w-full px-4" style={{ backgroundColor: "#ffffff" }}>
-        <div className="px-10 py-10">
+      <main className="w-full px-4 " style={{ backgroundColor: "#ffffff" }}>
+        <div className="sm:px-10 py-10">
           {/* Best Documentary Film Section */}
           <div className="space-y-10" data-section-type="documentary">
             <div className="flex justify-between">
               <div>
-                <h1 className="text-lg font-bold text-primary">
+                <h1 className="md:text-lg text-xl  font-bold text-primary">
                   Arunachal Film Festival
                 </h1>
-                <p className="text-4xl font-semibold">
+                <p className="md:text-4xl text-2xl font-semibold">
                   Nomination for the best documentary film
                 </p>
+
+                {/* Mobile: Button under text */}
+                <div className="flex items-center gap-2 mt-4 sm:hidden">
+                  <Link href="/awards">
+                    <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
+                      View Award
+                    </Button>
+                  </Link>
+                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary animate-pulse hover:animate-bounce cursor-pointer">
+                    <ArrowRight className="h-3 w-3 text-black" />
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
+
+              {/* Desktop: Button on the right */}
+              <div className="hidden sm:flex items-center gap-2">
                 <Link href="/awards">
                   <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
                     View Award
@@ -118,16 +132,16 @@ export default function AwardNomination() {
 
             {/* Documentary Films Carousel */}
             {/* Mobile-only Swiper */}
-            <div className="px-4 py-6 sm:hidden">
+            <div className="py-6 sm:hidden">
               {(() => {
                 const documentaryImages = getImagesByCategory("documentary");
                 return (
                   <Swiper
                     modules={[Autoplay]}
-                    spaceBetween={12}
+                    spaceBetween={6}
                     slidesPerView={1.1}
                     centeredSlides={false}
-                    loop={documentaryImages.length > 1}
+                  loop={documentaryImages.length > 1}
                     autoplay={
                       documentaryImages.length > 1
                         ? { delay: 3000, disableOnInteraction: false }
@@ -214,14 +228,28 @@ export default function AwardNomination() {
           <div className="space-y-10" data-section-type="short_film">
             <div className="flex justify-between">
               <div>
-                <h1 className="text-lg font-bold text-primary">
+                <h1 className="md:text-lg text-xl font-bold text-primary ">
                   Arunachal Film Festival
                 </h1>
-                <p className="text-4xl font-semibold">
-                  Nomination for the best Short film
+                <p className="md:text-4xl text-2xl font-semibold">
+                  Nomination for the best short film
                 </p>
+
+                {/* Mobile: Button under text */}
+                <div className="flex items-center gap-2 mt-4 sm:hidden">
+                  <Link href="/awards">
+                    <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
+                      View Award
+                    </Button>
+                  </Link>
+                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary animate-pulse hover:animate-bounce cursor-pointer">
+                    <ArrowRight className="h-3 w-3 text-black" />
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
+
+              {/* Desktop: Button on the right */}
+              <div className="hidden sm:flex items-center gap-2">
                 <Link href="/awards">
                   <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
                     View Award
@@ -235,19 +263,23 @@ export default function AwardNomination() {
 
             {/* Short Films Carousel */}
             {/* Mobile-only Swiper */}
-            <div className="px-4 py-6 sm:hidden">
+            <div className=" py-6 sm:hidden">
               {(() => {
                 const shortFilmImages = getImagesByCategory("short_film");
                 return (
                   <Swiper
                     modules={[Autoplay]}
-                    spaceBetween={12}
+                    spaceBetween={6}
                     slidesPerView={1.1}
                     centeredSlides={false}
                     loop={shortFilmImages.length > 1}
                     autoplay={
                       shortFilmImages.length > 1
-                        ? { delay: 3000, disableOnInteraction: false, reverseDirection: true }
+                        ? {
+                            delay: 3000,
+                            disableOnInteraction: false,
+                            reverseDirection: true,
+                          }
                         : false
                     }
                     speed={650}

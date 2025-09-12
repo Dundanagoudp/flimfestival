@@ -102,12 +102,12 @@ export default function AboutSection() {
           {/* Right side About content */}
           <div className="flex flex-col justify-center">
             <section className="space-y-4">
-              <h2 className="text-3xl font-bold">
-                {(introduction as any)?.title}
-              </h2>
-              <p className="text-xl text-[#989898] leading-[2.5rem] text-justify">
-                {(introduction as any)?.description}
-              </p>
+            <h2 className="text-2xl sm:text-3xl font-bold">
+    {(introduction as any)?.title}
+  </h2>
+  <p className="text-base sm:text-xl text-[#989898] leading-relaxed sm:leading-[2.5rem] text-justify">
+    {(introduction as any)?.description}
+  </p>
               <div className="flex items-center gap-2 group">
                 <Link href="/aboutus">
                   <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">

@@ -59,7 +59,7 @@ export default function Gallery() {
         <div className="px-10 py-10">
           <div>
             <div className="flex justify-center items-center flex-col">
-              <h1 className="text-6xl font-black">Gallery</h1>
+              <h1 className="sm:text-6xl text-3xl font-black">Gallery</h1>
 
               <div className="flex items-center gap-2 mt-5">
                 <Link href={'/gallery'}>
