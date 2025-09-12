@@ -150,14 +150,14 @@ export default function AwardPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+    <div className="flex flex-1 flex-col gap-4 p-3 pt-0 sm:gap-6 sm:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Award Management</h1>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Award Management</h1>
         </div>
-        <div className="flex gap-2">
-          <Button asChild variant="outline">
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button asChild variant="outline" className="w-full sm:w-auto">
             <Link href="/admin/dashboard/award/categories">
               <Trophy className="mr-2 h-4 w-4" />
               Manage Categories
@@ -173,34 +173,34 @@ export default function AwardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Awards</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium">Total Awards</CardTitle>
             <Trophy className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{awards.length}</div>
+            <div className="text-xl sm:text-2xl font-bold">{awards.length}</div>
             <p className="text-xs text-muted-foreground">All awards</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Categories</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium">Categories</CardTitle>
             <Trophy className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{categories.length}</div>
+            <div className="text-xl sm:text-2xl font-bold">{categories.length}</div>
             <p className="text-xs text-muted-foreground">Active categories</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">With Images</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium">With Images</CardTitle>
             <ImageIcon className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-xl sm:text-2xl font-bold">
               {awards.filter((a) => a.image).length}
             </div>
             <p className="text-xs text-muted-foreground">Awards with images</p>
@@ -208,11 +208,11 @@ export default function AwardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Recent</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium">Recent</CardTitle>
             <Calendar className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-xl sm:text-2xl font-bold">
               {awards.filter((a) => {
                 const date = new Date(a.createdAt)
                 const now = new Date()
@@ -229,10 +229,10 @@ export default function AwardPage() {
       {/* Filters and Search */}
       <Card>
         <CardHeader>
-          <CardTitle>Filters & Search</CardTitle>
+          <CardTitle className="text-sm sm:text-base">Filters & Search</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row">
             <div className="flex-1 min-w-0">
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -240,7 +240,7 @@ export default function AwardPage() {
                   placeholder="Search by title or description..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-8"
+                  className="pl-8 text-sm sm:text-base"
                 />
               </div>
             </div>
@@ -265,24 +265,24 @@ export default function AwardPage() {
       {/* Awards List */}
       <Card>
         <CardHeader>
-          <CardTitle>All Awards</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-sm sm:text-base">All Awards</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
             {filteredAwards.length} award{filteredAwards.length !== 1 ? "s" : ""} found
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {filteredAwards.length === 0 ? (
-              <div className="text-center py-8">
-                <Trophy className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No awards found</h3>
-                <p className="text-muted-foreground mb-4">
+              <div className="text-center py-6 sm:py-8">
+                <Trophy className="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-base sm:text-lg font-semibold mb-2">No awards found</h3>
+                <p className="text-sm sm:text-base text-muted-foreground mb-4">
                   {searchTerm || categoryFilter !== "all"
                     ? "Try adjusting your filters or search terms"
                     : "Get started by creating your first award"}
                 </p>
                 {!searchTerm && categoryFilter === "all" && (
-                  <Button asChild>
+                  <Button asChild className="w-full sm:w-auto">
                     <Link href="/admin/dashboard/award/add">
                       <Plus className="mr-2 h-4 w-4" />
                       Create Award
@@ -295,9 +295,9 @@ export default function AwardPage() {
                 {paginatedAwards.filter(award => award && award._id && award.title).map((award) => (
                   <div
                     key={award._id}
-                    className="flex flex-col sm:flex-row items-start gap-4 p-4 border rounded-lg"
+                    className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg"
                   >
-                    <div className="w-full sm:w-24 h-32 sm:h-16 bg-muted rounded-md overflow-hidden flex-shrink-0 mb-2 sm:mb-0">
+                    <div className="w-full sm:w-24 h-24 sm:h-16 bg-muted rounded-md overflow-hidden flex-shrink-0">
                       <img
                         src={award.image || "/placeholder.svg"}
                         alt={award.title}
@@ -305,20 +305,20 @@ export default function AwardPage() {
                       />
                     </div>
                     <div className="flex-1 space-y-2 min-w-0">
-                                              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                          <h3 className="text-lg font-semibold line-clamp-1">
-                            {award.title}
-                          </h3>
-                          {award.category && (
-                            <Badge variant="outline">
-                              {getCategoryName(award.category)}
-                            </Badge>
-                          )}
-                        </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                        <h3 className="text-base sm:text-lg font-semibold line-clamp-1">
+                          {award.title}
+                        </h3>
+                        {award.category && (
+                          <Badge variant="outline" className="text-xs">
+                            {getCategoryName(award.category)}
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
                         {award.description}
                       </p>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-1 sm:gap-2">
                         <Badge variant="secondary" className="text-xs">
                           Rule 1: {award.rule1}
                         </Badge>
@@ -329,13 +329,13 @@ export default function AwardPage() {
                           Rule 3: {award.rule3}
                         </Badge>
                       </div>
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
+                          <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
                           <span>Created: {formatDate(award.createdAt)}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <ImageIcon className="h-4 w-4" />
+                          <ImageIcon className="h-3 w-3 sm:h-4 sm:w-4" />
                           <span>{award.array_images?.length || 0} additional images</span>
                         </div>
                       </div>
@@ -348,20 +348,21 @@ export default function AwardPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuLabel className="text-xs sm:text-sm">Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem>
+                          <DropdownMenuItem className="text-xs sm:text-sm">
                             <Eye className="mr-2 h-4 w-4" />
                             View
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => router.push(`/admin/dashboard/award/edit/${award._id}`)}
+                            className="text-xs sm:text-sm"
                           >
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
                           <DropdownMenuItem 
-                            className={`text-red-600 ${!canDelete ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            className={`text-red-600 text-xs sm:text-sm ${!canDelete ? 'opacity-50 cursor-not-allowed' : ''}`}
                             onClick={() => canDelete && handleDeleteClick(award)}
                             disabled={!canDelete}
                           >

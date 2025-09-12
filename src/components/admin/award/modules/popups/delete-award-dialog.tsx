@@ -55,25 +55,25 @@ export function DeleteAwardDialog({ open, onOpenChange, award, onSuccess }: Dele
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="w-[95vw] max-w-[500px] mx-auto">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            <DialogTitle>Delete Award</DialogTitle>
+            <DialogTitle className="text-lg sm:text-xl">Delete Award</DialogTitle>
           </div>
-          <DialogDescription>
+          <DialogDescription className="text-sm sm:text-base">
             Are you sure you want to delete the award "{award.title}"? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         
         <div className="py-4">
-          <div className="bg-muted p-4 rounded-md space-y-3">
+          <div className="bg-muted p-3 sm:p-4 rounded-md space-y-3">
             <div className="flex items-center gap-2">
               <Trophy className="h-4 w-4 text-muted-foreground" />
               <p className="text-sm font-medium">{award.title}</p>
             </div>
             
-            <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
               <div>
                 <strong>Description:</strong>
                 <p className="truncate">{award.description}</p>
@@ -112,12 +112,13 @@ export function DeleteAwardDialog({ open, onOpenChange, award, onSuccess }: Dele
           </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
           <Button
             type="button"
             variant="outline"
             onClick={handleClose}
             disabled={isDeleting}
+            className="w-full sm:w-auto order-2 sm:order-1"
           >
             Cancel
           </Button>
@@ -128,6 +129,7 @@ export function DeleteAwardDialog({ open, onOpenChange, award, onSuccess }: Dele
             loading={isDeleting}
             loadingText="Deleting..."
             disabled={isDeleting || !canDelete}
+            className="w-full sm:w-auto order-1 sm:order-2"
           >
             <Trash2 className="mr-2 h-4 w-4" />
             Delete Award

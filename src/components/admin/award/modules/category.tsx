@@ -128,12 +128,12 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+    <div className="flex flex-1 flex-col gap-4 p-3 pt-0 sm:gap-6 sm:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Award Categories</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Award Categories</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
             Manage award categories for organizing awards
           </p>
         </div>
@@ -144,24 +144,24 @@ export default function CategoryPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Categories</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium">Total Categories</CardTitle>
             <Trophy className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{categories.length}</div>
+            <div className="text-xl sm:text-2xl font-bold">{categories.length}</div>
             <p className="text-xs text-muted-foreground">Active categories</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Recent</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium">Recent</CardTitle>
             <Trophy className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-xl sm:text-2xl font-bold">
               {categories.filter((c) => {
                 const date = new Date(c.createdAt || '')
                 const now = new Date()
@@ -175,11 +175,11 @@ export default function CategoryPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Updated</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium">Updated</CardTitle>
             <Trophy className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-xl sm:text-2xl font-bold">
               {categories.filter((c) => c.updatedAt && c.updatedAt !== c.createdAt).length}
             </div>
             <p className="text-xs text-muted-foreground">Modified categories</p>
@@ -190,7 +190,7 @@ export default function CategoryPage() {
       {/* Search */}
       <Card>
         <CardHeader>
-          <CardTitle>Search Categories</CardTitle>
+          <CardTitle className="text-sm sm:text-base">Search Categories</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="relative">
@@ -199,7 +199,7 @@ export default function CategoryPage() {
               placeholder="Search by category name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
+              className="pl-8 text-sm sm:text-base"
             />
           </div>
         </CardContent>
@@ -208,24 +208,24 @@ export default function CategoryPage() {
       {/* Categories List */}
       <Card>
         <CardHeader>
-          <CardTitle>All Categories</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-sm sm:text-base">All Categories</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
             {filteredCategories.length} categor{filteredCategories.length !== 1 ? "ies" : "y"} found
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {filteredCategories.length === 0 ? (
-              <div className="text-center py-8">
-                <Trophy className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No categories found</h3>
-                <p className="text-muted-foreground mb-4">
+              <div className="text-center py-6 sm:py-8">
+                <Trophy className="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-base sm:text-lg font-semibold mb-2">No categories found</h3>
+                <p className="text-sm sm:text-base text-muted-foreground mb-4">
                   {searchTerm
                     ? "Try adjusting your search terms"
                     : "Get started by creating your first category"}
                 </p>
                 {!searchTerm && (
-                  <Button onClick={handleAddCategory}>
+                  <Button onClick={handleAddCategory} className="w-full sm:w-auto">
                     <Plus className="mr-2 h-4 w-4" />
                     Add Category
                   </Button>
@@ -236,13 +236,13 @@ export default function CategoryPage() {
                 {paginatedCategories.map((category) => (
                   <div
                     key={category._id}
-                    className="flex items-center justify-between p-4 border rounded-lg"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg"
                   >
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-semibold">{category.name}</h3>
+                        <h3 className="text-base sm:text-lg font-semibold">{category.name}</h3>
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <span>Created: {formatDate(category.createdAt || '')}</span>
                         </div>
@@ -258,6 +258,7 @@ export default function CategoryPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleEditCategory(category)}
+                        className="flex-1 sm:flex-none"
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -266,6 +267,7 @@ export default function CategoryPage() {
                         size="sm"
                         onClick={() => handleDeleteCategory(category)}
                         disabled={!canDelete}
+                        className="flex-1 sm:flex-none"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

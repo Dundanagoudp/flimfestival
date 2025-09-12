@@ -218,13 +218,13 @@ export default function EditAwardPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+    <div className="flex flex-1 flex-col gap-4 p-3 pt-0 sm:gap-6 sm:p-6">
       <Card className="w-full">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold mb-6">
+          <CardTitle className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
             Edit Award: {award.title}
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm sm:text-base">
             Update award information, rules, and images.
           </CardDescription>
         </CardHeader>
@@ -232,26 +232,26 @@ export default function EditAwardPage() {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-6"
+              className="space-y-4 sm:space-y-6"
             >
               <FormField
                 control={form.control}
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Category</FormLabel>
                     <FormControl>
                       {loading ? (
                         <div className="flex items-center gap-2">
                           <Loader2 className="h-4 w-4 animate-spin" />
-                          <span>Loading categories...</span>
+                          <span className="text-sm sm:text-base">Loading categories...</span>
                         </div>
                       ) : (
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
                         >
-                          <SelectTrigger>
+                          <SelectTrigger className="text-sm sm:text-base">
                             <SelectValue placeholder="Select a category" />
                           </SelectTrigger>
                           <SelectContent>
@@ -259,6 +259,7 @@ export default function EditAwardPage() {
                               <SelectItem
                                 key={category._id}
                                 value={category._id}
+                                className="text-sm sm:text-base"
                               >
                                 {category.name}
                               </SelectItem>
@@ -277,9 +278,9 @@ export default function EditAwardPage() {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter award title" {...field} />
+                      <Input placeholder="Enter award title" {...field} className="text-sm sm:text-base" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -291,11 +292,11 @@ export default function EditAwardPage() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Description</FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Enter award description..."
-                        className="min-h-[100px]"
+                        className="min-h-[80px] sm:min-h-[100px] text-sm sm:text-base"
                         {...field}
                       />
                     </FormControl>
@@ -304,17 +305,17 @@ export default function EditAwardPage() {
                 )}
               />
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4">
                 <FormField
                   control={form.control}
                   name="rule1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Rule 1</FormLabel>
+                      <FormLabel className="text-sm sm:text-base">Rule 1</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Enter rule 1..."
-                          className="min-h-[80px]"
+                          className="min-h-[60px] sm:min-h-[80px] text-sm sm:text-base"
                           {...field}
                         />
                       </FormControl>
@@ -328,11 +329,11 @@ export default function EditAwardPage() {
                   name="rule2"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Rule 2</FormLabel>
+                      <FormLabel className="text-sm sm:text-base">Rule 2</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Enter rule 2..."
-                          className="min-h-[80px]"
+                          className="min-h-[60px] sm:min-h-[80px] text-sm sm:text-base"
                           {...field}
                         />
                       </FormControl>
@@ -346,11 +347,11 @@ export default function EditAwardPage() {
                   name="rule3"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Rule 3</FormLabel>
+                      <FormLabel className="text-sm sm:text-base">Rule 3</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Enter rule 3..."
-                          className="min-h-[80px]"
+                          className="min-h-[60px] sm:min-h-[80px] text-sm sm:text-base"
                           {...field}
                         />
                       </FormControl>
@@ -361,8 +362,8 @@ export default function EditAwardPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Main Image</Label>
-                <div className="flex items-center gap-4">
+                <Label className="text-sm sm:text-base">Main Image</Label>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -374,11 +375,12 @@ export default function EditAwardPage() {
                     type="button"
                     variant="outline"
                     onClick={triggerMainImageInput}
+                    className="w-full sm:w-auto"
                   >
                     {previewImage ? "Change Main Image" : "Upload Main Image"}
                   </DynamicButton>
                   {previewImage && (
-                    <div className="w-20 h-20 rounded-md overflow-hidden border">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-md overflow-hidden border">
                       <img
                         src={previewImage}
                         alt="Preview"
@@ -387,31 +389,31 @@ export default function EditAwardPage() {
                     </div>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   {previewImage ? "Current main image" : "Upload the main image for this award"}
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label>Additional Images</Label>
+                <Label className="text-sm sm:text-base">Additional Images</Label>
                 
                 {/* Existing Images */}
                 {existingImages.length > 0 && (
                   <div className="space-y-2">
-                    <p className="text-sm font-medium">Current Images:</p>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <p className="text-xs sm:text-sm font-medium">Current Images:</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
                       {existingImages.map((imageUrl, index) => (
                         <div key={`existing-${index}`} className="relative">
                           <img
                             src={imageUrl}
                             alt={`Existing ${index + 1}`}
-                            className="w-full h-20 object-cover rounded-md border"
+                            className="w-full h-16 sm:h-20 object-cover rounded-md border"
                           />
                           <Button
                             type="button"
                             variant="destructive"
                             size="sm"
-                            className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full"
+                            className="absolute -top-2 -right-2 h-5 w-5 sm:h-6 sm:w-6 p-0 rounded-full"
                             onClick={() => removeArrayImage(index, true)}
                           >
                             <X className="h-3 w-3" />
@@ -436,6 +438,7 @@ export default function EditAwardPage() {
                     type="button"
                     variant="outline"
                     onClick={triggerArrayImagesInput}
+                    className="w-full sm:w-auto"
                   >
                     Add More Images
                   </DynamicButton>
@@ -443,20 +446,20 @@ export default function EditAwardPage() {
 
                 {previewArrayImages.length > 0 && (
                   <div className="space-y-2">
-                    <p className="text-sm font-medium">New Images:</p>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <p className="text-xs sm:text-sm font-medium">New Images:</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
                       {previewArrayImages.map((preview, index) => (
                         <div key={`new-${index}`} className="relative">
                           <img
                             src={preview}
                             alt={`New ${index + 1}`}
-                            className="w-full h-20 object-cover rounded-md border"
+                            className="w-full h-16 sm:h-20 object-cover rounded-md border"
                           />
                           <Button
                             type="button"
                             variant="destructive"
                             size="sm"
-                            className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full"
+                            className="absolute -top-2 -right-2 h-5 w-5 sm:h-6 sm:w-6 p-0 rounded-full"
                             onClick={() => removeArrayImage(index, false)}
                           >
                             <X className="h-3 w-3" />
@@ -467,12 +470,12 @@ export default function EditAwardPage() {
                   </div>
                 )}
                 
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Manage additional images for this award
                 </p>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <DynamicButton 
                   type="submit" 
                   loading={isSubmitting}
@@ -485,6 +488,7 @@ export default function EditAwardPage() {
                   type="button" 
                   variant="outline"
                   onClick={() => router.push("/admin/dashboard/award")}
+                  className="w-full sm:w-auto"
                 >
                   Cancel
                 </DynamicButton>
