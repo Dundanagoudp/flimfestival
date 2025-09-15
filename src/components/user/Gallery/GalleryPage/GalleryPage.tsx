@@ -1,8 +1,7 @@
 "use client";
-
 import Image from "next/image";
 import React, { useEffect, useMemo, useState } from "react";
-import { getAllYears, getAllGalleryByYear } from "@/services/galleryServices"; // <- adjust path if different
+import { getAllYears, getAllGalleryByYear } from "@/services/galleryServices";
 import type {
   GalleryYear,
   GetAllGalleryResponse,
@@ -10,7 +9,8 @@ import type {
 } from "@/types/galleryTypes";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LoadingSpinner } from "@/components/common/LoaderSpinner";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 type YearId = string;
 
@@ -22,24 +22,18 @@ export default function GalleryPage() {
   const [loadingImages, setLoadingImages] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [openLightbox, setOpenLightbox] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // 1) Load all years
   useEffect(() => {
     (async () => {
       setLoading(true);
       try {
         setLoadingYears(true);
         setError(null);
-        const yrs = await getAllYears(); // YearsResponse
-        // sort by value desc (e.g., 2025, 2024, ...)
+        const yrs = await getAllYears();
         const sorted = [...yrs].sort((a, b) => b.value - a.value);
         setYears(sorted);
-
-        // default active: first in sorted list
         if (sorted.length > 0) {
           setActiveYearId(sorted[0]._id);
         }
@@ -52,7 +46,6 @@ export default function GalleryPage() {
     })();
   }, []);
 
-  // 2) Load images for selected year
   useEffect(() => {
     if (!activeYearId) return;
     (async () => {
@@ -60,9 +53,7 @@ export default function GalleryPage() {
       try {
         setLoadingImages(true);
         setError(null);
-        const resp: GetAllGalleryResponse = await getAllGalleryByYear(
-          activeYearId
-        );
+        const resp: GetAllGalleryResponse = await getAllGalleryByYear(activeYearId);
         setImages(resp?.images ?? []);
       } catch (e: any) {
         setError(e?.message || "Failed to load gallery");
@@ -74,7 +65,6 @@ export default function GalleryPage() {
     })();
   }, [activeYearId]);
 
-  // Derived “chip” data from years (value displayed, id used)
   const yearChips = useMemo(
     () =>
       years.map((y) => ({
@@ -84,102 +74,21 @@ export default function GalleryPage() {
     [years]
   );
 
-  // Find the active year value for display (optional)
   const activeYearValue = useMemo(() => {
     const y = years.find((yy) => yy._id === activeYearId);
     return y?.value;
   }, [years, activeYearId]);
 
-  // Image modal handlers
-  const openImageModal = (image: GalleryImage, index: number) => {
-    setSelectedImage(image);
-    setCurrentImageIndex(index);
-    document.body.style.overflow = "hidden";
-    // Prevent zoom on iOS
-    document.addEventListener("touchmove", preventDefault, { passive: false });
-  };
+  const slides = images.map((item) => ({
+    src: item.photo,
+    alt: `gallery-${item._id}`,
+    width: 1920,
+    height: 1080,
+    srcSet: [
+      { src: item.photo, width: 320, height: 213 },
+    ],
+  }));
 
-  const closeImageModal = () => {
-    setSelectedImage(null);
-    document.body.style.overflow = "unset";
-    document.removeEventListener("touchmove", preventDefault);
-  };
-
-  const preventDefault = (e: Event) => {
-    e.preventDefault();
-  };
-
-  const navigateImage = (direction: "prev" | "next") => {
-    if (images.length === 0) return;
-
-    let newIndex;
-    if (direction === "prev") {
-      newIndex =
-        currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
-    } else {
-      newIndex =
-        currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
-    }
-
-    setCurrentImageIndex(newIndex);
-    setSelectedImage(images[newIndex]);
-  };
-
-  // Robust close handler
-  const handleCloseModal = (e?: React.MouseEvent | React.TouchEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    closeImageModal();
-  };
-
-  // Touch gesture handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > 50;
-    const isRightSwipe = distance < -50;
-
-    if (isLeftSwipe && images.length > 1) {
-      navigateImage("next");
-    }
-    if (isRightSwipe && images.length > 1) {
-      navigateImage("prev");
-    }
-  };
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!selectedImage) return;
-
-      switch (e.key) {
-        case "Escape":
-          closeImageModal();
-          break;
-        case "ArrowLeft":
-          navigateImage("prev");
-          break;
-        case "ArrowRight":
-          navigateImage("next");
-          break;
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [selectedImage, currentImageIndex, images]);
   if (loading && loadingYears) {
     return <LoadingSpinner />;
   }
@@ -187,14 +96,11 @@ export default function GalleryPage() {
   return (
     <section className="bg-[oklch(0.97_0_0)]">
       <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-        {/* Errors (if any) */}
         {error && (
           <div className="mb-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
           </div>
         )}
-
-        {/* Year chips */}
         <div className="flex flex-wrap items-center gap-3">
           {loadingYears ? (
             <>
@@ -213,10 +119,11 @@ export default function GalleryPage() {
                   key={y.id}
                   type="button"
                   onClick={() => setActiveYearId(y.id)}
-                  className={`rounded-full border px-4 py-1.5 text-sm transition ${active
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-secondary text-foreground hover:bg-muted"
-                    }`}
+                  className={`rounded-full border px-4 py-1.5 text-sm transition ${
+                    active
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-secondary text-foreground hover:bg-muted"
+                  }`}
                   aria-pressed={active}
                 >
                   {y.value}
@@ -227,8 +134,6 @@ export default function GalleryPage() {
             <p className="text-sm text-muted-foreground">No years found.</p>
           )}
         </div>
-
-        {/* Grid */}
         <div className="mt-8">
           {loadingImages ? (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -238,12 +143,12 @@ export default function GalleryPage() {
                   idx === 0
                     ? "h-[230px] sm:h-[280px] md:h-[320px] lg:h-[300px] xl:h-[340px]"
                     : idx === 1 || idx === 2
-                      ? "h-[230px] sm:h-[260px] md:h-[280px]"
-                      : idx >= 3 && idx <= 6
-                        ? "h-[210px] sm:h-[230px] md:h-[240px]"
-                        : idx === 7
-                          ? "h-[230px] sm:h-[260px] md:h-[300px]"
-                          : "h-[210px] sm:h-[230px] md:h-[240px]";
+                    ? "h-[230px] sm:h-[260px] md:h-[280px]"
+                    : idx >= 3 && idx <= 6
+                    ? "h-[210px] sm:h-[230px] md:h-[240px]"
+                    : idx === 7
+                    ? "h-[230px] sm:h-[260px] md:h-[300px]"
+                    : "h-[210px] sm:h-[230px] md:h-[240px]";
                 return (
                   <Skeleton
                     key={idx}
@@ -266,17 +171,22 @@ export default function GalleryPage() {
                   idx === 0
                     ? "h-[230px] sm:h-[280px] md:h-[320px] lg:h-[300px] xl:h-[340px]"
                     : idx === 1 || idx === 2
-                      ? "h-[230px] sm:h-[260px] md:h-[280px]"
-                      : idx >= 3 && idx <= 6
-                        ? "h-[210px] sm:h-[230px] md:h-[240px]"
-                        : idx === 7
-                          ? "h-[230px] sm:h-[260px] md:h-[300px]"
-                          : "h-[210px] sm:h-[230px] md:h-[240px]";
+                    ? "h-[230px] sm:h-[260px] md:h-[280px]"
+                    : idx >= 3 && idx <= 6
+                    ? "h-[210px] sm:h-[230px] md:h-[240px]"
+                    : idx === 7
+                    ? "h-[230px] sm:h-[260px] md:h-[300px]"
+                    : "h-[210px] sm:h-[230px] md:h-[240px]";
                 return (
                   <figure
                     key={item._id}
-                    className={`group relative overflow-hidden rounded-2xl bg-card shadow-sm ring-1 ring-border/70 cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02] ${span} ${heightClass}`}
-                    onClick={() => openImageModal(item, idx)}
+                    className={`group relative overflow-hidden rounded-2xl bg-card shadow-sm ring-1 ring-border/70 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] ${span} ${heightClass}`}
+                    onClick={() => {
+                      const index = images.findIndex((img) => img._id === item._id);
+                      setCurrentImageIndex(index);
+                      setOpenLightbox(true);
+                    }}
+                    style={{ cursor: 'pointer' }}
                   >
                     <Image
                       src={item.photo}
@@ -288,21 +198,6 @@ export default function GalleryPage() {
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300" />
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg">
-                        <svg
-                          className="w-6 h-6 text-gray-800"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
-                          />
-                        </svg>
-                      </div>
                     </div>
                   </figure>
                 );
@@ -311,54 +206,13 @@ export default function GalleryPage() {
           )}
         </div>
 
-        {/* Premium Image Modal - Optimized for All Devices */}
-        {selectedImage && (
-          <div
-            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300"
-            onClick={handleCloseModal}
-          >
-            {/* Close Button (Top-Right, all devices) */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                closeImageModal();
-              }}
-              className="fixed top-3 right-3 z-[60] bg-black/70 hover:bg-black/80 rounded-full p-2 transition-all duration-200 shadow-md"
-              aria-label="Close image viewer"
-            >
-              <X className="w-4 h-4 text-white" strokeWidth={2.5} />
-            </button>
-
-            {/* Minimal UI: no counters or arrows for a clean experience */}
-
-            {/* Modal Container - Always Centered */}
-            <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-8">
-              {/* Image Container */}
-              <div
-                className="relative flex items-center justify-center w-full h-full"
-                onClick={(e) => e.stopPropagation()}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-              >
-                <Image
-                  src={selectedImage.photo}
-                  alt={`Gallery image ${currentImageIndex + 1}`}
-                  width={1200}
-                  height={800}
-                  className="max-w-full max-h-[calc(100vh-8rem)] sm:max-h-[calc(100vh-6rem)] object-contain rounded-lg shadow-2xl select-none"
-                  priority
-                  sizes="100vw"
-                />
-              </div>
-            </div>
-
-            {/* Navigation controls removed for simplicity */}
-
-            {/* Navigation controls removed for simplicity */}
-          </div>
-        )}
+        <Lightbox
+          open={openLightbox}
+          close={() => setOpenLightbox(false)}
+          slides={slides}
+          index={currentImageIndex}
+        />
       </div>
-    </section >
+    </section>
   );
 }
