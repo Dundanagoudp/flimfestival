@@ -1,15 +1,32 @@
 "use client";
 import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 import Reveal from "@/components/common/Reveal";
-import { Card, CardContent } from "@/components/ui/card";
 import { getVideoBlog } from "@/services/videosServices";
-import { GetAllVideosResponse, VideoBlog } from "@/types/videosTypes";
 import React, { useEffect, useState } from "react";
+
+function getYouTubeVideoId(youtubeUrl?: string): string | null {
+  if (!youtubeUrl) return null;
+  const regex = /(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
+  const match = youtubeUrl.match(regex);
+  if (match && match[1]) return match[1];
+  try {
+    const url = new URL(youtubeUrl);
+    const v = url.searchParams.get("v");
+    if (v && v.length === 11) return v;
+  } catch {}
+  return null;
+}
+
+function getYouTubeThumbnail(youtubeUrl?: string): string | undefined {
+  const id = getYouTubeVideoId(youtubeUrl);
+  return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : undefined;
+}
 
 export default function ShowVideo() {
   const [videoBlog, setVideoBlog] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<"video" | "youtube">("video");
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   useEffect(() => {
     const fetchVideoBlog = async () => {
       setLoading(true);
@@ -26,6 +43,23 @@ export default function ShowVideo() {
   }, []);
 
   const filteredVideos = videoBlog.filter((v) => v.videoType === activeTab);
+  const selectedVideo =
+    selectedIndex !== null ? filteredVideos[selectedIndex] : null;
+
+  useEffect(() => {
+    // Close modal when switching tabs or when list length changes
+    setSelectedIndex(null);
+  }, [activeTab, filteredVideos.length]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedIndex(null);
+    };
+    if (selectedIndex !== null) {
+      window.addEventListener("keydown", onKeyDown);
+    }
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selectedIndex]);
 if (loading) {
   return <LoadingSpinner />;
 }
@@ -63,10 +97,10 @@ if (loading) {
           </div>
         </div>
 
-        {/* Cards */}
+        {/* YouTube Home-style Grid */}
         <div className="relative">
           <Reveal
-            key={filteredVideos.length}
+            key={`${activeTab}-${filteredVideos.length}`}
             delay={0.1}
             y={-10}
             transition={{
@@ -76,56 +110,102 @@ if (loading) {
               mass: 0.8,
             }}
           >
-            <div className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide px-4 pb-6">
-              {filteredVideos.length > 0 ? (
-                filteredVideos.map((video) => (
-                  <Card
+            {filteredVideos.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredVideos.map((video, idx) => (
+                  <button
                     key={video._id}
-                    className="shadow-lg rounded-2xl min-w-[320px] max-w-[350px] flex-shrink-0 snap-center hover:scale-105 hover:shadow-2xl transition-transform duration-300 ease-out bg-white"
+                    onClick={() => setSelectedIndex(idx)}
+                    className="group text-left"
                   >
-                    <CardContent className="p-0">
-                      {activeTab === "video" ? (
-                        <div className="aspect-video w-full overflow-hidden rounded-t-2xl">
-                          <video
-                            src={video.video_url}
-                            poster={video.imageUrl}
-                            controls
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      ) : (
-                        <div className="aspect-video w-full overflow-hidden rounded-t-2xl">
-                          <iframe
-                            src={video.youtubeUrl.replace(
-                              "watch?v=",
-                              "embed/"
-                            )}
-                            title={video.title}
-                            className="w-full h-full"
-                            frameBorder="0"
-                            allowFullScreen
-                          />
-                        </div>
-                      )}
-                      <div className="p-4">
-                        <h3 className="font-semibold text-lg line-clamp-2 mb-2">
-                          {video.title}
-                        </h3>
-                        <p className="text-sm text-gray-500">
-                          {new Date(video.addedAt).toLocaleDateString()}
-                        </p>
+                    <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-gray-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={
+                          (activeTab === "youtube" || video.youtubeUrl)
+                            ? (getYouTubeThumbnail(video.youtubeUrl) || video.imageUrl)
+                            : video.imageUrl
+                        }
+                        alt={video.title}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                      <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
+                        {new Date(video.addedAt).toLocaleDateString()}
                       </div>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : (
-                <div className="flex justify-center items-center w-full py-20">
-                  <p className="text-gray-500 text-lg">No {activeTab === "video" ? "videos" : "YouTube videos"} available</p>
-                </div>
-              )}
-            </div>
+                    </div>
+                    <div className="mt-3 space-y-1">
+                      <div className="font-semibold leading-snug line-clamp-2">
+                        {video.title}
+                      </div>
+                      {video.description ? (
+                        <div className="text-sm text-gray-500 line-clamp-2">
+                          {video.description}
+                        </div>
+                      ) : null}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="flex justify-center items-center w-full py-20">
+                <p className="text-gray-500 text-lg">No {activeTab === "video" ? "videos" : "YouTube videos"} available</p>
+              </div>
+            )}
           </Reveal>
         </div>
+
+        {/* Modal Player */}
+        {selectedVideo ? (
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="fixed inset-0 z-50 flex items-center justify-center"
+            onClick={() => setSelectedIndex(null)}
+          >
+            <div className="absolute inset-0 bg-black/80" />
+            <div
+              className="relative z-10 w-[92vw] max-w-5xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="aspect-video w-full overflow-hidden rounded-xl bg-black">
+                {activeTab === "video" ? (
+                  <video
+                    key={selectedVideo._id}
+                    src={selectedVideo.video_url}
+                    poster={selectedVideo.imageUrl}
+                    controls
+                    autoPlay
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <iframe
+                    key={selectedVideo._id}
+                    src={
+                      selectedVideo.youtubeUrl
+                        ?.replace("watch?v=", "embed/") + "?autoplay=1&rel=0"
+                    }
+                    title={selectedVideo.title}
+                    className="w-full h-full"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                )}
+              </div>
+              <button
+                onClick={() => setSelectedIndex(null)}
+                className="absolute -top-10 right-0 text-white/80 hover:text-white"
+                aria-label="Close"
+              >
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.3 5.71L12 12.01l-6.3-6.3-1.4 1.41 6.29 6.29-6.29 6.29 1.4 1.41 6.3-6.3 6.29 6.3 1.41-1.41-6.3-6.29 6.3-6.29z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        ) : null}
       </main>
     </div>
   );
