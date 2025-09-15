@@ -94,29 +94,31 @@ export default function GalleryPage() {
   const openImageModal = (image: GalleryImage, index: number) => {
     setSelectedImage(image);
     setCurrentImageIndex(index);
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
     // Prevent zoom on iOS
-    document.addEventListener('touchmove', preventDefault, { passive: false });
+    document.addEventListener("touchmove", preventDefault, { passive: false });
   };
 
   const closeImageModal = () => {
     setSelectedImage(null);
-    document.body.style.overflow = 'unset';
-    document.removeEventListener('touchmove', preventDefault);
+    document.body.style.overflow = "unset";
+    document.removeEventListener("touchmove", preventDefault);
   };
 
   const preventDefault = (e: Event) => {
     e.preventDefault();
   };
 
-  const navigateImage = (direction: 'prev' | 'next') => {
+  const navigateImage = (direction: "prev" | "next") => {
     if (images.length === 0) return;
 
     let newIndex;
-    if (direction === 'prev') {
-      newIndex = currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
+    if (direction === "prev") {
+      newIndex =
+        currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
     } else {
-      newIndex = currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
+      newIndex =
+        currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
     }
 
     setCurrentImageIndex(newIndex);
@@ -150,10 +152,10 @@ export default function GalleryPage() {
     const isRightSwipe = distance < -50;
 
     if (isLeftSwipe && images.length > 1) {
-      navigateImage('next');
+      navigateImage("next");
     }
     if (isRightSwipe && images.length > 1) {
-      navigateImage('prev');
+      navigateImage("prev");
     }
   };
 
@@ -163,20 +165,20 @@ export default function GalleryPage() {
       if (!selectedImage) return;
 
       switch (e.key) {
-        case 'Escape':
+        case "Escape":
           closeImageModal();
           break;
-        case 'ArrowLeft':
-          navigateImage('prev');
+        case "ArrowLeft":
+          navigateImage("prev");
           break;
-        case 'ArrowRight':
-          navigateImage('next');
+        case "ArrowRight":
+          navigateImage("next");
           break;
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [selectedImage, currentImageIndex, images]);
   if (loading && loadingYears) {
     return <LoadingSpinner />;
@@ -197,7 +199,10 @@ export default function GalleryPage() {
           {loadingYears ? (
             <>
               {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-8 w-16 rounded-full bg-gray-300" />
+                <Skeleton
+                  key={i}
+                  className="h-8 w-16 rounded-full bg-gray-300"
+                />
               ))}
             </>
           ) : yearChips.length > 0 ? (
@@ -284,8 +289,18 @@ export default function GalleryPage() {
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300" />
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg">
-                        <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                        <svg
+                          className="w-6 h-6 text-gray-800"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
+                          />
                         </svg>
                       </div>
                     </div>
@@ -301,139 +316,49 @@ export default function GalleryPage() {
           <div
             className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300"
             onClick={handleCloseModal}
-            onTouchEnd={handleCloseModal}
           >
-            {/* Modal Container */}
-            <div className="relative w-full h-full flex items-center justify-center p-4 sm:p-6 lg:p-8">
+            {/* Close Button (Top-Right, all devices) */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                closeImageModal();
+              }}
+              className="fixed top-3 right-3 z-[60] bg-black/70 hover:bg-black/80 rounded-full p-2 transition-all duration-200 shadow-md"
+              aria-label="Close image viewer"
+            >
+              <X className="w-4 h-4 text-white" strokeWidth={2.5} />
+            </button>
 
-              {/* Close Button - Fixed Position, Always Accessible */}
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  closeImageModal();
-                }}
-                onTouchEnd={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  closeImageModal();
-                }}
-                className="fixed top-4 right-4 z-50 bg-red-600 hover:bg-red-700 active:bg-red-800 backdrop-blur-md rounded-full p-3 sm:p-4 transition-all duration-200 shadow-lg border-2 border-white/20"
-                aria-label="Close image viewer"
-                type="button"
-                style={{ touchAction: 'manipulation' }}
-              >
-                <X className="w-6 h-6 sm:w-7 sm:h-7 text-white" strokeWidth={2.5} />
-              </button>
+            {/* Minimal UI: no counters or arrows for a clean experience */}
 
-              {/* Top Controls Bar */}
-              <div className="absolute top-4 left-4 right-20 z-20 flex items-center">
-                {/* Image Counter */}
-                {images.length > 1 && (
-                  <div className="bg-black/60 backdrop-blur-md rounded-full px-4 py-2 sm:px-5 sm:py-2.5">
-                    <span className="text-white text-sm sm:text-base font-medium">
-                      {currentImageIndex + 1} / {images.length}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Navigation Buttons - Desktop & Tablet */}
-              {images.length > 1 && (
-                <>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigateImage('prev');
-                    }}
-                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full p-2 sm:p-3 transition-all duration-200 touch-manipulation hidden sm:block"
-                    aria-label="Previous image"
-                    type="button"
-                  >
-                    <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigateImage('next');
-                    }}
-                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 backdrop-blur-md rounded-full p-2 sm:p-3 transition-all duration-200 touch-manipulation hidden sm:block"
-                    aria-label="Next image"
-                    type="button"
-                  >
-                    <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                  </button>
-                </>
-              )}
-
-              {/* Mobile Navigation - Bottom Controls */}
-              {images.length > 1 && (
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-6 sm:hidden">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigateImage('prev');
-                    }}
-                    className="bg-black/60 hover:bg-black/80 backdrop-blur-md rounded-full p-4 transition-all duration-200 shadow-lg"
-                    aria-label="Previous image"
-                    type="button"
-                    style={{ touchAction: 'manipulation' }}
-                  >
-                    <ChevronLeft className="w-6 h-6 text-white" strokeWidth={2.5} />
-                  </button>
-
-                  {/* Mobile Close Button */}
-                  <button
-                    onClick={handleCloseModal}
-                    onTouchEnd={handleCloseModal}
-                    className="bg-red-600 hover:bg-red-700 active:bg-red-800 backdrop-blur-md rounded-full p-4 transition-all duration-200 shadow-lg border-2 border-white/20"
-                    aria-label="Close image viewer"
-                    type="button"
-                    style={{ touchAction: 'manipulation' }}
-                  >
-                    <X className="w-6 h-6 text-white" strokeWidth={2.5} />
-                  </button>
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigateImage('next');
-                    }}
-                    className="bg-black/60 hover:bg-black/80 backdrop-blur-md rounded-full p-4 transition-all duration-200 shadow-lg"
-                    aria-label="Next image"
-                    type="button"
-                    style={{ touchAction: 'manipulation' }}
-                  >
-                    <ChevronRight className="w-6 h-6 text-white" strokeWidth={2.5} />
-                  </button>
-                </div>
-              )}
-
-              {/* Image Container - Responsive with Touch Support */}
+            {/* Modal Container - Always Centered */}
+            <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-8">
+              {/* Image Container */}
               <div
-                className="relative w-full h-full flex items-center justify-center touch-pan-y"
+                className="relative flex items-center justify-center w-full h-full"
                 onClick={(e) => e.stopPropagation()}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
               >
-                <div className="relative max-w-full max-h-full animate-in zoom-in-95 duration-300">
-                  <Image
-                    src={selectedImage.photo}
-                    alt={`Gallery image ${currentImageIndex + 1}`}
-                    width={1200}
-                    height={800}
-                    className="max-w-full max-h-[calc(100vh-8rem)] sm:max-h-[calc(100vh-6rem)] object-contain rounded-lg shadow-2xl select-none"
-                    priority
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 80vw"
-                    draggable={false}
-                  />
-                </div>
+                <Image
+                  src={selectedImage.photo}
+                  alt={`Gallery image ${currentImageIndex + 1}`}
+                  width={1200}
+                  height={800}
+                  className="max-w-full max-h-[calc(100vh-8rem)] sm:max-h-[calc(100vh-6rem)] object-contain rounded-lg shadow-2xl select-none"
+                  priority
+                  sizes="100vw"
+                />
               </div>
             </div>
+
+            {/* Navigation controls removed for simplicity */}
+
+            {/* Navigation controls removed for simplicity */}
           </div>
         )}
       </div>
-    </section>
+    </section >
   );
 }
