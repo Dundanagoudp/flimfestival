@@ -95,7 +95,7 @@ export default function EventSchedule() {
                 success for every single client we create for.
               </p>
               <div className="flex items-center gap-2">
-                <Link href="/events">
+                <Link href="/Events">
                   <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out text-sm md:text-base">
                     View Schedule
                   </Button>
