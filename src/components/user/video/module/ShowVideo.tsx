@@ -13,7 +13,7 @@ function getYouTubeVideoId(youtubeUrl?: string): string | null {
     const url = new URL(youtubeUrl);
     const v = url.searchParams.get("v");
     if (v && v.length === 11) return v;
-  } catch {}
+  } catch { }
   return null;
 }
 
@@ -60,9 +60,9 @@ export default function ShowVideo() {
     }
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [selectedIndex]);
-if (loading) {
-  return <LoadingSpinner />;
-}
+  if (loading) {
+    return <LoadingSpinner />;
+  }
   return (
     <div className="w-full bg-white">
       <main className="container mx-auto px-4 py-10">
@@ -75,23 +75,40 @@ if (loading) {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`flex items-center gap-2 px-6 py-3 rounded-md font-medium transition-all duration-200 ${
-                    isActive
+                  className={`flex items-center gap-2 px-6 py-3 rounded-md font-medium transition-all duration-200 ${isActive
                       ? "bg-primary text-white shadow-sm"
                       : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
-                  }`}
+                    }`}
                 >
                   {tab === "video" ? (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    <svg
+                      className="w-5 h-5"
+                      fill={isActive ? "currentColor" : "none"}
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
                     </svg>
                   ) : (
-                    <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    <svg
+                      className="w-5 h-5"
+                      fill={isActive ? "currentColor" : "none"}
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fill={isActive ? "currentColor" : "gray"}
+                        d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
+                      />
                     </svg>
                   )}
                   <span>{tab === "video" ? "Videos" : "YouTube"}</span>
                 </button>
+
               );
             })}
           </div>
