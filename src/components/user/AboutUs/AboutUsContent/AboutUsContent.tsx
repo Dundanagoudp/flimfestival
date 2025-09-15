@@ -51,6 +51,7 @@ export default function AboutUsContent() {
       </div>
     );
   }
+  //aboutus
   return (
       <section className="bg-gray-100">
       <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
