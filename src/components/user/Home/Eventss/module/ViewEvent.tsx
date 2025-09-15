@@ -4,11 +4,10 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react";
 import { getEvent, getFullEvent } from '@/services/eventsService';
-import { EventItem, EventDayItem, TimeEntry, GetFullEventResponse } from '@/types/eventsTypes';
+import { EventItem, GetFullEventResponse } from '@/types/eventsTypes';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Calendar, MapPin, Clock, Users } from 'lucide-react';
 import { LoadingSpinner } from '@/components/common/LoaderSpinner';
-import HeroEvent from './HeroEvent';
 import Reveal from '@/components/common/Reveal';
 import { useRouter } from 'next/navigation';
 
@@ -77,7 +76,8 @@ export default function ViewEvent() {
       setActiveEventId(eventId);
     };
 
-    const handleRegister = (eventId: string, eventName: string) => {
+    const handleRegister = () => {
+      setRegistering(activeEventId);
       // Redirect to registration page
       router.push('/events/register');
     };
@@ -89,21 +89,22 @@ export default function ViewEvent() {
       );
     }
   return (
-    <div>
-    
-      <main className="w-full px-4" style={{ backgroundColor: "#ffffff" }}>
-        <div className="px-10 py-10 ">
-          <div>
-            <h1 className='text-3xl'>Events in <span className='text-primary'> Arunachal Pradesh</span></h1>
+    <div className="min-h-screen bg-white">
+      <main className="w-full">
+        <div className="px-4 sm:px-6 lg:px-10 py-6 lg:py-10">
+          <div className="mb-6 lg:mb-8">
+            <h1 className='text-2xl sm:text-3xl lg:text-4xl font-bold text-center sm:text-left'>
+              Events in <span className='text-primary'>Arunachal Pradesh</span>
+            </h1>
           </div>
 
           {/* Event Selection Badges */}
-          <div className='mt-10 px-8 gap-4 flex flex-wrap'>
+          <div className='mt-6 lg:mt-10 gap-2 sm:gap-4 flex flex-wrap justify-center sm:justify-start'>
             {events.map((event,index) => (
               <Reveal key={index} delay={0.1} y={-10} transition={{ type: 'spring', stiffness: 90, damping: 18, mass: 0.8 }}>
               <Badge
                 key={event._id}
-                className={`w-auto h-[28px] px-3 cursor-pointer transition-all duration-200 ${
+                className={`w-auto h-[32px] sm:h-[28px] px-3 sm:px-4 cursor-pointer transition-all duration-200 text-sm ${
                   activeEventId === event._id
                     ? 'bg-primary text-white shadow-md'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -124,55 +125,57 @@ export default function ViewEvent() {
           )}
 
           {!loading && events.length === 0 && (
-            <div className="mt-8 text-center p-8 bg-gray-50 rounded-lg">
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">No Events Available</h3>
-              <p className="text-gray-500">Please check back later for upcoming events.</p>
+            <div className="mt-6 lg:mt-8 text-center p-6 lg:p-8 bg-gray-50 rounded-lg mx-2 sm:mx-0">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">No Events Available</h3>
+              <p className="text-sm sm:text-base text-gray-500">Please check back later for upcoming events.</p>
             </div>
           )}
 
           {selectedEvent && !loading && (
-            <div className="mt-8">
+            <div className="mt-6 lg:mt-8">
               {/* Event Header with Registration */}
-              <div className="mb-8 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl p-6 border border-primary/20">
-                <div className="flex justify-between items-start">
+              <div className="mb-6 lg:mb-8 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl p-4 sm:p-6 border border-primary/20">
+                <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4 lg:gap-6">
                   <div className="flex-1">
-                    <h2 className="text-3xl font-bold text-gray-800 mb-3">{selectedEvent.event.name}</h2>
-                    <p className="text-gray-600 mb-4 text-lg leading-relaxed">{selectedEvent.event.description}</p>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-3">{selectedEvent.event.name}</h2>
+                    <p className="text-gray-600 mb-4 text-sm sm:text-base lg:text-lg leading-relaxed">{selectedEvent.event.description}</p>
                     
                     {/* Event Details with Icons */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4 mt-4">
                       <div className="flex items-center gap-2 text-gray-600">
-                        <Calendar className="w-5 h-5 text-primary" />
-                        <span className="font-medium">{selectedEvent.event.year} - Month {selectedEvent.event.month}</span>
+                        <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+                        <span className="font-medium text-sm sm:text-base">{selectedEvent.event.year} - Month {selectedEvent.event.month}</span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-600">
-                        <Clock className="w-5 h-5 text-primary" />
-                        <span className="font-medium">{selectedEvent.event.totalDays} Days</span>
+                        <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+                        <span className="font-medium text-sm sm:text-base">{selectedEvent.event.totalDays} Days</span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-600">
-                        <Users className="w-5 h-5 text-primary" />
-                        <span className="font-medium">Multiple Sessions</span>
+                        <Users className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+                        <span className="font-medium text-sm sm:text-base">Multiple Sessions</span>
                       </div>
                     </div>
                   </div>
                   
                   {/* Registration Button */}
-                  <div className="ml-6">
+                  <div className="flex flex-col items-center lg:items-end">
                     <div className="flex items-center gap-2">
                       <Button
-                        onClick={() => handleRegister(selectedEvent.event._id, selectedEvent.event.name)}
+                        onClick={handleRegister}
                         disabled={registering === selectedEvent.event._id}
-                        className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                        className="bg-primary hover:bg-primary/90 text-white px-4 sm:px-6 lg:px-8 py-2 sm:py-3 text-sm sm:text-base lg:text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                       >
                         {registering === selectedEvent.event._id ? (
                           <div className="flex items-center gap-2">
                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            Registering...
+                            <span className="hidden sm:inline">Registering...</span>
+                            <span className="sm:hidden">...</span>
                           </div>
                         ) : (
                           <div className="flex items-center gap-2">
-                            <Users className="w-5 h-5" />
-                            Register Now
+                            <Users className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <span className="hidden sm:inline">Register Now</span>
+                            <span className="sm:hidden">Register</span>
                           </div>
                         )}
                       </Button>
@@ -185,82 +188,86 @@ export default function ViewEvent() {
                 </div>
               </div>
 
-              {/* Days and Time Slots - Associated Layout */}
-              <div className="space-y-6 ">
+              {/* Days and Time Slots - Mobile Optimized Layout */}
+              <div className="space-y-4 lg:space-y-6">
                 {selectedEvent.days.map((day) => (
-                  <div key={day._id} className="grid grid-cols-12 gap-6 border rounded-lg p-6 bg-gray-50">
-                    {/* Left Side - Day Info */}
-                    <div className="col-span-4">
-                      <div className="space-y-4">
-                        <div>
-                          <h3 className="text-xl font-semibold text-gray-800 mb-2">{day.name}</h3>
-                          <p className="text-gray-600 text-sm">{day.description}</p>
-                        </div>
-                        {day.image && (
-                          <div className="w-full">
-                            <img
-                              src={day.image}
-                              alt={day.name}
-                              className="w-full aspect-[4/3] object-contain rounded-md shadow-sm bg-gray-100"
-                            />
+                  <div key={day._id} className="border rounded-lg p-4 sm:p-6 bg-gray-50">
+                    {/* Mobile: Stacked Layout, Desktop: Grid Layout */}
+                    <div className="flex flex-col lg:grid lg:grid-cols-12 lg:gap-6 space-y-4 lg:space-y-0">
+                      {/* Day Info */}
+                      <div className="lg:col-span-4">
+                        <div className="space-y-3 lg:space-y-4">
+                          <div>
+                            <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">{day.name}</h3>
+                            <p className="text-gray-600 text-sm sm:text-base">{day.description}</p>
                           </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Right Side - Day's Time Slots */}
-                    <div className="col-span-8">
-                      <div className="bg-white rounded-lg p-4 h-full">
-                        <div className="flex justify-between items-center mb-4 border-b pb-2">
-                          <h4 className="text-lg font-medium text-primary">
-                            Schedule for {day.name}
-                          </h4>
-                          <Badge variant="secondary" className="text-xs">
-                            {(day as any).timeSlots?.length || 0} Sessions
-                          </Badge>
+                          {day.image && (
+                            <div className="w-full">
+                              <img
+                                src={day.image}
+                                alt={day.name}
+                                className="w-full aspect-[4/3] object-contain rounded-md shadow-sm bg-gray-100"
+                              />
+                            </div>
+                          )}
                         </div>
-                        <ScrollArea className="h-[300px] pr-4">
-                          <div className="space-y-3">
-                            {(day as any).timeSlots?.length > 0 ? (
-                              (day as any).timeSlots.map((slot: TimeSlot) => (
-                                <div key={slot._id} className="bg-gradient-to-r from-gray-50 to-white p-4 rounded-lg border border-gray-200 hover:shadow-md hover:border-primary/30 transition-all duration-200">
-                                  <div className="flex justify-between items-start">
-                                    <div className="flex-1">
-                                      <div className="flex items-center gap-2 mb-2">
-                                        <h5 className="font-semibold text-gray-800">{slot.title}</h5>
-                                        <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">
-                                          {slot.type}
-                                        </Badge>
-                                      </div>
-                                      <p className="text-sm text-gray-600 mb-3 leading-relaxed">{slot.description}</p>
-                                      <div className="flex items-center gap-1 text-sm text-gray-500">
-                                        <MapPin className="w-4 h-4" />
-                                        <span>{slot.location}</span>
-                                      </div>
-                                    </div>
-                                    <div className="text-right ml-4">
-                                      <div className="bg-primary/10 px-4 py-3 rounded-lg border border-primary/20">
-                                        <div className="flex items-center gap-1 text-primary mb-1">
-                                          <Clock className="w-4 h-4" />
-                                          <span className="text-xs font-medium">Time</span>
+                      </div>
+
+                      {/* Day's Time Slots */}
+                      <div className="lg:col-span-8">
+                        <div className="bg-white rounded-lg p-3 sm:p-4 h-full">
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 border-b pb-2 gap-2">
+                            <h4 className="text-base sm:text-lg font-medium text-primary">
+                              Schedule for {day.name}
+                            </h4>
+                            <Badge variant="secondary" className="text-xs w-fit">
+                              {(day as any).timeSlots?.length || 0} Sessions
+                            </Badge>
+                          </div>
+                          <ScrollArea className="h-[250px] sm:h-[300px] lg:h-[350px] pr-2 sm:pr-4">
+                            <div className="space-y-3">
+                              {(day as any).timeSlots?.length > 0 ? (
+                                (day as any).timeSlots.map((slot: TimeSlot) => (
+                                  <div key={slot._id} className="bg-gradient-to-r from-gray-50 to-white p-3 sm:p-4 rounded-lg border border-gray-200 hover:shadow-md hover:border-primary/30 transition-all duration-200">
+                                    {/* Mobile: Stacked, Desktop: Side by side */}
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 sm:gap-4">
+                                      <div className="flex-1">
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                                          <h5 className="font-semibold text-gray-800 text-sm sm:text-base">{slot.title}</h5>
+                                          <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20 w-fit">
+                                            {slot.type}
+                                          </Badge>
                                         </div>
-                                        <p className="font-bold text-primary text-sm">
-                                          {slot.startTime} - {slot.endTime}
-                                        </p>
+                                        <p className="text-xs sm:text-sm text-gray-600 mb-3 leading-relaxed">{slot.description}</p>
+                                        <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-500">
+                                          <MapPin className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                                          <span className="truncate">{slot.location}</span>
+                                        </div>
+                                      </div>
+                                      <div className="text-left sm:text-right">
+                                        <div className="bg-primary/10 px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-primary/20 w-fit sm:w-auto">
+                                          <div className="flex items-center gap-1 text-primary mb-1">
+                                            <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                                            <span className="text-xs font-medium">Time</span>
+                                          </div>
+                                          <p className="font-bold text-primary text-xs sm:text-sm whitespace-nowrap">
+                                            {slot.startTime} - {slot.endTime}
+                                          </p>
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
+                                ))
+                              ) : (
+                                <div className="text-center py-8 sm:py-12 text-gray-500">
+                                  <Calendar className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-3 text-gray-300" />
+                                  <p className="text-base sm:text-lg font-medium">No sessions scheduled</p>
+                                  <p className="text-xs sm:text-sm">Check back later for updates</p>
                                 </div>
-                              ))
-                            ) : (
-                              <div className="text-center py-12 text-gray-500">
-                                <Calendar className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                                <p className="text-lg font-medium">No sessions scheduled</p>
-                                <p className="text-sm">Check back later for updates</p>
-                              </div>
-                            )}
-                          </div>
-                        </ScrollArea>
+                              )}
+                            </div>
+                          </ScrollArea>
+                        </div>
                       </div>
                     </div>
                   </div>
