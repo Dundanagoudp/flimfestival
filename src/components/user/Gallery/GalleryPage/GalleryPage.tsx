@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
 
 type YearId = string;
 
@@ -211,6 +212,8 @@ export default function GalleryPage() {
           close={() => setOpenLightbox(false)}
           slides={slides}
           index={currentImageIndex}
+          plugins={[Zoom]}
+          zoom={{ scrollToZoom: true, maxZoomPixelRatio: 3, zoomInMultiplier: 2 }}
         />
       </div>
     </section>
