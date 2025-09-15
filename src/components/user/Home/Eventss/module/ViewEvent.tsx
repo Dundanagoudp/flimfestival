@@ -79,7 +79,7 @@ export default function ViewEvent() {
     const handleRegister = () => {
       setRegistering(activeEventId);
       // Redirect to registration page
-      router.push('/events/register');
+      router.push('/Events/register');
     };
     if (loading) {
       return (
