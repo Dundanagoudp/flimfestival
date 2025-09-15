@@ -45,6 +45,8 @@ export default function ViewEvent() {
           }
         } catch (error) {
           console.error('Error fetching events:', error);
+          // Set empty array to prevent crashes
+          setEvents([]);
         }
       }
       fetchEvents();
@@ -118,6 +120,13 @@ export default function ViewEvent() {
           {loading && (
             <div className="mt-8 text-center">
               <p>Loading event details...</p>
+            </div>
+          )}
+
+          {!loading && events.length === 0 && (
+            <div className="mt-8 text-center p-8 bg-gray-50 rounded-lg">
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">No Events Available</h3>
+              <p className="text-gray-500">Please check back later for upcoming events.</p>
             </div>
           )}
 
