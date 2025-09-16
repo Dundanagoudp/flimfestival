@@ -38,9 +38,9 @@ const HeroSection = () => {
       {/* Content */}
       <div className="absolute inset-0 flex items-end justify-start px-10 md:px-20 pb-20 md:pb-32">
         <div className="space-y-6 text-white max-w-2xl">
-          <p className="text-primary text-3xl font-medium">
+          <h1 className="text-primary text-3xl sm:text-6xl font-medium">
             Arunachal Film Festival
-          </p>
+          </h1>
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">
             Discover film,<br />
             reimagine the world
