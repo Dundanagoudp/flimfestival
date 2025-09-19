@@ -28,7 +28,7 @@ export default function VideoSection() {
     <div style={{ backgroundColor: '#1A1A1A' }}>
       <main className="w-full px-4">
         <div className="px-10 py-10 relative">
-          <div className="absolute top-0 right-0 flex items-center gap-2 group mt-10">
+          {/* <div className="absolute top-0 right-0 flex items-center gap-2 group mt-10">
             <Link href="/videos">
               <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
                 More Videos
@@ -37,7 +37,7 @@ export default function VideoSection() {
             <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary animate-pulse hover:animate-bounce cursor-pointer">
               <ArrowRight className="h-3 w-3 text-black" />
             </span>
-          </div>
+          </div> */}
 
           <div className="flex flex-col justify-center">
             <section className="space-y-4">

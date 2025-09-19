@@ -18,9 +18,9 @@ const sampleMenu: { heading: string; links: { title: string; url?: string }[] }[
   {
     heading: "Film Selection",
     links: [
-      { title: "Invitees Film", url: "/videos" },
-      { title: "Short Film", url: "/videos" },
-      { title: "Short Documentary", url: "/videos" },
+      { title: "Invitees Film", url: "/awards" },
+      { title: "Short Film", url: "/awards" },
+      { title: "Short Documentary", url: "/awards" },
     ],
   },
   {
