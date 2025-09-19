@@ -72,7 +72,7 @@ export default function Footer() {
      <div className="mt-4 flex justify-center lg:justify-start gap-4 text-sm">
                 <a className="underline" href="https://www.facebook.com/share/1AJf83oQwr/" aria-label="Facebook">Facebook</a>
                 <a className="underline" href="https://www.instagram.com/p/DNx7ML5XlnS/?igsh=bGlnOXF3NXN6NHF0" aria-label="Instagram">Instagram</a>
-                {/* <a className="underline" href="#" aria-label="Twitter">Twitter</a> */}
+                <a className="underline" href="https://filmfreeway.com/ArunachalFilmFest" aria-label="Filmfreeway" aria-label="Filmfreeway">Filmfreeway</a>
               </div>
           </div>
         </div>
