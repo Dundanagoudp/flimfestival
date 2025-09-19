@@ -18,7 +18,6 @@ export default function ShowBlogs() {
     const fetchBlogs = async () => {
       setIsLoading(true)
       const response = await getAllBlogs()
-      console.log("response of blogs", response)
       setBlogs(response)
       setIsLoading(false)
     }

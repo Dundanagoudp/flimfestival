@@ -59,7 +59,7 @@ export default function ViewEvent() {
         setLoading(true);
         try {
           const response = await getFullEvent(activeEventId);
-          console.log("event",response);
+          
           setSelectedEvent(response);
         } catch (error) {
           console.error('Error fetching full event:', error);

@@ -31,7 +31,6 @@ export default function GuestContent() {
         setLoading(true);
         setError(null);
         const res = await getGuestsYearwise();
-        console.log("response of guests", res);
         const payload = Array.isArray(res)
           ? res
           : Array.isArray((res as any)?.data)
