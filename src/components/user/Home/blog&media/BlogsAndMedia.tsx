@@ -20,7 +20,6 @@ export default function BlogsAndMedia() {
       setIsLoading(true);
       try {
         const response = await getLatestBlogs();
-        console.log("Blogs", response);
         setBlogs(response ?? []);
       } catch (err: any) {
         console.log(err);

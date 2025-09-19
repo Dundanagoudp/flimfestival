@@ -48,7 +48,6 @@ export default function EventSchedule() {
       try {
         const response = await getLatestEvent();
         setEventData(response);
-        console.log(" Latest Event", response);
       } catch (err: any) {
         console.log(err);
         setLoading(false);
@@ -65,7 +64,6 @@ export default function EventSchedule() {
       try {
         const response = await getWorkshops();
         setWorkshopData(response);
-        console.log("response of Workshop", response);
       } catch (err: any) {
         console.log(err);
         setLoading(false);

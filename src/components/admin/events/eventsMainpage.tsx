@@ -375,10 +375,9 @@ export default function EventsMainpage() {
                     <DropdownMenuItem
                       onSelect={(e) => {
                         e.preventDefault()
-                        console.log("Current event:", currentEvent)
-                        console.log("Selected event ID:", selectedEventId)
+                  
                         const id = currentEvent?._id || selectedEventId || ""
-                        console.log("Using event ID:", id)
+                        
                         if (id) {
                           setViewEventId(id)
                           setViewModalOpen(true)

@@ -14,7 +14,6 @@ export default function YearAward() {
   useEffect(() => {
     const fetchAwards = async () => {
       const response = await getAllAwards();
-      console.log("Awards", response);
       setAwards(Array.isArray(response) ? response : []); 
     };
     fetchAwards();

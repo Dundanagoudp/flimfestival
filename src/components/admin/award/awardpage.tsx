@@ -48,8 +48,6 @@ export default function AwardPage() {
         getAllAwards(),
         getAllAwardCategories()
       ])
-      console.log('Awards data:', awardsData)
-      console.log('Categories data:', categoriesData)
       
       // Ensure we have valid data
       if (Array.isArray(awardsData)) {
