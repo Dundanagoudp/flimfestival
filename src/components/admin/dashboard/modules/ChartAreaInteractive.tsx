@@ -35,9 +35,7 @@ export default function ChartAreaInteractive() {
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        console.log('Fetching area chart data...')
         const data = await getDashboardAreaChart()
-        console.log('Area chart API response:', data)
         setChartData(data)
       } catch (error) {
         console.error('Error fetching area chart data:', error)
@@ -97,12 +95,6 @@ export default function ChartAreaInteractive() {
     submissions: chartData.data.datasets[0]?.data[index] || 0,
     registrations: chartData.data.datasets[1]?.data[index] || 0,
   }))
-
-  // Debug: Log the data to see what we're getting
-  console.log('ChartAreaInteractive - chartData:', chartData)
-  console.log('ChartAreaInteractive - transformedData:', transformedData)
-  console.log('ChartAreaInteractive - labels:', chartData.data.labels)
-  console.log('ChartAreaInteractive - datasets:', chartData.data.datasets)
 
   // For month-based data, just show all data regardless of time range filter
   const filteredData = transformedData

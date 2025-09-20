@@ -17,7 +17,6 @@ export default function VideoSection() {
         setVideo(firstVideoUrl || null);
        
       } catch (err: any) {
-        console.log("error", err);
       } finally {
         setLoading(false);
       }

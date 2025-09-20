@@ -25,7 +25,6 @@ export default function AwardNomination() {
         const data = response.items || [];
         setAwards(data);
       } catch (err: any) {
-        console.log(err);
       } finally {
         setLoading(false);
       }

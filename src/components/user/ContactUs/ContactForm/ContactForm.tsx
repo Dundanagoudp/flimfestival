@@ -81,7 +81,6 @@ export default function ContactForm() {
       setNotice({ type: "success", text: "Thanks! We’ll get back to you shortly." });
       setForm({ name: "", email: "", phone: PHONE_PREFIX, message: "" });
     } catch (err: any) {
-      console.log("err", err);
       toast.showToast("Something went wrong. Please try again.", "error");
       const msg =
         err?.response?.data?.message ||

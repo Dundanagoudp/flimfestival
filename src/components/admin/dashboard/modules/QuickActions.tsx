@@ -99,7 +99,6 @@ export default function QuickActions() {
                 className="flex items-center justify-between rounded-lg border p-2 sm:p-3 hover:bg-gray-50 cursor-pointer transition-colors"
                 onClick={() => {
                   // You can add navigation logic here
-                  console.log('Navigate to:', action.route)
                 }}
               >
                 <div className="flex-1 min-w-0">

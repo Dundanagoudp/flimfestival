@@ -87,11 +87,7 @@ export default function AddBlogPage() {
 
   const contentType = form.watch("contentType")
 
-  // Debug form state
-  useEffect(() => {
-    console.log("Form state:", form.getValues());
-    console.log("Form errors:", form.formState.errors);
-  }, [form.formState.errors]);
+
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -129,8 +125,6 @@ export default function AddBlogPage() {
   const onSubmit = async (values: FormValues) => {
     setIsSubmitting(true)
     try {
-      console.log("Form values:", values); // Debug log
-      
       const payload = {
         title: values.title,
         contentType: values.contentType,
@@ -141,8 +135,6 @@ export default function AddBlogPage() {
         publishedDate: values.publishedDate,
         image: values.image,
       }
-
-      console.log("Payload being sent:", payload); // Debug log
       
       await createBlog(payload)
       showToast("Blog created successfully!", "success")
