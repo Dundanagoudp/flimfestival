@@ -70,9 +70,9 @@ export default function Footer() {
         
           <div className="flex flex-col justify-end items-end text-sm">
      <div className="mt-4 flex justify-center lg:justify-start gap-4 text-sm">
-                <a className="underline" href="https://www.facebook.com/share/1AJf83oQwr/" aria-label="Facebook">Facebook</a>
-                <a className="underline" href="https://www.instagram.com/p/DNx7ML5XlnS/?igsh=bGlnOXF3NXN6NHF0" aria-label="Instagram">Instagram</a>
-                <a className="underline" href="https://filmfreeway.com/ArunachalFilmFest" aria-label="Filmfreeway" >Filmfreeway</a>
+                <a className="underline" href="https://www.facebook.com/share/1AJf83oQwr/" aria-label="Facebook" target="_blank" rel="noopener noreferrer">Facebook</a>
+                <a className="underline" href="https://www.instagram.com/p/DNx7ML5XlnS/?igsh=bGlnOXF3NXN6NHF0" aria-label="Instagram" target="_blank" rel="noopener noreferrer">Instagram</a>
+                <a className="underline" href="https://filmfreeway.com/ArunachalFilmFest" aria-label="Filmfreeway"  rel="noopener noreferrer" target="_blank" >Filmfreeway</a>
               </div>
           </div>
         </div>
