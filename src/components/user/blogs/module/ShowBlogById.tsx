@@ -23,7 +23,6 @@ export default function ShowBlogById() {
       setIsLoading(true);
       const response = await getSingleBlog(id);
       setBlog(response);
-      console.log(response);
       setIsLoading(false);
     };
     fetchBlog();

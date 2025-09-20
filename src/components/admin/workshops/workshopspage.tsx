@@ -46,7 +46,6 @@ export default function WorkshopsPage() {
     setLoading(true);
     try {
       const data = await getWorkshops();
-      console.log("Workshops API Response:", data);
       setWorkshops(data || []);
     } catch (error) {
       console.error("Error loading workshops:", error);

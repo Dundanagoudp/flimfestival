@@ -73,7 +73,6 @@ export default function AboutSection() {
         const response = await getWorkshops();
         setWorkshopData(response);
       } catch (err: any) {
-        console.log(err);
         setLoading(false);
       } finally {
         setLoading(false);
@@ -88,7 +87,6 @@ export default function AboutSection() {
         const response = await getIntroduction();
         setIntroduction(response);
       } catch (error) {
-        console.log("error", error);
         setLoading(false);
       } finally {
         setLoading(false);

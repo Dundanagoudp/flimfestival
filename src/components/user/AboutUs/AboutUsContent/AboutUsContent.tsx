@@ -2,7 +2,7 @@
 
 import { getAboutStatistics, getIntroduction } from "@/services/aboutServices";
 import { AboutIntroduction, AboutStatistics } from "@/types/aboutTypes";
-import React, { useEffect ,useState} from "react";
+import React, { useEffect, useState } from "react";
 import Reveal from "@/components/common/Reveal";
 import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 
@@ -13,13 +13,12 @@ export default function AboutUsContent() {
   useEffect(() => {
     const fetchStats = async () => {
       setLoading(true);
-      try{
-      const response = await getAboutStatistics();
-      setStats(response);
-      }catch(error){
-        console.log("error", error);
+      try {
+        const response = await getAboutStatistics();
+        setStats(response);
+      } catch (error) {
         setLoading(false);
-      }finally{
+      } finally {
         setLoading(false);
       }
     };
@@ -28,16 +27,15 @@ export default function AboutUsContent() {
   useEffect(() => {
     const fetchIntroduction = async () => {
       setLoading(true);
-      try{
-        
-      const response = await getIntroduction();
-      setIntroduction(response);
-        
-   
-      }catch(error){
-        console.log("error", error);
+      try {
+
+        const response = await getIntroduction();
+        setIntroduction(response);
+
+
+      } catch (error) {
         setLoading(false);
-      }finally{
+      } finally {
         setLoading(false);
       }
     };
@@ -53,7 +51,7 @@ export default function AboutUsContent() {
   }
   //aboutus
   return (
-      <section className="bg-gray-100">
+    <section className="bg-gray-100">
       <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="space-y-10">
           {/* First Row: Image + Title & Description */}

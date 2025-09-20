@@ -22,7 +22,6 @@ export default function BlogsAndMedia() {
         const response = await getLatestBlogs();
         setBlogs(response ?? []);
       } catch (err: any) {
-        console.log(err);
         throw new Error(
           err?.response?.data?.message ||
             err?.message ||

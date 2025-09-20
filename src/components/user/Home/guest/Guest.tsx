@@ -17,7 +17,6 @@ function Guest() {
         const response = await getAllGuests();
         setGuestData(response);
       } catch (err: any) {
-        console.log(err)
       } finally {
         setLoading(false)
       }
