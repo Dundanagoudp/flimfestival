@@ -93,6 +93,15 @@ export async function getEventById(eventId: string) {
   return events.find((e) => e._id === eventId) || null
 }
 
+export async function getEventDetails(eventId: string) {
+  try {
+    const { data } = await apiClient.get<GetFullEventResponse>(`${BASE}/eventDetails/${eventId}`)
+    return data
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to get event by id")
+  }
+}
+
 // Get total events (backend may return number or object)
 export async function getTotalEvent() {
   try {

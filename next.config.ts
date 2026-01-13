@@ -31,6 +31,14 @@ const nextConfig: NextConfig = {
   //   ];
   // },
   images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '7000',
+        pathname: '/uploads/**',
+      },
+    ],
     domains: [
       'images.unsplash.com',
       'hebbkx1anhila5yf.public.blob.vercel-storage.com',

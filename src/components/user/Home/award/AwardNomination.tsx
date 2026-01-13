@@ -5,14 +5,14 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 
 // Import Swiper styles
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import { getAllAwards, getNomination } from "@/services/awardService";
 import { FilmItem } from "@/types/nominatedTypes";
 import React, { useEffect } from "react";
 import Link from "next/link";
+import { getMediaUrl } from "@/utils/media";
+import { get } from "http";
 
 export default function AwardNomination() {
   const [awards, setAwards] = React.useState<FilmItem[]>([]);
@@ -50,6 +50,7 @@ export default function AwardNomination() {
       if (imageCount === 3) return 3;
       return Math.min(defaultSlides, imageCount);
     };
+
 
     return {
       slidesPerView: getSlidesPerView(4),
@@ -162,7 +163,7 @@ export default function AwardNomination() {
                           <SwiperSlide key={`doc-m-${idx}`}>
                             <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 overflow-hidden shadow-sm">
                               <img
-                                src={img}
+                                src={getMediaUrl(img)}
                                 alt={`documentary ${idx + 1}`}
                                 className="w-full h-full object-cover"
                                 draggable="false"
@@ -206,9 +207,9 @@ export default function AwardNomination() {
                         ))
                       : documentaryImages.map((img, idx) => (
                           <SwiperSlide key={`doc-${idx}`}>
-                            <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 hover:scale-105 transition-all duration-300 overflow-hidden shadow-sm">
+                            <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 hover:scale-101 transition-all  overflow-hidden shadow-sm">
                               <img
-                                src={img}
+                                src={getMediaUrl(img)}
                                 alt={`documentary ${idx + 1}`}
                                 className="w-full h-full object-cover"
                                 draggable="false"
@@ -297,7 +298,7 @@ export default function AwardNomination() {
                           <SwiperSlide key={`short-m-${idx}`}>
                             <div className="w-full h-[277px] rounded-[10px] bg-gray-100 border border-gray-200 overflow-hidden shadow-sm">
                               <img
-                                src={img}
+                                src={getMediaUrl(img)}
                                 alt={`short film ${idx + 1}`}
                                 className="w-full h-full object-cover"
                                 draggable="false"
@@ -349,9 +350,9 @@ export default function AwardNomination() {
                         ))
                       : shortFilmImages.map((img, idx) => (
                           <SwiperSlide key={`short-${idx}`}>
-                            <div className="w-full h-[277px] rounded-[10px] bg-gray-100 hover:scale-105 transition-all duration-300 border border-gray-200 overflow-hidden shadow-sm">
+                            <div className="w-full h-[277px] rounded-[10px] bg-gray-100 hover:scale-101 transition-all  border border-gray-200 overflow-hidden shadow-sm">
                               <img
-                                src={img}
+                                src={getMediaUrl(img)}
                                 alt={`short film ${idx + 1}`}
                                 className="w-full h-full object-cover"
                                 draggable="false"

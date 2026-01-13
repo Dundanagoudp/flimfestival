@@ -23,6 +23,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useAuth } from "@/context/auth-context"
+import { getMediaUrl } from "@/utils/media"
 
 const fetchYears = async () => getYears()
 const fetchGuestsAll = async () => getAllGuests()
@@ -117,6 +118,9 @@ export default function GuestsPage() {
   function handleSuccess() {
     mutate()
   }
+  const getImageSrc = (url: string) => {
+    return getMediaUrl(url)
+  }
 
   return (
     <main className="p-2 md:p-4 max-w-12xl ">
@@ -169,7 +173,7 @@ export default function GuestsPage() {
                         <Image
                           src={
                             typeof g.photo === "string" && g.photo
-                              ? g.photo
+                              ? getImageSrc(g.photo)
                               : "/placeholder.svg?height=48&width=48&query=guest%20photo"
                           }
                           alt={g.name}
@@ -230,7 +234,7 @@ export default function GuestsPage() {
                             <Image
                               src={
                                 typeof g.photo === "string" && g.photo
-                                  ? g.photo
+                                  ? getImageSrc(g.photo)
                                   : "/placeholder.svg?height=40&width=40&query=guest%20photo"
                               }
                               alt={g.name}

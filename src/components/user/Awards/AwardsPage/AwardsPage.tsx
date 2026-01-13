@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { getAllAwards, getCategoryNameMap } from "@/services/awardService";
 import type { Award } from "@/types/awardTypes";
 import { LoadingSpinner } from "@/components/common/LoaderSpinner";
+import { getMediaUrl } from "@/utils/media";
 
 /** A single "Short Documentary Rules & Regulations" block */
 function RulesSection({
@@ -24,26 +25,26 @@ function RulesSection({
       {/* Top row: image (left) + copy (right) */}
       <div className="grid items-start gap-8 lg:grid-cols-12">
         {/* Image */}
-     {/* Image (taller) */}
-<div className="lg:col-span-5">
-  <div className="relative h-[420px] sm:h-[380px] lg:h-[400px] xl:h-[500px] overflow-hidden rounded-3xl ring-1 ring-border/70 shadow-sm bg-card">
-    <Image
-      src={award.image || "/placeholder.svg"}
-      alt={award.title}
-      fill
-      sizes="(min-width: 1024px) 40vw, 100vw"
-      className="object-cover"
-      priority
-    />
-  </div>
-</div>
-
+        {/* Image (taller) */}
+        <div className="lg:col-span-5">
+          <div className="relative h-[420px] sm:h-[380px] lg:h-[400px] xl:h-[500px] overflow-hidden rounded-3xl ring-1 ring-border/70 shadow-sm bg-card">
+            <Image
+              src={getMediaUrl(award.image) || "/placeholder.svg"}
+              alt={award.title}
+              fill
+              sizes="(min-width: 1024px) 40vw, 100vw"
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
 
         {/* Copy */}
         <div className="lg:col-span-7">
           <div className="space-y-3">
             <p className="font-montserrat text-[16px] font-semibold uppercase tracking-wide text-primary">
-              Short Documentary Rules & Regulations{categoryName ? ` • ${categoryName}` : ""}
+              Short Documentary Rules & Regulations
+              {categoryName ? ` • ${categoryName}` : ""}
             </p>
 
             <h2 className="font-montserrat text-3xl font-extrabold leading-tight text-foreground sm:text-[34px]">
@@ -64,13 +65,14 @@ function RulesSection({
           { title: "Rule 2", text: award.rule2 },
           { title: "Rule 3", text: award.rule3 },
         ].map((r) => (
-          <div
-            key={r.title}
-            className="  p-6 "
-          >
-           <div className="h-[2px] w-full bg-border/80 -mt-2 mb-4" />
-            <p className="font-montserrat text-base font-semibold text-foreground">{r.title}</p>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">{r.text}</p>
+          <div key={r.title} className="  p-6 ">
+            <div className="h-[2px] w-full bg-border/80 -mt-2 mb-4" />
+            <p className="font-montserrat text-base font-semibold text-foreground">
+              {r.title}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              {r.text}
+            </p>
           </div>
         ))}
       </div>
@@ -84,7 +86,7 @@ function RulesSection({
               className="overflow-hidden rounded-xl border border-border/70 bg-muted shadow-sm"
             >
               <Image
-                src={src}
+                src={getMediaUrl(src)}
                 alt={`thumbnail-${i + 1}`}
                 width={600}
                 height={450}
@@ -94,7 +96,7 @@ function RulesSection({
           ) : (
             <div
               key={i}
-            //   className="h-36 rounded-xl border border-border/70 bg-muted shadow-sm"
+              //   className="h-36 rounded-xl border border-border/70 bg-muted shadow-sm"
             />
           )
         )}
@@ -108,21 +110,26 @@ export default function AwardsPage() {
   const [catMap, setCatMap] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
+  const getImageUrl = (image: string) => {
+    return getMediaUrl(image);
+  };
   useEffect(() => {
     let mounted = true;
     (async () => {
       setLoading(true);
       try {
-        const [awardsRes, cats] = await Promise.all([getAllAwards(), getCategoryNameMap()]);
+        const [awardsRes, cats] = await Promise.all([
+          getAllAwards(),
+          getCategoryNameMap(),
+        ]);
         if (!mounted) return;
         setAwards(awardsRes);
+        console.log("awardsRes", awardsRes);
         setCatMap(cats);
       } catch (e: any) {
         if (!mounted) return;
         setError(e?.message || "Failed to load awards");
-      }
-      finally{
+      } finally {
         setLoading(false);
       }
     })();
@@ -142,9 +149,9 @@ export default function AwardsPage() {
       </section>
     );
   }
-if (loading) {
-  return <LoadingSpinner />;
-}
+  if (loading) {
+    return <LoadingSpinner />;
+  }
   if (!awards) {
     // Skeleton
     return (
@@ -162,12 +169,18 @@ if (loading) {
               </div>
               <div className="grid gap-6 sm:grid-cols-3">
                 {Array.from({ length: 3 }).map((__, i) => (
-                  <div key={i} className="h-28 rounded-2xl bg-muted animate-pulse" />
+                  <div
+                    key={i}
+                    className="h-28 rounded-2xl bg-muted animate-pulse"
+                  />
                 ))}
               </div>
               <div className="grid grid-cols-2 gap-5 md:grid-cols-4">
                 {Array.from({ length: 4 }).map((__, i) => (
-                  <div key={i} className="h-36 rounded-xl bg-muted animate-pulse" />
+                  <div
+                    key={i}
+                    className="h-36 rounded-xl bg-muted animate-pulse"
+                  />
                 ))}
               </div>
             </div>
@@ -181,8 +194,10 @@ if (loading) {
   const a1 = awards[0];
   const a2 = awards[1] ?? awards[0];
 
-  const catName1 = typeof a1.category === "string" ? catMap[a1.category] : a1.category?.name;
-  const catName2 = typeof a2.category === "string" ? catMap[a2.category] : a2.category?.name;
+  const catName1 =
+    typeof a1.category === "string" ? catMap[a1.category] : a1.category?.name;
+  const catName2 =
+    typeof a2.category === "string" ? catMap[a2.category] : a2.category?.name;
 
   return (
     <section className="bg-[oklch(0.97_0_0)]">

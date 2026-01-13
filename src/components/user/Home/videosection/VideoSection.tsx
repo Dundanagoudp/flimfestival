@@ -5,6 +5,7 @@ import { getVideoHome } from '@/services/galleryServices';
 import { GetAllMediaResponse } from '@/types/HomeTypes';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { getMediaUrl } from '@/utils/media';
 export default function VideoSection() {
 
   const [video, setVideo] = useState<string | null>(null);
@@ -23,6 +24,9 @@ export default function VideoSection() {
     };
     fetchVideo();
   }, []);
+  const getVideoUrl = (video: string) => {
+    return getMediaUrl(video);
+  }
   return (
     <div style={{ backgroundColor: '#1A1A1A' }}>
       <main className="w-full px-4">
@@ -60,7 +64,7 @@ export default function VideoSection() {
               <p className="text-white">Loading...</p>
             ) : video ? (
               <video
-                src={video}
+                src={getVideoUrl(video)}
                 controls
                 playsInline
                 className="w-full max-w-[1140px] aspect-video rounded-[10px]"

@@ -1,4 +1,5 @@
 'use client'
+import { getMediaUrl } from '@/utils/media';
 import React, { useState, useEffect } from 'react';
 
 const GuestHero = () => {
@@ -12,6 +13,7 @@ const GuestHero = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
   return (
     <section
       className="w-full h-150 relative overflow-hidden"

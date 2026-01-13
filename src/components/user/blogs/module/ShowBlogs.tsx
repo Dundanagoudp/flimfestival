@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import Reveal from '@/components/common/Reveal'
 import Link from 'next/link'
 import { Skeleton } from '@/components/ui/skeleton'
+import { getMediaUrl } from '@/utils/media'
 
 export default function ShowBlogs() {
   const [blogs, setBlogs] = useState<BlogPost[]>([])
@@ -23,6 +24,9 @@ export default function ShowBlogs() {
     }
     fetchBlogs()
   }, [])
+  const getImageUrl = (image: string) => {
+    return getMediaUrl(image);
+  }
   return (
     <div>
   <main className="w-full px-4" style={{ backgroundColor: "#ffffff" }}>
@@ -83,7 +87,7 @@ export default function ShowBlogs() {
                       <Badge className="absolute top-2 left-2">{categoryName}</Badge>
                     )}
                     <img
-                      src={blog.imageUrl || '/video.png'}
+                      src={getImageUrl(blog.imageUrl) || '/video.png'}
                       alt={blog.title}
                       className="w-full h-full object-cover"
                       draggable="false"

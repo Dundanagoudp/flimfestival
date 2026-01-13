@@ -35,6 +35,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { getMediaUrl } from "@/utils/media"
 
 export default function EventsMainpage() {
   const { showToast } = useToast()
@@ -62,6 +63,7 @@ export default function EventsMainpage() {
   const [viewEventId, setViewEventId] = useState<string | null>(null)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [eventToDelete, setEventToDelete] = useState<EventItem | null>(null)
+  const [image, setImage] = useState<string | null>(null)
 
   useEffect(() => {
     void bootstrap()
@@ -93,7 +95,10 @@ export default function EventsMainpage() {
     setIsLoading(true)
     try {
       const events = await getEvent()
+
       setAllEvents(events)
+   
+      setImage(events[0].image ?? null) 
       const paramEventId = searchParams?.get("eventId") || ""
       const initial = (paramEventId && events.find((e) => e._id === paramEventId)) || events?.[0] || null
       if (initial) setSelectedEventId(initial._id)
@@ -165,7 +170,10 @@ export default function EventsMainpage() {
       setIsDeleting(null)
     }
   }
-
+  const imgFor = (url: string) => {
+    const src = getMediaUrl(url ?? "");      // keep your existing media helper
+    return src !== "/placeholder.svg" ? src : "/herosection.png";
+  };
   function handleEditTimeSlot(timeSlot: TimeEntry, dayId: string) {
     setSelectedTimeSlot(timeSlot)
     setSelectedDayId(dayId)
@@ -203,6 +211,11 @@ export default function EventsMainpage() {
     } finally {
       setUploadingImage(null)
     }
+  }
+  const getImageSrc = () => {
+    console.log("image", image)
+    const mediaUrl = getMediaUrl(image ?? '')
+    return mediaUrl !== "/placeholder.svg" ? mediaUrl : "/herosection.png"
   }
 
   function handleUpdateImage(day: EventDayItem) {
@@ -500,7 +513,7 @@ export default function EventsMainpage() {
                     <div className="mt-4">
                       <div className="relative w-full max-w-lg">
                         <img
-                          src={day.image}
+                          src={imgFor(day.image)}
                           alt={`Day ${day.dayNumber} - ${day.name}`}
                           className="w-full h-56 object-cover rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-lg"
                         />

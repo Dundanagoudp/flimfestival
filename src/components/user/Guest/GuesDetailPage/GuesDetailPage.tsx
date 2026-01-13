@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getGuestById, getAllGuests } from "@/services/guestService";
 import type { Guest } from "@/types/guestTypes";
+import { getMediaUrl } from "@/utils/media";
 
 type UIItem = {
   id: string;
@@ -25,6 +26,9 @@ export default function GuestDetailPage() {
   const [allGuests, setAllGuests] = useState<UIItem[]>([]);
   const [loadingMore, setLoadingMore] = useState(true);
 
+  const getImageUrl = (image: string) => {
+    return getMediaUrl(image);
+  }
   // fetch current guest
   useEffect(() => {
     let mounted = true;
@@ -124,7 +128,7 @@ export default function GuestDetailPage() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl ring-1 ring-border/70 md:aspect-[4/3]">
             <Image
-              src={photo}
+              src={getImageUrl(photo)}
               alt={name}
               fill
               className="object-cover"
@@ -181,7 +185,7 @@ export default function GuestDetailPage() {
                   >
                     <div className="relative aspect-[4/5] w-full">
                       <Image
-                        src={g.photo || "/placeholder.png"}
+                        src={getImageUrl(g.photo) || "/placeholder.png"}
                         alt={g.name}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"

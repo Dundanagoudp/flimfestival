@@ -2,7 +2,10 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { getMediaUrl } from "@/utils/media";
 export default function Contact() {
+
+
   return (
     <section className="w-full bg-[#eeeeee]">
       <div className="px-6 py-12">

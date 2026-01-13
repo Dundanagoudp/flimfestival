@@ -12,6 +12,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { getGalleryYearwise } from "@/services/galleryServices";
 import Link from "next/link";
+import { getMediaUrl } from "@/utils/media";
 
 interface GalleryImage {
   _id: string;
@@ -23,7 +24,10 @@ export default function Gallery() {
   const [gallery, setGallery] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
+   const getImageUrl  = (url: string ) => {
 
+    return getMediaUrl(url);
+  }
   useEffect(() => {
     const fetchGallery = async () => {
       try {
@@ -115,7 +119,7 @@ export default function Gallery() {
               <SwiperSlide key={image._id}>
                 <div className="relative overflow-hidden cursor-pointer group transform transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl">
                   <img
-                    src={image.photo}
+                    src={ getImageUrl(image.photo)}
                     alt={`Gallery image from ${image.year}`}
                     className="w-full h-82 object-fill rounded-2xl"
                     draggable="false"
