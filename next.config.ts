@@ -4,10 +4,6 @@ const isDev = process.env.NODE_ENV !== 'production';
 const isVercel = !!process.env.VERCEL;
 
 const nextConfig: NextConfig = {
-  eslint: {
-    // Skip ESLint during production builds (e.g., on Vercel)
-    ignoreDuringBuilds: true,
-  },
   // Do NOT use standalone on Vercel; enable it only for self-host/Docker
   ...(isVercel ? {} : { output: 'standalone' as const }),
   // poweredByHeader: false,
@@ -38,12 +34,26 @@ const nextConfig: NextConfig = {
         port: '7000',
         pathname: '/uploads/**',
       },
-    ],
-    domains: [
-      'images.unsplash.com',
-      'hebbkx1anhila5yf.public.blob.vercel-storage.com',
-      'storage.googleapis.com',
-      'img.youtube.com',
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'hebbkx1anhila5yf.public.blob.vercel-storage.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.youtube.com',
+        pathname: '/**',
+      },
     ],
   },
 };
