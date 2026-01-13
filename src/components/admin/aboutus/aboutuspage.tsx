@@ -24,6 +24,7 @@ import { StatisticsModal } from "./modules/popups/statistics-modal"
 import { IntroductionModal } from "./modules/popups/introduction-modal"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import DynamicButton from "@/components/common/DynamicButton"
+import { getMediaUrl } from "@/utils/media"
 
 type TabKey = "banner" | "statistics" | "introduction"
 
@@ -42,6 +43,10 @@ export default function AboutUsAdminPage() {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const { showToast } = useToast()
+
+  const getImageUrl = (url: string) => {
+    return getMediaUrl(url);
+  }
 
   const fetchAll = async () => {
     setLoading(true)
@@ -120,7 +125,7 @@ export default function AboutUsAdminPage() {
             {banner ? (
               <div className="flex flex-col sm:flex-row gap-4 items-start">
                 <div className="w-full sm:w-80 h-40 rounded-md overflow-hidden bg-muted">
-                  <img src={banner.backgroundImage} alt={banner.title} className="w-full h-full object-cover" />
+                  <img src={getImageUrl(banner.backgroundImage)} alt={banner.title} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 space-y-2">
                   <h3 className="text-lg font-semibold">{banner.title}</h3>
@@ -153,7 +158,7 @@ export default function AboutUsAdminPage() {
                 </div>
                 {stats.image && (
                   <div className="w-full sm:w-[520px] h-40 rounded-md overflow-hidden bg-muted">
-                    <img src={stats.image} alt="statistics" className="w-full h-full object-cover" />
+                    <img src={getImageUrl(stats.image)} alt="statistics" className="w-full h-full object-cover" />
                   </div>
                 )}
                 <div className="flex gap-2">
@@ -181,7 +186,7 @@ export default function AboutUsAdminPage() {
                 <p className="text-muted-foreground max-w-2xl">{intro.description}</p>
                 {intro.image && (
                   <div className="w-full sm:w-[520px] h-40 rounded-md overflow-hidden bg-muted">
-                    <img src={intro.image} alt="introduction" className="w-full h-full object-cover" />
+                    <img src={getImageUrl(intro.image)} alt="introduction" className="w-full h-full object-cover" />
                   </div>
                 )}
                 <div className="flex gap-2">

@@ -8,6 +8,9 @@ import { BlogPost } from "@/types/blogsTypes";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
+import { getMediaUrl } from "@/utils/media";
+import { get } from "http";
+import { useRouter } from "next/navigation";
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -15,6 +18,7 @@ export default function BlogsAndMedia() {
   const [blogs, setBlogs] = React.useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
+  const router = useRouter();
   useEffect(() => {
     const fetchBlogs = async () => {
       setIsLoading(true);
@@ -34,6 +38,12 @@ export default function BlogsAndMedia() {
     fetchBlogs();
   }, []);
 
+  const handleRouteToblog = (id: string) => {
+    router.push(`/blogs/${id}`);
+  }
+  const getImageUrl = (url: string) => {
+    return getMediaUrl(url);
+  };
   const latestBlogs = blogs
     .slice()
     .sort(
@@ -107,7 +117,7 @@ export default function BlogsAndMedia() {
                     {/* image wrapper keeps full height */}
                     <Link href={`/blogs/${blog._id}`}>
                       <img
-                        src={blog.imageUrl || "default-image.png"}
+                        src={getImageUrl(blog.imageUrl) || "default-image.png"}
                         alt={blog.title}
                         loading="lazy"
                         className={`w-full h-full object-cover transition-transform duration-500`}
@@ -126,7 +136,9 @@ export default function BlogsAndMedia() {
                     </div>
 
                     <div className="absolute right-4 bottom-4">
-                      <button className="text-xs px-3 py-1 rounded-full bg-primary">
+                      <button className="text-xs px-3 py-1 rounded-full bg-primary"
+                      onClick={() => handleRouteToblog(blog._id)}
+                      >
                         Read More
                       </button>
                     </div>
@@ -153,7 +165,7 @@ export default function BlogsAndMedia() {
                   <article>
                     <div className="relative rounded-lg overflow-hidden bg-gray-100 group cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-black/20">
                       <img
-                        src={blog.imageUrl || "default-image.png"}
+                        src={getMediaUrl(blog.imageUrl) || "default-image.png"}
                         alt={blog.title}
                         className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
                       />
@@ -164,7 +176,10 @@ export default function BlogsAndMedia() {
                         )}
                       </div>
                       <div className="absolute right-3 bottom-3">
-                        <button className="text-xs px-3 py-1 rounded-full bg-yellow-300">
+                        <button className="text-xs px-3 py-1 rounded-full bg-yellow-300" 
+                        onClick={() => {
+                          handleRouteToblog(blog._id);
+                        }}>
                           Read More
                         </button>
                       </div>

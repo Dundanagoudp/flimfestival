@@ -177,7 +177,12 @@ const adminNavData = {
         {
           title:"HomeVideo",
           url:"/admin/dashboard/home/homevideo"
+        },
+         {
+          title:"AboutUs",
+          url:"/admin/dashboard/home/aboutus"
         }
+  
       ]
 
     },

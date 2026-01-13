@@ -22,6 +22,7 @@ import ImageModal from "@/components/admin/gallery/modules/popups/image-modal"
 import ImageCard from "@/components/admin/gallery/modules/image-card"
 import DynamicPagination from "@/components/common/DynamicPagination"
 import { useAuth } from "@/context/auth-context"
+import { getMediaUrl } from "@/utils/media"
 
 export default function GalleryPage() {
   const { showToast } = useToast()
@@ -137,6 +138,9 @@ export default function GalleryPage() {
       setError("Failed to refresh images")
       showToast("Failed to refresh images", "error")
     }
+  }
+  const getImageSrc = (url: string) => {
+    return getMediaUrl(url)
   }
 
   const handleDeleteYear = async () => {
@@ -357,15 +361,17 @@ export default function GalleryPage() {
           {imagesLoading ? (
             Array.from({ length: 6 }).map((_, i) => <Card key={i} className="h-40 animate-pulse bg-muted/40" />)
           ) : paginatedImages && paginatedImages.length > 0 ? (
-            paginatedImages.map((img) => (
-              <ImageCard
-                key={img._id}
-                item={img}
+            paginatedImages.map((img) => {
+              const imgSrc = getImageSrc(img.photo)
+              return (
+                <ImageCard
+                  key={img._id}
+                  item={{ ...img, photo: imgSrc }}
                 checked={selected.has(img._id)}
                 onCheckedChange={toggleCheck}
                 onImageClick={openImageModal}
               />
-            ))
+            )})
           ) : (
             <Card className="col-span-full">
               <CardContent className="flex items-center gap-3 p-4 sm:p-6 text-muted-foreground">

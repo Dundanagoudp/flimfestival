@@ -36,6 +36,7 @@ import {
 import { useRouter, useParams } from "next/navigation"
 import { useToast } from "@/components/ui/custom-toast"
 import DynamicButton from "@/components/common/DynamicButton"
+import { getMediaUrl } from "@/utils/media"
 
 // Form validation schema
 const formSchema = z.object({
@@ -65,6 +66,10 @@ export default function EditAwardPage() {
   const router = useRouter()
   const params = useParams()
   const { showToast } = useToast()
+  
+  const getImageUrl = (image: string) => {
+    return getMediaUrl(image);
+  }
 
   const awardId = params.id as string
 
@@ -382,7 +387,7 @@ export default function EditAwardPage() {
                   {previewImage && (
                     <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-md overflow-hidden border">
                       <img
-                        src={previewImage}
+                        src={getImageUrl(previewImage)}
                         alt="Preview"
                         className="w-full h-full object-cover"
                       />
@@ -405,7 +410,7 @@ export default function EditAwardPage() {
                       {existingImages.map((imageUrl, index) => (
                         <div key={`existing-${index}`} className="relative">
                           <img
-                            src={imageUrl}
+                            src={getImageUrl(imageUrl)}
                             alt={`Existing ${index + 1}`}
                             className="w-full h-16 sm:h-20 object-cover rounded-md border"
                           />

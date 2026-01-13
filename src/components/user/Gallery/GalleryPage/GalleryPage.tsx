@@ -12,6 +12,7 @@ import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import { getMediaUrl } from "@/utils/media";
 
 type YearId = string;
 
@@ -25,7 +26,9 @@ export default function GalleryPage() {
   const [error, setError] = useState<string | null>(null);
   const [openLightbox, setOpenLightbox] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
+  const getImageUrl = (image: string) => {
+    return getMediaUrl(image);
+  }
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -190,7 +193,7 @@ export default function GalleryPage() {
                     style={{ cursor: 'pointer' }}
                   >
                     <Image
-                      src={item.photo}
+                      src={getImageUrl(item.photo)}
                       alt={`gallery-${item._id}`}
                       fill
                       sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"

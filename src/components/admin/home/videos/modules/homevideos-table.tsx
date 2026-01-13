@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import DynamicButton from "@/components/common/DynamicButton";
 import DynamicPagination from "@/components/common/DynamicPagination";
 import type { HomeVideo } from "@/types/homevideosTypes";
+import { getMediaUrl } from "@/utils/media";
 
 interface Props {
   items: HomeVideo[];
@@ -35,7 +36,12 @@ export default function HomeVideosTable({
   onPageChange,
   totalItems,
   itemsPerPage,
-}: Props) {
+}: Props)
+ {
+ const getImageSrc = (url: string) => {
+  if (!url) return "";
+  return getMediaUrl(url);
+ };
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
@@ -72,7 +78,7 @@ export default function HomeVideosTable({
                   <TableCell className="font-medium">{it.title}</TableCell>
                   <TableCell className="max-w-[420px] truncate">{it.description}</TableCell>
                   <TableCell>
-                    <a href={it.video} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
+                    <a href={getMediaUrl(it.video)} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
                       View
                     </a>
                   </TableCell>

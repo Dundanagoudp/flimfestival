@@ -7,6 +7,7 @@ import Link from "next/link";
 import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 import { getWorkshops } from "@/services/workshopService";
 import { getLatestEvent } from "@/services/eventsService";
+import { getMediaUrl } from "@/utils/media";
 
 type ScheduleItemProps = {
   time: string;
@@ -76,6 +77,9 @@ export default function EventSchedule() {
     currentEvent?.days?.[selectedDay]?.image ||
     currentEvent?.event?.image ||
     "/event.png";
+  const getImageUrl = (image: string) => {
+    return getMediaUrl(image);
+  }
 
   return (
     <>
@@ -183,7 +187,7 @@ export default function EventSchedule() {
               <div className="w-full md:hidden mt-6">
                 <div className="aspect-[4/3] w-full">
                   <img
-                    src={imageUrl}
+                    src={getImageUrl(imageUrl)}
                     alt={
                       currentEvent?.days?.[selectedDay]?.description ||
                       "Event preview"
@@ -196,7 +200,7 @@ export default function EventSchedule() {
               <div className="w-full md:w-[30%] flex-shrink-0 hidden md:block">
                 <div className="aspect-[4/3] w-full">
                   <img
-                    src={imageUrl}
+                    src={getImageUrl(imageUrl)}
                     alt={
                       currentEvent?.days?.[selectedDay]?.description ||
                       "Event preview"

@@ -8,6 +8,7 @@ import DynamicButton from "@/components/common/DynamicButton";
 import type { Nomination } from "@/types/nominationsTypes";
 import DynamicPagination from "@/components/common/DynamicPagination";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { getMediaUrl } from "@/utils/media";
 
 const TYPES: { label: string; value: string }[] = [
   { label: "All", value: "all" },
@@ -64,6 +65,10 @@ export default function NominationsTable({
     setIsConfirmOpen(false);
     setPendingDelete(null);
   };
+  const getImgsrc = (url: string) => {
+ 
+      return getMediaUrl(url);
+    }
 
   const handleCancelDelete = () => {
     setIsConfirmOpen(false);
@@ -106,7 +111,7 @@ export default function NominationsTable({
             {items.map((n) => (
               <TableRow key={n._id}>
                 <TableCell>
-                  <img src={n.image} alt={n.title} className="h-10 w-16 object-cover rounded" />
+                  <img src={getImgsrc(n.image)} alt={n.title} className="w-16 h-16 object-cover rounded-md" />
                 </TableCell>
                 <TableCell className="font-medium">{n.title}</TableCell>
                 <TableCell>{n.type}</TableCell>

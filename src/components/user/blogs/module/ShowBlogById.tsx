@@ -12,12 +12,16 @@ import Reveal from "@/components/common/Reveal";
 import { useParams } from "next/navigation";
 import formatShortDate from "@/components/common/FormateDate";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getMediaUrl } from "@/utils/media";
 
 export default function ShowBlogById() {
   const { id } = useParams<{ id: string }>();
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [blog, setBlog] = useState<BlogPost>();
   const [isLoading, setIsLoading] = useState(true);
+  const getImageUrl = (image: string) => {
+    return getMediaUrl(image);
+  }
   useEffect(() => {
     const fetchBlog = async () => {
       setIsLoading(true);
@@ -124,7 +128,7 @@ export default function ShowBlogById() {
           {blog?.imageUrl && (
             <div className="relative group overflow-hidden rounded-2xl shadow-lg">
               <img
-                src={blog?.imageUrl}
+                src={getImageUrl(blog?.imageUrl)}
                 alt={blog?.title}
                 className="w-full h-[300px] sm:h-[400px] lg:h-[500px] object-cover group-hover:scale-105 transition-transform duration-700"
               />
@@ -185,7 +189,7 @@ export default function ShowBlogById() {
                 >
                   <div className="w-12 h-12 rounded-md bg-gray-100 overflow-hidden flex-shrink-0">
                     <img
-                      src={b.imageUrl}
+                      src={getImageUrl(b.imageUrl)}
                       className="w-full h-full object-cover"
                       alt={b.title}
                     />

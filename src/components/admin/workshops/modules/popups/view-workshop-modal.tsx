@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { Workshop } from "@/types/workshop-Types";
 import { ExternalLink, Calendar, User, FileText } from "lucide-react";
+import { getMediaUrl } from "@/utils/media";
 
 interface ViewWorkshopModalProps {
   isOpen: boolean;
@@ -15,6 +16,9 @@ interface ViewWorkshopModalProps {
 
 export default function ViewWorkshopModal({ isOpen, onClose, workshop }: ViewWorkshopModalProps) {
   if (!workshop) return null;
+  const getImageSrc = (url: string) => {
+    return getMediaUrl(url)
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -28,7 +32,7 @@ export default function ViewWorkshopModal({ isOpen, onClose, workshop }: ViewWor
           {workshop.imageUrl && (
             <div className="w-full">
               <img 
-                src={workshop.imageUrl} 
+                src={getImageSrc(workshop.imageUrl)} 
                 alt={workshop.name}
                 className="w-full h-48 object-cover rounded-lg"
               />

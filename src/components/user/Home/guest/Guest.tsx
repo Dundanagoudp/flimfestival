@@ -6,7 +6,9 @@ import { getAllGuests } from '@/services/guestService'
 import Link from 'next/link'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
-import 'swiper/css'
+import { getMediaUrl } from '@/utils/media'
+import { get } from 'http'
+
 function Guest() {
  const [guestData, setGuestData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -23,6 +25,9 @@ function Guest() {
     }
     fetchGuest()
   }, [])
+  const getImgSrc=(url:string)=>{
+    return getMediaUrl(url);
+  }
    const displayGuests = guestData.slice(0, 6)
     if (loading) {
     return (
@@ -104,11 +109,11 @@ function Guest() {
                 <>
                   {/* Featured guest (top-left, larger) */}
 
-                  <div className="relative cursor-pointer group transform transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl ">
+                  <div className="relative cursor-pointer group transform transition-all  hover:scale-101 hover:shadow-2xl ">
                     <img
-                      src={displayGuests[0]?.photo || "/video.png"}
+                      src={getMediaUrl(displayGuests[0]?.photo || "/video.png")}
                       alt={displayGuests[0]?.name || "Featured Guest"}
-                      className="w-full h-56 sm:h-64 md:h-72 lg:h-96 rounded-lg object-cover transition-all duration-300 ease-out group-hover:brightness-110"
+                      className="w-full h-56 sm:h-64 md:h-72 lg:h-96 rounded-lg object-cover transition-all  ease-out group-hover:brightness-101"
                       loading="lazy"
                       decoding="async"
                       sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
@@ -131,11 +136,11 @@ function Guest() {
 
                   {/* Top row - right two thumbnails */}
                   {displayGuests[1] && (
-                    <div className="relative cursor-pointer group transform transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl">
+                    <div className="relative cursor-pointer group transform transition-all  hover:scale-101 hover:shadow-2xl">
                       <img
-                        src={displayGuests[1].photo || "/video.png"}
+                        src={getMediaUrl(displayGuests[1].photo || "/video.png")}
                         alt={displayGuests[1].name}
-                        className="w-full h-56 sm:h-64 md:h-72 lg:h-96 rounded-lg object-cover transition-all duration-300 ease-out group-hover:brightness-110"
+                        className="w-full h-56 sm:h-64 md:h-72 lg:h-96 rounded-lg object-cover transition-all  group-hover:brightness-110"
                         loading="lazy"
                         decoding="async"
                         sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
@@ -153,11 +158,11 @@ function Guest() {
                   )}
                   
                   {displayGuests[2] && (
-                    <div className="relative cursor-pointer group transform transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl">
+                    <div className="relative cursor-pointer group transform transition-all  hover:scale-101 hover:shadow-2xl">
                       <img
-                        src={displayGuests[2].photo || "/video.png"}
+                        src={getImgSrc(displayGuests[2].photo || "/video.png")}
                         alt={displayGuests[2].name}
-                        className="w-full h-56 sm:h-64 md:h-72 lg:h-96 rounded-lg object-fill transition-all duration-300 ease-out group-hover:brightness-110"
+                        className="w-full h-56 sm:h-64 md:h-72 lg:h-96 rounded-lg object-fill transition-all  group-hover:brightness-110"
                         loading="lazy"
                         decoding="async"
                         sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
@@ -176,11 +181,11 @@ function Guest() {
 
                   {/* Bottom row - 3 thumbnails */}
                   {displayGuests.slice(3, 6).map((guest) => (
-                    <div key={guest._id} className="relative cursor-pointer group transform transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl">
+                    <div key={guest._id} className="relative cursor-pointer group transform transition-all  hover:scale-101 hover:shadow-2xl">
                       <img
-                        src={guest.photo || "/video.png"}
+                        src={getImgSrc(guest.photo)  || "/video.png"}
                         alt={guest.name}
-                        className="w-full h-56 sm:h-64 md:h-72 lg:h-80 rounded-lg object-fill transition-all duration-300 ease-out group-hover:brightness-110"
+                        className="w-full h-56 sm:h-64 md:h-72 lg:h-80 rounded-lg object-fill transition-all  group-hover:brightness-110"
                         loading="lazy"
                         decoding="async"
                         sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"

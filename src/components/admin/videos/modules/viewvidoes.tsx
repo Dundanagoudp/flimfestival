@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/custom-toast"
 import DynamicButton from "@/components/common/DynamicButton"
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog"
 import { useAuth } from "@/context/auth-context"
+import { getMediaUrl } from "@/utils/media"
 
 export default function VideoDetailPage() {
   const params = useParams() as { id?: string }
@@ -32,6 +33,9 @@ export default function VideoDetailPage() {
   })
   const { userRole } = useAuth()
   const canDelete = userRole === "admin"
+  const getImageSrc = (url: string) => {
+    return getMediaUrl(url)
+  }
 
   useEffect(() => {
     const fetchVideo = async () => {
@@ -39,6 +43,7 @@ export default function VideoDetailPage() {
       try {
         const result = await getVideoById(id)
         if (result.success && result.data) {
+          console.log(result.data)
           setVideo(result.data)
         } else {
           showToast("Video not found", "error")
@@ -64,6 +69,7 @@ export default function VideoDetailPage() {
       loading: false
     })
   }
+  
 
   const handleDeleteConfirm = async () => {
     if (!video) return
@@ -253,7 +259,7 @@ export default function VideoDetailPage() {
               {video.videoType === "video" && video.video_url && (
                 <div className="aspect-video relative">
                   <video
-                    src={video.video_url}
+                    src={getMediaUrl(video.video_url)}
                     poster={video.imageUrl}
                     controls
                     className="w-full h-full"
@@ -268,7 +274,7 @@ export default function VideoDetailPage() {
               {video.videoType === "video" && !video.video_url && video.imageUrl && (
                 <div className="aspect-video relative">
                   <Image
-                    src={video.imageUrl || "/placeholder.svg"}
+                    src={getImageSrc(video.imageUrl) || "/placeholder.svg"}
                     alt={video.title}
                     fill
                     className="object-cover"
@@ -340,7 +346,7 @@ export default function VideoDetailPage() {
                     <div className="space-y-3">
                       <div className="aspect-video relative rounded-lg overflow-hidden bg-gray-100 border">
                         <Image
-                          src={video.imageUrl || "/placeholder.svg"}
+                          src={getImageSrc(video.imageUrl) || "/placeholder.svg"}
                           alt={`${video.title} thumbnail`}
                           fill
                           className="object-cover"

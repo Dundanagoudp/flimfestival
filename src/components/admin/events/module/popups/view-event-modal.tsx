@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Loader2, Calendar, Clock, MapPin } from "lucide-react"
 import { getEventById, getEventDay, getTime } from "@/services/eventsService"
 import type { EventDayItem, EventItem } from "@/types/eventsTypes"
+import { getMediaUrl } from "@/utils/media"
 
 interface ViewEventModalProps {
   isOpen: boolean
@@ -49,6 +50,10 @@ export default function ViewEventModal({ isOpen, onClose, eventId }: ViewEventMo
       }
     })()
   }, [isOpen, eventId])
+
+  const getImageSrc = (url: string) => {
+    return getMediaUrl(url)
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -100,7 +105,7 @@ export default function ViewEventModal({ isOpen, onClose, eventId }: ViewEventMo
               </div>
               {event.image && (
                 <img
-                  src={event.image || "/placeholder.svg"}
+                  src={getImageSrc(event.image) || "/placeholder.svg"}
                   alt={event.name}
                   className="w-full h-64 md:h-80 object-cover rounded border"
                 />

@@ -16,6 +16,7 @@ import { addImages } from "@/services/galleryServices"
 import type { GalleryYear, GalleryImage } from "@/types/galleryTypes"
 import { useToast } from "@/components/ui/custom-toast"
 import { useAuth } from "@/context/auth-context"
+import { getMediaUrl } from "@/utils/media"
 
 export default function ImageUploadPage() {
   const { showToast } = useToast()
@@ -57,7 +58,9 @@ export default function ImageUploadPage() {
   const [currentPage, setCurrentPage] = React.useState(1)
   const imagesPerPage = 24
   const totalPages = Math.ceil((images?.length || 0) / imagesPerPage)
-  
+  const getImageSrc = (url: string) => {
+    return getMediaUrl(url)
+  }
   // Reset to first page when year changes
   React.useEffect(() => {
     setCurrentPage(1)
@@ -324,7 +327,7 @@ export default function ImageUploadPage() {
                   <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer">
                     <CardContent className="p-0">
                                              <img
-                        src={image.photo}
+                        src={getImageSrc(image.photo)}
                         alt={`Gallery image ${image._id}`}
                         className="w-full h-32 object-cover"
                         onClick={(e) => openImageModal(image)}
@@ -396,7 +399,7 @@ export default function ImageUploadPage() {
             </div>
             <div className="p-4">
                              <img
-                src={selectedImage.photo}
+                src={getImageSrc(selectedImage.photo)}
                 alt={`Gallery image ${selectedImage._id}`}
                 className="w-full max-h-[60vh] object-contain rounded-lg"
               />

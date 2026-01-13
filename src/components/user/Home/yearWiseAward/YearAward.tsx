@@ -8,6 +8,7 @@ import { Navigation, Pagination } from 'swiper/modules';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { getAllAwards } from '@/services/awardService';
 import { GetAllAwardsResponse } from '@/types/awardTypes';
+import { getMediaUrl } from '@/utils/media';
 
 export default function YearAward() {
   const [awards, setAwards] = useState<GetAllAwardsResponse>([]);
@@ -18,6 +19,9 @@ export default function YearAward() {
     };
     fetchAwards();
   }, []);
+  const getImageUrl = (image: string) => {
+    return getMediaUrl(image);
+  }
 
   return (
     <main className="w-full px-4" style={{ backgroundColor: "#ffffff" }}>
@@ -47,17 +51,17 @@ export default function YearAward() {
       >
         {awards.map((award) => (
           <SwiperSlide key={award._id}>
-            <Card className="h-full">
+            <Card className="h-full hover:scale-101 transition-all duration-300">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg">{award.title}</CardTitle>
+                <CardTitle className="text-lg">{award.title.slice(0, 20)}...</CardTitle>
                 <CardDescription className="text-sm">
-                  {award.description}
+                  {award.description.slice(0, 80)}...
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden relative">
                   <img
-                    src={award.image}
+                    src={getImageUrl(award.image)}
                     alt={`${award.title}`}
                     className="w-full h-full object-cover"
                   />

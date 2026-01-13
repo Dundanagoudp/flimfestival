@@ -8,6 +8,7 @@ import { Loader2, Upload, Image as ImageIcon, X } from "lucide-react"
 import { useToast } from "@/components/ui/custom-toast"
 import { updateEventDayWithImage } from "@/services/eventsService"
 import type { EventDayItem } from "@/types/eventsTypes"
+import { getMediaUrl } from "@/utils/media"
 
 interface UpdateDayImageModalProps {
   isOpen: boolean
@@ -30,7 +31,9 @@ export default function UpdateDayImageModal({ isOpen, onClose, day, onSuccess }:
       setPreviewUrl(url)
     }
   }
-
+  const getImageSrc = (url: string) => {
+    return getMediaUrl(url)
+  }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!day || !selectedFile) return
@@ -82,7 +85,7 @@ export default function UpdateDayImageModal({ isOpen, onClose, day, onSuccess }:
               <Label>Current Image</Label>
               <div className="relative w-full max-w-md">
                 <img
-                  src={day.image}
+                  src={getImageSrc(day.image)}
                   alt={`Current Day ${day.dayNumber} Image`}
                   className="w-full h-48 object-cover rounded-lg border"
                 />

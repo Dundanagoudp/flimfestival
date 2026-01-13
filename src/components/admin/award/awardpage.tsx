@@ -24,6 +24,7 @@ import DynamicButton from "@/components/common/DynamicButton"
 import DynamicPagination from "@/components/common/DynamicPagination"
 import { DeleteAwardDialog } from "./modules/popups/delete-award-dialog"
 import { useAuth } from "@/context/auth-context"
+import { getMediaUrl } from "@/utils/media"
 
 export default function AwardPage() {
   const { userRole } = useAuth()
@@ -109,6 +110,9 @@ export default function AwardPage() {
       setAwards(awards.filter(award => award._id !== selectedAward._id))
       setSelectedAward(null)
     }
+  }
+  const getImageSrc = (url: string) => {
+    return getMediaUrl(url);
   }
 
   const getCategoryName = (category: string | AwardCategory | undefined | null) => {
@@ -297,7 +301,7 @@ export default function AwardPage() {
                   >
                     <div className="w-full sm:w-24 h-24 sm:h-16 bg-muted rounded-md overflow-hidden flex-shrink-0">
                       <img
-                        src={award.image || "/placeholder.svg"}
+                        src={getImageSrc(award.image || "")}
                         alt={award.title}
                         className="w-full h-full object-cover"
                       />

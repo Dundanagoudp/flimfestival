@@ -9,10 +9,14 @@ import Link from "next/link";
 import Image from "next/image";
 import Reveal from "@/components/common/Reveal";
 import { LoadingSpinner } from "@/components/common/LoaderSpinner";
+import { getMediaUrl } from "@/utils/media";
 
 export default function ShowWorkShop() {
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const getImageUrl = (image: string) => {
+    return getMediaUrl(image);
+  }
 
 
 
@@ -60,7 +64,7 @@ export default function ShowWorkShop() {
             >
               <div className="relative w-full h-48">
                 <Image
-                  src={workshop?.imageUrl || "/event.png"}
+                  src={getImageUrl(workshop?.imageUrl) || "/event.png"}
                   alt={workshop?.name || "Workshop image"}
                   fill
                   sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"

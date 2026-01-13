@@ -5,6 +5,7 @@ import { AboutIntroduction, AboutStatistics } from "@/types/aboutTypes";
 import React, { useEffect, useState } from "react";
 import Reveal from "@/components/common/Reveal";
 import { LoadingSpinner } from "@/components/common/LoaderSpinner";
+import { getMediaUrl } from "@/utils/media";
 
 export default function AboutUsContent() {
   const [stats, setStats] = useState<AboutStatistics | null>(null)
@@ -24,6 +25,9 @@ export default function AboutUsContent() {
     };
     fetchStats();
   }, []);
+  const getImageUrl = (image: string) => {
+    return getMediaUrl(image);
+  }
   useEffect(() => {
     const fetchIntroduction = async () => {
       setLoading(true);
@@ -41,6 +45,7 @@ export default function AboutUsContent() {
     };
     fetchIntroduction();
   }, []);
+  const introImgs = introduction?.image ? [introduction.image] : [];
   const imgs = stats?.image ? [stats.image, stats.image] : [];
   if (loading) {
     return (
@@ -58,8 +63,8 @@ export default function AboutUsContent() {
           <div className="grid items-center gap-10 lg:grid-cols-12">
             <div className="lg:col-span-5">
               <div className="h-[180px] sm:h-[220px] md:h-[260px] rounded-2xl overflow-hidden ring-1 ring-gray-300/70 bg-white">
-                {imgs[0] ? (
-                  <img src={imgs[0]} alt="Left top" className="h-full w-full object-cover" />
+                {introImgs[0] ? (
+                  <img src={getImageUrl(introImgs[0])} alt="Left top" className="h-full w-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-gray-200" />
                 )}
@@ -82,7 +87,7 @@ export default function AboutUsContent() {
               <div className="lg:col-span-5">
                 <div className="h-[180px] sm:h-[220px] md:h-[260px] rounded-2xl overflow-hidden ring-1 ring-gray-300/70 bg-white">
                   {imgs[1] ? (
-                    <img src={imgs[1]} alt="Left bottom" className="h-full w-full object-cover" />
+                    <img src={getImageUrl(imgs[1])} alt="Left bottom" className="h-full w-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-gray-200" />
                   )}

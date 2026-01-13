@@ -13,7 +13,8 @@ import { getIntroduction } from "@/services/aboutServices";
 import { AboutIntroduction } from "@/types/aboutTypes";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
-import 'swiper/css';
+import { getMediaUrl } from "@/utils/media";
+
 
 function Feature({
   title,
@@ -37,6 +38,12 @@ function ImagePlaceholder() {
 }
 
 function WorkshopCard({ workshop }: { workshop: Workshop }) {
+
+  const  getImageUrl  = (url: string ) => {
+
+    return getMediaUrl(url);
+  }
+
   return (
 <Card
   className="overflow-hidden rounded-xl border border-black/5 bg-white shadow-sm 
@@ -44,7 +51,7 @@ function WorkshopCard({ workshop }: { workshop: Workshop }) {
 >
   <div className="relative w-full h-[160px] sm:h-[200px] lg:h-[220px] overflow-hidden">
     <Image
-      src={workshop?.imageUrl || "/event.png"}
+      src={getImageUrl(workshop?.imageUrl) || "/event.png"}
       alt={workshop?.name || "Workshop image"}
       fill
       sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"

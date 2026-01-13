@@ -24,6 +24,7 @@ import { MoreHorizontal } from "lucide-react"
 import { DeleteBlogDialog } from "./module/popups/delete-blog-dialog"
 import DynamicButton from "@/components/common/DynamicButton"
 import DynamicPagination from "@/components/common/DynamicPagination"
+import { getMediaUrl } from "@/utils/media"
 
 export default function BlogsPage() {
   const { userRole } = useAuth()
@@ -104,7 +105,11 @@ export default function BlogsPage() {
     }
     return category.name
   }
-
+  const getImageSrc = (url: string) => {
+    console.log("url", url)
+    console.log("getMediaUrl result:", getMediaUrl(url))
+    return getMediaUrl(url)
+  }
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString)
@@ -276,7 +281,7 @@ export default function BlogsPage() {
                     >
                       <div className="w-full sm:w-24 h-32 sm:h-16 bg-muted rounded-md overflow-hidden flex-shrink-0 mb-2 sm:mb-0">
                         <img
-                          src={blog.imageUrl || "/placeholder.svg"}
+                          src={getImageSrc(blog.imageUrl) || "/placeholder.svg"}
                           alt={blog.title}
                           className="w-full h-full object-cover"
                         />
