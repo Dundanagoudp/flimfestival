@@ -80,6 +80,10 @@ export function getAuthToken(): string | null {
     }
   }
 
-  console.error("[getAuthToken] No authentication token found")
+  // Don't log error for public endpoints - missing token is expected for unauthenticated requests
+  // Only log in development mode for debugging purposes
+  if (process.env.NODE_ENV === "development") {
+    console.debug("[getAuthToken] No authentication token found (this is normal for public endpoints)")
+  }
   return null
 }

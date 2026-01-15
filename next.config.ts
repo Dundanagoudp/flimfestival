@@ -27,12 +27,19 @@ const nextConfig: NextConfig = {
   //   ];
   // },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'http',
         hostname: 'localhost',
         port: '7000',
         pathname: '/uploads/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '7000',
+        pathname: '/api/v1/uploads/**',
       },
       {
         protocol: 'https',

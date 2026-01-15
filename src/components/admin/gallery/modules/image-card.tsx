@@ -2,13 +2,7 @@
 import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import type { GalleryImage } from "@/types/galleryTypes"
-
-function toAbsoluteUrl(photo: string): string {
-  if (/^https?:\/\//i.test(photo)) return photo
-  const base = process.env.NEXT_PUBLIC_API_BASE_URL || ""
-  const origin = base.replace(/\/api\/?.*$/i, "")
-  return `${origin}${photo.startsWith("/") ? "" : "/"}${photo}`
-}
+import { getMediaUrl } from "@/utils/media"
 
 type Props = {
   item: GalleryImage
@@ -18,7 +12,7 @@ type Props = {
 }
 
 export default function ImageCard({ item, checked, onCheckedChange, onImageClick }: Props) {
-  const src = toAbsoluteUrl(item.photo)
+  const src = getMediaUrl(item.photo)
   
   const handleImageClick = () => {
     onImageClick(item)
