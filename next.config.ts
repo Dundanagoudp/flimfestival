@@ -6,26 +6,61 @@ const isVercel = !!process.env.VERCEL;
 const nextConfig: NextConfig = {
   // Do NOT use standalone on Vercel; enable it only for self-host/Docker
   ...(isVercel ? {} : { output: 'standalone' as const }),
-  // poweredByHeader: false,
-  // async headers() {
-  //   return [
-  //     {
-  //       source: "/(.*)",
-  //       headers: [
-  //         { key: "X-Frame-Options", value: "DENY" },
-  //         { key: "X-Content-Type-Options", value: "nosniff" },
-  //         { key: "Referrer-Policy", value: "no-referrer" },
-  //         { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), usb=(), payment=(), clipboard-read=(), clipboard-write=(), accelerometer=(), autoplay=(), encrypted-media=(), fullscreen=(self), gyroscope=(), magnetometer=(), midi=(), picture-in-picture=()" },
-  //         { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains; preload" },
-  //         { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-  //         // COEP can break external resources; leave unset unless you operate in a COOP/COEP isolated environment
-  //         { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
-  //         { key: "X-DNS-Prefetch-Control", value: isDev ? "on" : "off" },
-  //         { key: "X-XSS-Protection", value: "1; mode=block" },
-  //       ],
-  //     },
-  //   ];
-  // },
+  poweredByHeader: false,
+
+  // CVE-2025-55182 Protection: restrict server actions
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '1mb',
+      allowedOrigins: [],
+    },
+  },
+
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "no-referrer" },
+          {
+            key: "Permissions-Policy",
+            value:
+              "camera=(), microphone=(), geolocation=(), usb=(), payment=(), clipboard-read=(), clipboard-write=(), accelerometer=(), autoplay=(), encrypted-media=(), fullscreen=(self), gyroscope=(), magnetometer=(), midi=(), picture-in-picture=()",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains; preload",
+          },
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+          { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              "worker-src 'self'",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "font-src 'self' data: https://fonts.gstatic.com",
+              "img-src 'self' data: https: http: blob:",
+              "media-src 'self' https: http: blob:",
+              "connect-src 'self' data: https: http: ws: wss:",
+              "frame-src 'self' https://www.youtube.com",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'none'",
+              "upgrade-insecure-requests",
+            ].join("; "),
+          },
+          { key: "X-DNS-Prefetch-Control", value: isDev ? "on" : "off" },
+          { key: "X-XSS-Protection", value: "1; mode=block" },
+        ],
+      },
+    ];
+  },
+
   images: {
     unoptimized: true,
     remotePatterns: [
