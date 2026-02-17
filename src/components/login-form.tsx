@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { FormEvent, useState } from "react"
+import React, { FormEvent, useEffect, useState } from "react"
 import { loginUser } from "@/services/authService"
 import Cookies from "js-cookie"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/custom-toast"
 import { useAuth } from "@/context/auth-context"
+
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:7000/api/v1"
+const captchaUrl = `${apiBaseUrl}/captcha/generate`
 
 export function LoginForm({
   className,
@@ -17,24 +20,54 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [altchaKey, setAltchaKey] = useState(Date.now())
+  const [captchaError, setCaptchaError] = useState("")
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
   const { showToast } = useToast()
   const { login } = useAuth()
 
+  // Load ALTCHA on mount. The widget fetches the challenge from captchaUrl (GET /captcha/generate).
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    setMounted(true)
+    Promise.all([
+      import("altcha/external"),
+      import("altcha/altcha.css"),
+    ]).catch(console.error)
+  }, [])
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (isSubmitting) return
+    setCaptchaError("")
+
     const form = e.currentTarget
     const formData = new FormData(form)
     const email = String(formData.get("email") || "").trim()
     const password = String(formData.get("password") || "")
+
     if (!email || !password) {
       showToast("Please enter email and password", "warning")
       return
     }
+
+    const widget = form.querySelector("altcha-widget") as HTMLElement & { value?: string }
+    const hiddenInput = form.querySelector('input[name="altcha"]') as HTMLInputElement | null
+    const altchaPayload = hiddenInput?.value?.trim() || widget?.value?.trim()
+
+    if (!widget) {
+      setCaptchaError("CAPTCHA widget not loaded")
+      return
+    }
+    if (!altchaPayload) {
+      setCaptchaError("Please complete the CAPTCHA")
+      return
+    }
+
     try {
       setIsSubmitting(true)
-      const res = await loginUser({ email, password })
+      const res = await loginUser({ email, password, altchaPayload })
       
       // Store token and user role in cookies
       Cookies.set("token", res.token, { sameSite: "lax" })
@@ -52,9 +85,11 @@ export function LoginForm({
       
       showToast(res.message || "Login successful", "success")
       router.replace("/admin/dashboard")
-    } catch (error: any) {
-      const apiMessage = error?.response?.data?.message || error?.message || "Login failed"
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string }; status?: number }; message?: string }
+      const apiMessage = err?.response?.data?.message || err?.message || "Login failed"
       showToast(apiMessage, "error")
+      setAltchaKey(Date.now())
     } finally {
       setIsSubmitting(false)
     }
@@ -124,6 +159,19 @@ export function LoginForm({
                       )}
                     </button>
                   </div>
+                </div>
+
+                {/* ALTCHA CAPTCHA - uses GET /captcha/generate via challengeurl */}
+                <div className="space-y-2">
+                  {mounted &&
+                    React.createElement("altcha-widget" as "div", {
+                      key: altchaKey,
+                      challengeurl: captchaUrl,
+                      workerurl: "/altcha-worker.js",
+                    })}
+                  {captchaError && (
+                    <p className="text-sm text-red-500 font-montserrat">{captchaError}</p>
+                  )}
                 </div>
               </div>
               

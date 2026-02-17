@@ -1,6 +1,8 @@
 export type LoginRequest = {
   email: string;
   password: string;
+  /** ALTCHA payload (sent as `altcha` in request body) */
+  altchaPayload?: string;
 };
 
 export type LoginResponse = {
