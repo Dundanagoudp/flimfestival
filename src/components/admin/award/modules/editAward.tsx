@@ -19,6 +19,10 @@ import { Label } from "@/components/ui/label"
 import { Loader2, X } from "lucide-react"
 import { getAwardById, updateAward, getAllAwardCategories } from "@/services/awardService"
 import { Award, AwardCategory } from "@/types/awardTypes"
+import { validateFile } from "@/lib/sanitize"
+
+const AWARD_IMAGE_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"]
+const AWARD_IMAGE_MAX_SIZE_MB = 5
 import {
   Card,
   CardHeader,
@@ -181,6 +185,20 @@ export default function EditAwardPage() {
   }
 
   const onSubmit = async (values: FormValues) => {
+    if (values.image) {
+      const v = validateFile(values.image, AWARD_IMAGE_ALLOWED_TYPES, AWARD_IMAGE_MAX_SIZE_MB)
+      if (!v.valid) {
+        showToast(v.error ?? "Invalid main image", "error")
+        return
+      }
+    }
+    for (const file of values.array_images || []) {
+      const v = validateFile(file, AWARD_IMAGE_ALLOWED_TYPES, AWARD_IMAGE_MAX_SIZE_MB)
+      if (!v.valid) {
+        showToast(v.error ?? "Invalid image in additional images", "error")
+        return
+      }
+    }
     setIsSubmitting(true)
     try {
       const payload = {

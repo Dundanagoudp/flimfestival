@@ -12,6 +12,10 @@ import Link from "next/link"
 import { useToast } from "@/components/ui/custom-toast"
 import { getEvent, updateEvent } from "@/services/eventsService"
 import type { EventItem } from "@/types/eventsTypes"
+import { validateFile } from "@/lib/sanitize"
+
+const EVENT_IMAGE_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"]
+const EVENT_IMAGE_MAX_SIZE_MB = 5
 
 export default function EditEventPage() {
   const { showToast } = useToast()
@@ -54,6 +58,13 @@ export default function EditEventPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!event) return
+    if (imageFile) {
+      const validation = validateFile(imageFile, EVENT_IMAGE_ALLOWED_TYPES, EVENT_IMAGE_MAX_SIZE_MB)
+      if (!validation.valid) {
+        showToast(validation.error ?? "Invalid image file", "error")
+        return
+      }
+    }
     setSaving(true)
     try {
       await updateEvent(event._id, {

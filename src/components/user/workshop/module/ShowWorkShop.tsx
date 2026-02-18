@@ -10,6 +10,7 @@ import Image from "next/image";
 import Reveal from "@/components/common/Reveal";
 import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 import { getMediaUrl } from "@/utils/media";
+import { sanitizeUrl } from "@/lib/sanitize";
 
 export default function ShowWorkShop() {
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
@@ -77,7 +78,7 @@ export default function ShowWorkShop() {
                 <p className="text-sm text-gray-600 mb-4">{workshop?.about}</p>
                 <div className="flex items-center gap-2">
                   <Link
-                    href={workshop?.registrationFormUrl}
+                    href={sanitizeUrl(workshop?.registrationFormUrl || '') || '#'}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1"

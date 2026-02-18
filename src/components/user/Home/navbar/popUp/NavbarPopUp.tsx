@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { X, ChevronDown } from "lucide-react";
+import { sanitizeUrl } from "@/lib/sanitize";
 
 interface MenuLink {
   title: string;
@@ -118,7 +119,7 @@ export function MegaMenu({ open, onClose, menu }: MegaMenuProps) {
                             <ListItem
                               key={link.title}
                               title={link.title}
-                              href={link.url || '#'}
+                              href={sanitizeUrl(link.url || '') || '#'}
                               onClick={onClose}
                             />
                           ))}
@@ -150,7 +151,7 @@ export function MegaMenu({ open, onClose, menu }: MegaMenuProps) {
                       <ListItem
                         key={link.title}
                         title={link.title}
-                        href={link.url || "#"}
+                        href={sanitizeUrl(link.url || '') || '#'}
                         onClick={onClose}
                         delay={open ? `${300 + index * 100 + linkIndex * 50}ms` : '0ms'}
                       />

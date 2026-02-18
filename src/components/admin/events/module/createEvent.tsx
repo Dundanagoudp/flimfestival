@@ -11,6 +11,10 @@ import { Calendar, Loader2, Save } from "lucide-react"
 import { useToast } from "@/components/ui/custom-toast"
 import { addEvent } from "@/services/eventsService"
 import type { CreateEventPayload } from "@/types/eventsTypes"
+import { validateFile } from "@/lib/sanitize"
+
+const EVENT_IMAGE_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"]
+const EVENT_IMAGE_MAX_SIZE_MB = 5
 
 function getNowISOString() {
   const now = new Date()
@@ -56,6 +60,13 @@ export default function CreateEventForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (formData.imageFile) {
+      const validation = validateFile(formData.imageFile, EVENT_IMAGE_ALLOWED_TYPES, EVENT_IMAGE_MAX_SIZE_MB)
+      if (!validation.valid) {
+        showToast(validation.error ?? "Invalid image file", "error")
+        return
+      }
+    }
     setIsLoading(true)
     try {
       const payload: CreateEventPayload & { imageFile?: File | null } = {

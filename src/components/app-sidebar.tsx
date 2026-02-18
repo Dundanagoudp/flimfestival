@@ -14,7 +14,6 @@ import {
   LayoutDashboard,
 } from "lucide-react"
 import { useToast } from "@/components/ui/custom-toast"
-import { logoutUser } from "@/services/authService"
 import { getMyProfile } from "@/services/userServices"
 import { setCookie, getCookie } from "@/lib/cookies"
 import { useRouter } from "next/navigation"
@@ -343,7 +342,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [userData, setUserData] = useState<User | null>(null)
   const [sidebarData, setSidebarData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const { userRole: ctxRole } = useAuth()
+  const { userRole: ctxRole, logout: contextLogout } = useAuth()
 
   useEffect(() => {
     const roleFromContextOrCookie = ctxRole || getCookie("userRole")
@@ -379,15 +378,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const handleLogout = useCallback(async () => {
     try {
-      await logoutUser()
-      setCookie("userRole", "", { days: -1 })
-      setCookie("token", "", { days: -1 })
+      await contextLogout()
       showToast("Logged out successfully", "success")
-      router.replace("/login")
     } catch (error: any) {
       showToast(error?.response?.data?.message || error.message || "Logout failed", "error")
     }
-  }, [router])
+  }, [contextLogout])
 
   if (loading || !sidebarData) {
     return null

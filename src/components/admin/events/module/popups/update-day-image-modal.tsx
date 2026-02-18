@@ -9,6 +9,10 @@ import { useToast } from "@/components/ui/custom-toast"
 import { updateEventDayWithImage } from "@/services/eventsService"
 import type { EventDayItem } from "@/types/eventsTypes"
 import { getMediaUrl } from "@/utils/media"
+import { validateFile } from "@/lib/sanitize"
+
+const EVENT_IMAGE_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"]
+const EVENT_IMAGE_MAX_SIZE_MB = 5
 
 interface UpdateDayImageModalProps {
   isOpen: boolean
@@ -37,6 +41,12 @@ export default function UpdateDayImageModal({ isOpen, onClose, day, onSuccess }:
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!day || !selectedFile) return
+
+    const validation = validateFile(selectedFile, EVENT_IMAGE_ALLOWED_TYPES, EVENT_IMAGE_MAX_SIZE_MB)
+    if (!validation.valid) {
+      showToast(validation.error ?? "Invalid file", "error")
+      return
+    }
 
     setUploading(true)
     try {

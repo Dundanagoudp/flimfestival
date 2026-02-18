@@ -23,6 +23,7 @@ import {
 import { MoreHorizontal } from "lucide-react"
 import { DeleteBlogDialog } from "./module/popups/delete-blog-dialog"
 import DynamicButton from "@/components/common/DynamicButton"
+import { sanitizeUrl } from "@/lib/sanitize"
 import DynamicPagination from "@/components/common/DynamicPagination"
 import { getMediaUrl } from "@/utils/media"
 
@@ -350,10 +351,10 @@ export default function BlogsPage() {
                               <Edit className="mr-2 h-4 w-4" />
                               Edit
                             </DropdownMenuItem>
-                            {blog.contentType === "link" && blog.link && (
+                            {blog.contentType === "link" && blog.link && sanitizeUrl(blog.link) && (
                               <DropdownMenuItem asChild>
                                 <a
-                                  href={blog.link}
+                                  href={sanitizeUrl(blog.link)}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                 >

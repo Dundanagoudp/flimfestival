@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import type { Workshop } from "@/types/workshop-Types";
 import { ExternalLink, Calendar, User, FileText } from "lucide-react";
 import { getMediaUrl } from "@/utils/media";
+import { sanitizeUrl } from "@/lib/sanitize";
 
 interface ViewWorkshopModalProps {
   isOpen: boolean;
@@ -80,7 +81,7 @@ export default function ViewWorkshopModal({ isOpen, onClose, workshop }: ViewWor
               <div className="flex items-center gap-2">
                 <ExternalLink className="h-4 w-4 text-gray-500" />
                 <a 
-                  href={workshop.registrationFormUrl}
+                  href={sanitizeUrl(workshop.registrationFormUrl) || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:text-blue-800 text-sm underline"

@@ -13,6 +13,7 @@ import { useParams } from "next/navigation";
 import formatShortDate from "@/components/common/FormateDate";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getMediaUrl } from "@/utils/media";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 export default function ShowBlogById() {
   const { id } = useParams<{ id: string }>();
@@ -169,9 +170,10 @@ export default function ShowBlogById() {
           </div>
           {/* Article Content */}
           <div className="p-6 lg:p-8 shadow-sm border-0 bg-white/70 backdrop-blur-sm rounded-lg">
-            <div className="prose prose-lg max-w-none text-gray-800 leading-relaxed">
-              <p className="text-lg">{blog?.contents}</p>
-            </div>
+            <div
+              className="prose prose-lg max-w-none text-gray-800 leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(blog?.contents ?? "") }}
+            />
           </div>
         </article>
       </div>

@@ -1,6 +1,7 @@
 /**
  * Password Encryption Utility
- * Encrypts sensitive data using AES-256-CBC before transmission
+ * Encrypts sensitive data using AES-256-CBC before transmission.
+ * Use for login and other sensitive forms; ensure the backend expects and decrypts the payload.
  *
  * Security Note: This provides defense-in-depth alongside HTTPS.
  * The encryption key is intentionally client-side for transport encryption.

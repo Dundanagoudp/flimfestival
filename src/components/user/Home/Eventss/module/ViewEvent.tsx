@@ -11,6 +11,7 @@ import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 import Reveal from "@/components/common/Reveal";
 import { useRouter } from "next/navigation";
 import { getMediaUrl } from "@/utils/media";
+import { sanitizeTextContent } from "@/lib/sanitize";
 
 type TimeSlot = {
   _id: string;
@@ -179,7 +180,7 @@ export default function ViewEvent() {
                       {selectedEvent.event.name}
                     </h2>
                     <p className="text-gray-600 mb-4 text-sm sm:text-base lg:text-lg leading-relaxed">
-                      {selectedEvent.event.description}
+                      {sanitizeTextContent(selectedEvent.event.description)}
                     </p>
 
                     {/* Event Details with Icons */}

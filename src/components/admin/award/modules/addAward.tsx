@@ -18,6 +18,10 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Loader2, X, Trophy } from "lucide-react"
 import { createAward, getAllAwardCategories } from "@/services/awardService"
+import { validateFile } from "@/lib/sanitize"
+
+const AWARD_IMAGE_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"]
+const AWARD_IMAGE_MAX_SIZE_MB = 5
 import { AwardCategory } from "@/types/awardTypes"
 import {
   Card,
@@ -144,6 +148,18 @@ export default function AddAwardPage() {
   }
 
   const onSubmit = async (values: FormValues) => {
+    const mainValidation = validateFile(values.image, AWARD_IMAGE_ALLOWED_TYPES, AWARD_IMAGE_MAX_SIZE_MB)
+    if (!mainValidation.valid) {
+      showToast(mainValidation.error ?? "Invalid main image", "error")
+      return
+    }
+    for (const file of values.array_images) {
+      const v = validateFile(file, AWARD_IMAGE_ALLOWED_TYPES, AWARD_IMAGE_MAX_SIZE_MB)
+      if (!v.valid) {
+        showToast(v.error ?? "Invalid image in additional images", "error")
+        return
+      }
+    }
     setIsSubmitting(true)
     try {
       await createAward(values)

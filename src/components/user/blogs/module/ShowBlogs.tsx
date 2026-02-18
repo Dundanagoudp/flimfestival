@@ -9,6 +9,7 @@ import Reveal from '@/components/common/Reveal'
 import Link from 'next/link'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getMediaUrl } from '@/utils/media'
+import { sanitizeUrl } from '@/lib/sanitize'
 
 export default function ShowBlogs() {
   const [blogs, setBlogs] = useState<BlogPost[]>([])
@@ -106,7 +107,7 @@ export default function ShowBlogs() {
                     </Button>
                   ) : (
                     <Button asChild size="sm" className="w-1/2">
-                      <a href={blog.link || '#'} target="_blank" rel="noopener noreferrer">Open Link</a>
+                      <a href={sanitizeUrl(blog.link || '') || '#'} target="_blank" rel="noopener noreferrer">Open Link</a>
                     </Button>
                   )}
                 </CardFooter>

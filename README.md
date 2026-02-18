@@ -7,6 +7,12 @@ Copy `.env.example` to `.env.local` and set values as needed.
 - **NEXT_PUBLIC_API_BASE_URL** (required): API base URL, e.g. `http://localhost:7000/api/v1`.
 - **NEXT_PUBLIC_ENCRYPTION_KEY** (optional): 64 hex characters (256-bit key). When set, login, addUser, and editUser payloads are encrypted with AES-256-CBC before sending; the value must match the backend `ENCRYPTION_KEY`. If omitted, those requests are sent as plain JSON.
 
+## Security
+
+- **Sanitization** (`src/lib/sanitize.ts`): User-generated HTML is sanitized with DOMPurify before render; links use `sanitizeUrl()`; descriptions/excerpts use `sanitizeTextContent()`. File uploads are validated with `validateFile()` (type, size, image extension).
+- **Request safety** (`src/lib/security/rscGuard.ts`): For future API routes or server actions that accept JSON, use `checkRequestSecurity(headers, body)` and `validateRequestBody(body)`; use `createSafeResponse()` when returning arbitrary data to avoid leaking dangerous payloads.
+- **Transport encryption**: Optional client-side encryption for login and sensitive forms is provided by `src/lib/encryption.ts`; use with HTTPS and server-side validation.
+
 ## Getting Started
 
 First, run the development server:

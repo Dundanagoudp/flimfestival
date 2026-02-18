@@ -15,6 +15,7 @@ import DynamicButton from "@/components/common/DynamicButton"
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog"
 import { useAuth } from "@/context/auth-context"
 import { getMediaUrl } from "@/utils/media"
+import { sanitizeUrl } from "@/lib/sanitize"
 
 export default function VideoDetailPage() {
   const params = useParams() as { id?: string }
@@ -248,7 +249,7 @@ export default function VideoDetailPage() {
                     asChild
                     className="bg-red-600 hover:bg-red-700 text-white"
                   >
-                    <a href={video.youtubeUrl} target="_blank" rel="noopener noreferrer">
+                    <a href={sanitizeUrl(video.youtubeUrl) || '#'} target="_blank" rel="noopener noreferrer">
                       <Youtube className="h-4 w-4 mr-2" />
                       Watch on YouTube
                     </a>
@@ -320,7 +321,7 @@ export default function VideoDetailPage() {
                   <div className="p-3 bg-red-50 rounded-lg">
                     <h4 className="text-sm font-medium text-red-800 mb-2">YouTube Link</h4>
                     <Button variant="outline" size="sm" asChild className="w-full justify-start bg-white/80">
-                      <a href={video.youtubeUrl} target="_blank" rel="noopener noreferrer">
+                      <a href={sanitizeUrl(video.youtubeUrl) || '#'} target="_blank" rel="noopener noreferrer">
                         <ExternalLink className="h-4 w-4 mr-2" />
                         Open in YouTube
                       </a>
@@ -332,7 +333,7 @@ export default function VideoDetailPage() {
                   <div className="p-3 bg-blue-50 rounded-lg">
                     <h4 className="text-sm font-medium text-blue-800 mb-2">Video File</h4>
                     <Button variant="outline" size="sm" asChild className="w-full justify-start bg-white/80">
-                      <a href={video.video_url} target="_blank" rel="noopener noreferrer">
+                      <a href={sanitizeUrl(video.video_url) || '#'} target="_blank" rel="noopener noreferrer">
                         <Download className="h-4 w-4 mr-2" />
                         Download Original
                       </a>
@@ -354,7 +355,7 @@ export default function VideoDetailPage() {
                         />
                       </div>
                       <Button variant="outline" size="sm" asChild className="w-full justify-start bg-white/80">
-                        <a href={video.imageUrl} target="_blank" rel="noopener noreferrer">
+                        <a href={sanitizeUrl(video.imageUrl) || '#'} target="_blank" rel="noopener noreferrer">
                           <ExternalLink className="h-4 w-4 mr-2" />
                           View Full Size
                         </a>

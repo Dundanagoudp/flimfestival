@@ -7,6 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import { getGuestById, getAllGuests } from "@/services/guestService";
 import type { Guest } from "@/types/guestTypes";
 import { getMediaUrl } from "@/utils/media";
+import { sanitizeTextContent } from "@/lib/sanitize";
 
 type UIItem = {
   id: string;
@@ -119,7 +120,7 @@ export default function GuestDetailPage() {
   const role = (guest as any).role ?? "Guest";
   const name = (guest as any).name ?? "";
   const age = (guest as any).age ?? "";
-  const description = (guest as any).description ?? "";
+  const description = sanitizeTextContent((guest as any).description ?? "");
 
   return (
     <section className="bg-[oklch(0.97_0_0)]">

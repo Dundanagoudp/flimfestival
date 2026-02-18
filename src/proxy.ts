@@ -14,19 +14,8 @@ export function proxy(request: NextRequest) {
     pathname === path || pathname.startsWith(`${path}/`)
   );
 
-  if (!isProtected) {
-    return NextResponse.next();
-  }
-
-  // Example: Check for a session cookie (customize as per your auth logic)
-  const token = request.cookies.get('token')?.value;
-  if (!token) {
-    // Not logged in, redirect to login
-    const loginUrl = new URL('/login', request.url);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  // If logged in, allow access (role-based content handled in page)
+  // Auth is via HttpOnly cookie on the API origin; this middleware runs on the app origin
+  // and cannot see that cookie. Rely on client-side auth (auth context + ProtectedRoute) to redirect.
   return NextResponse.next();
 }
 

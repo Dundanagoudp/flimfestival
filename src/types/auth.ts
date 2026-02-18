@@ -5,15 +5,10 @@ export type LoginRequest = {
   altchaPayload?: string;
 };
 
+/** Login returns only success and message; JWT is in HttpOnly cookie. */
 export type LoginResponse = {
+  success: boolean;
   message: string;
-  token: string;
-  data: {
-    user: {
-      role: string;
-      accountType?: string;
-    };
-  };
 }; 
 
 export type LogoutResponse = {

@@ -5,6 +5,10 @@ import { addImages } from "@/services/galleryServices"
 import { DynamicButton } from "@/components/common"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/custom-toast"
+import { validateFile } from "@/lib/sanitize"
+
+const GALLERY_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"]
+const GALLERY_MAX_SIZE_MB = 5
 
 type Props = {
   yearId: string
@@ -23,21 +27,14 @@ export default function UploadImages({ yearId, onDone }: Props) {
       return
     }
     
-    // Validate file types
-    const invalidFiles = Array.from(files).filter(file => !file.type.startsWith('image/'))
-    if (invalidFiles.length > 0) {
-      setError("Please select only image files")
-      return
+    for (const file of Array.from(files)) {
+      const result = validateFile(file, GALLERY_ALLOWED_TYPES, GALLERY_MAX_SIZE_MB)
+      if (!result.valid) {
+        setError(result.error ?? "Invalid file")
+        return
+      }
     }
-    
-    // Validate file sizes (max 5MB per file)
-    const maxSize = 5 * 1024 * 1024 // 5MB
-    const oversizedFiles = Array.from(files).filter(file => file.size > maxSize)
-    if (oversizedFiles.length > 0) {
-      setError("Some files are too large. Maximum size is 5MB per file")
-      return
-    }
-    
+
     try {
       setLoading(true)
       setError(null)

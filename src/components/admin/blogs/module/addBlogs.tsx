@@ -18,6 +18,10 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Loader2 } from "lucide-react"
 import { createBlog, getAllCategories } from "@/services/blogsServices"
+import { validateFile } from "@/lib/sanitize"
+
+const BLOG_IMAGE_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"]
+const BLOG_IMAGE_MAX_SIZE_MB = 5
 import { BlogCategory } from "@/types/blogsTypes"
 import {
   Card,
@@ -123,6 +127,11 @@ export default function AddBlogPage() {
   }
 
   const onSubmit = async (values: FormValues) => {
+    const validation = validateFile(values.image, BLOG_IMAGE_ALLOWED_TYPES, BLOG_IMAGE_MAX_SIZE_MB)
+    if (!validation.valid) {
+      showToast(validation.error ?? "Invalid image file", "error")
+      return
+    }
     setIsSubmitting(true)
     try {
       const payload = {

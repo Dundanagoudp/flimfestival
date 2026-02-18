@@ -1,60 +1,52 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { getCookie } from "@/lib/cookies";
+import { useEffect } from "react";
+import { useAuth } from "@/context/auth-context";
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
   allowedRoles?: string[];
-  authPage?: boolean; 
+  authPage?: boolean;
 };
 
 export default function ProtectedRoute({
   children,
   allowedRoles,
-  authPage = false, 
+  authPage = false,
 }: ProtectedRouteProps) {
   const router = useRouter();
-  const [isChecking, setIsChecking] = useState(true);
+  const { userRole, isLoading } = useAuth();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const userRole = getCookie("userRole");
+    if (isLoading) return;
 
-      if (authPage && userRole) {
-        // If this is an auth page and user is logged in, redirect to dashboard
-        switch (userRole) {
-          case "admin":
-            router.replace("/admin/dashboard");
-            break;
-          default:
-            router.replace("/admin/dashboard");
-        }
+    if (authPage && userRole) {
+      router.replace("/admin/dashboard");
+      return;
+    }
+
+    if (!authPage) {
+      if (!userRole) {
+        router.replace("/login");
         return;
       }
-
-      if (!authPage) {
-        // For non-auth pages, check if user has required role
-        if (!userRole) {
-          router.replace("/login");
-          return;
-        }
-
-        if (allowedRoles && !allowedRoles.includes(userRole)) {
-          router.replace("/unauthorized");
-          return;
-        }
+      if (allowedRoles && !allowedRoles.includes(userRole)) {
+        router.replace("/unauthorized");
+        return;
       }
+    }
+  }, [router, allowedRoles, authPage, userRole, isLoading]);
 
-      setIsChecking(false);
-    };
-
-    checkAuth();
-  }, [router, allowedRoles, authPage]);
-
-  if (isChecking) {
+  if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (!authPage && !userRole) {
+    return null;
+  }
+  if (authPage && userRole) {
+    return null;
   }
 
   return <>{children}</>;

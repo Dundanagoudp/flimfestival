@@ -2,14 +2,16 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getCookie, setCookie, deleteCookie } from "@/lib/cookies";
+import { setCookie, deleteCookie } from "@/lib/cookies";
 import { logoutUser } from "@/services/authService";
-import Cookies from "js-cookie";
+import { getMyProfile } from "@/services/userServices";
+import type { User } from "@/types/user-types";
 
 type AuthContextType = {
+  user: User | null;
   userRole: string | null;
   isLoading: boolean;
-  login: (role: string) => void;
+  login: (user: User) => void;
   logout: () => void;
   checkAuth: () => Promise<boolean>;
 };
@@ -17,84 +19,60 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [userRole, setUserRole] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  const userRole = user?.role ?? null;
+
   const checkAuth = async () => {
     try {
-      const res = await fetch("/api/auth/check");
-      const data = await res.json();
-
-      if (data.isAuthenticated && data.role) {
-        setUserRole(data.role);
-        setCookie("userRole", data.role, { days: 1 });
+      const profileResponse = await getMyProfile();
+      if (profileResponse.success && profileResponse.data) {
+        setUser(profileResponse.data);
+        setCookie("userRole", profileResponse.data.role, { days: 1 });
         return true;
       }
+      setUser(null);
       return false;
     } catch (error) {
       console.error("Auth check failed:", error);
+      setUser(null);
       return false;
     }
   };
 
   useEffect(() => {
     const initializeAuth = async () => {
-      // First check client-side cookies
-      const role = getCookie("userRole");
-
-      if (role) {
-        setUserRole(role);
-      } else {
-        // If no client cookie, verify with server
-        await checkAuth();
-      }
+      await checkAuth();
       setIsLoading(false);
     };
 
     initializeAuth();
   }, []);
 
-  const login = (role: string) => {
-    setCookie("userRole", role, { days: 1 });
-    setUserRole(role);
+  const login = (userData: User) => {
+    setUser(userData);
+    setCookie("userRole", userData.role, { days: 1 });
   };
 
   const logout = async () => {
     try {
-      // Call the logout API
       await logoutUser();
-      
-      // Clear all auth cookies
       deleteCookie("userRole");
-      Cookies.remove("token");
-      // Clear localStorage fallback token
-      try {
-        if (typeof window !== "undefined") {
-          window.localStorage.removeItem("token");
-        }
-      } catch {}
-      
-      setUserRole(null);
+      setUser(null);
       router.push("/login");
     } catch (error) {
       console.error("Logout failed:", error);
-      // Even if API call fails, clear local state
       deleteCookie("userRole");
-      Cookies.remove("token");
-      try {
-        if (typeof window !== "undefined") {
-          window.localStorage.removeItem("token");
-        }
-      } catch {}
-      setUserRole(null);
+      setUser(null);
       router.push("/login");
     }
   };
 
   return (
     <AuthContext.Provider
-      value={{ userRole, isLoading, login, logout, checkAuth }}
+      value={{ user, userRole, isLoading, login, logout, checkAuth }}
     >
       {children}
     </AuthContext.Provider>
