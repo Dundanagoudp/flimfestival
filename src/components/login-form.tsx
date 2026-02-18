@@ -27,6 +27,41 @@ function getStoredLockUntil(): number | null {
   return Number.isFinite(ts) && ts > Date.now() ? ts : null
 }
 
+/** Detect backend rate-limit message (429 or 200 + success: false with rate-limit text) */
+function isRateLimitMessage(msg: string): boolean {
+  if (!msg || typeof msg !== "string") return false
+  return /too many login attempts/i.test(msg) || /too many requests/i.test(msg) || /rate limit/i.test(msg)
+}
+
+/**
+ * Parse lock duration from 429 response headers.
+ * Returns lockUntil (ms timestamp) or null to use fallback.
+ */
+function getLockUntilFromHeaders(headers: Record<string, string> | undefined): number | null {
+  if (!headers || typeof headers !== "object") return null
+  const get = (key: string) => {
+    const lower = key.toLowerCase()
+    const value = headers[lower] ?? headers[key]
+    return typeof value === "string" ? value.trim() : ""
+  }
+  // RateLimit-Reset: Unix timestamp in seconds
+  const reset = get("ratelimit-reset")
+  if (reset) {
+    const sec = parseInt(reset, 10)
+    if (Number.isFinite(sec)) {
+      const ms = sec <= 1e10 ? sec * 1000 : sec
+      return ms > Date.now() ? ms : null
+    }
+  }
+  // Retry-After: seconds until retry
+  const retryAfter = get("retry-after")
+  if (retryAfter) {
+    const sec = parseInt(retryAfter, 10)
+    if (Number.isFinite(sec) && sec > 0) return Date.now() + sec * 1000
+  }
+  return null
+}
+
 export function LoginForm({
   className,
   ...props
@@ -152,7 +187,21 @@ export function LoginForm({
       const res = await loginUser({ email, password, altchaPayload })
 
       if (!res.success) {
-        showToast(res.message || "Login failed", "error")
+        const msg = res.message || "Login failed"
+        if (isRateLimitMessage(msg)) {
+          const until = Date.now() + LOCK_DURATION_MS
+          setLoginError(msg)
+          setLockUntil(until)
+          try {
+            sessionStorage.setItem(LOCK_STORAGE_KEY, String(until))
+          } catch {
+            /* ignore */
+          }
+          showToast(msg, "error")
+          setAltchaKey(Date.now())
+          return
+        }
+        showToast(msg, "error")
         setAltchaKey(Date.now())
         return
       }
@@ -171,13 +220,21 @@ export function LoginForm({
       showToast(res.message || "Login successful", "success")
       router.replace("/admin/dashboard")
     } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string }; status?: number }; message?: string }
+      const err = error as {
+        response?: {
+          data?: { message?: string }
+          status?: number
+          headers?: Record<string, string>
+        }
+        message?: string
+      }
       const status = err?.response?.status
       const apiMessage = err?.response?.data?.message || err?.message || "Login failed"
 
       if (status === 429) {
         const lockMessage = err?.response?.data?.message || LOCK_MESSAGE
-        const until = Date.now() + LOCK_DURATION_MS
+        const headerUntil = getLockUntilFromHeaders(err?.response?.headers)
+        const until = headerUntil ?? Date.now() + LOCK_DURATION_MS
         setLockUntil(until)
         setLoginError(lockMessage)
         try {
@@ -226,7 +283,7 @@ export function LoginForm({
                   className="rounded-lg border border-amber-500/50 bg-amber-500/10 p-4 text-sm text-amber-700 dark:text-amber-400 font-montserrat"
                   data-testid="login-lock-message"
                 >
-                  <p>{LOCK_MESSAGE}</p>
+                  <p>{loginError || LOCK_MESSAGE}</p>
                   {countdownSeconds != null && countdownSeconds > 0 && (
                     <p className="mt-2 font-medium">
                       Try again in {Math.floor(countdownSeconds / 60)}:
