@@ -1,5 +1,12 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment variables
+
+Copy `.env.example` to `.env.local` and set values as needed.
+
+- **NEXT_PUBLIC_API_BASE_URL** (required): API base URL, e.g. `http://localhost:7000/api/v1`.
+- **NEXT_PUBLIC_ENCRYPTION_KEY** (optional): 64 hex characters (256-bit key). When set, login, addUser, and editUser payloads are encrypted with AES-256-CBC before sending; the value must match the backend `ENCRYPTION_KEY`. If omitted, those requests are sent as plain JSON.
+
 ## Getting Started
 
 First, run the development server:

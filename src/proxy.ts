@@ -6,7 +6,7 @@ const protectedPaths = [
   '/admin/dashboard',
 ];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Check if the path is protected
@@ -32,4 +32,4 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: ['/admin/dashboard/:path*'],
-}; 
+};

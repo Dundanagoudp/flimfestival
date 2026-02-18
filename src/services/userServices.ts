@@ -1,5 +1,6 @@
 import type { ApiResponse, User, CreateUserData, EditUserData } from "@/types/user-types"
 import apiClient from "../apiClient"
+import { encryptPayload, isEncryptionAvailable } from "@/lib/encryption"
 
 // Get all Users
 export async function getAllUsers(): Promise<ApiResponse<User[]>> {
@@ -21,7 +22,10 @@ export async function getAllUsers(): Promise<ApiResponse<User[]>> {
 // Add User
 export async function addUser(data: CreateUserData): Promise<ApiResponse<User>> {
   try {
-    const response = await apiClient.post("/auth/addUser", data)
+    const body = isEncryptionAvailable()
+      ? { encryptedBody: encryptPayload(data) }
+      : data
+    const response = await apiClient.post("/auth/addUser", body)
     return {
       success: true,
       data: response.data,
@@ -55,7 +59,10 @@ export async function deleteUser(userId: string): Promise<ApiResponse<any>> {
 // Edit User
 export async function editUser(userId: string, data: EditUserData): Promise<ApiResponse<User>> {
   try {
-    const response = await apiClient.put(`/auth/editUser/${userId}`, data)
+    const body = isEncryptionAvailable()
+      ? { encryptedBody: encryptPayload(data) }
+      : data
+    const response = await apiClient.put(`/auth/editUser/${userId}`, body)
     return {
       success: true,
       data: response.data.user,
