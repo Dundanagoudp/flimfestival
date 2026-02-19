@@ -262,7 +262,7 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="w-full max-w-md mx-auto shadow-lg border border-border bg-card/95 backdrop-blur-sm">
         <CardContent className="p-8">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} autoComplete="off">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center space-y-2">
                 <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4">
@@ -310,6 +310,7 @@ export function LoginForm({
                     placeholder="Enter your email"
                     required
                     name="email"
+                    autoComplete="off"
                     disabled={isLocked}
                     className="h-12 border-input focus:border-ring focus:ring-ring/20 transition-colors font-montserrat"
                   />
@@ -326,6 +327,7 @@ export function LoginForm({
                       placeholder="Enter your password"
                       required 
                       name="password" 
+                      autoComplete="off"
                       disabled={isLocked}
                       className="h-12 border-input focus:border-ring focus:ring-ring/20 transition-colors font-montserrat pr-12"
                     />
