@@ -9,9 +9,10 @@ import type { CuratedGroupedImage } from "@/types/curatedTypes"
 interface OfficialSectionCarouselProps {
   images: CuratedGroupedImage[]
   categoryName?: string
+  onImageClick?: (image: CuratedGroupedImage) => void
 }
 
-export default function OfficialSectionCarousel({ images, categoryName }: OfficialSectionCarouselProps) {
+export default function OfficialSectionCarousel({ images, categoryName, onImageClick }: OfficialSectionCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: "start",
@@ -29,9 +30,11 @@ export default function OfficialSectionCarousel({ images, categoryName }: Offici
       <div className="overflow-hidden rounded-xl" ref={emblaRef}>
         <div className="flex gap-6">
           {images.map((item) => (
-            <div
+            <button
               key={item._id}
-              className="min-w-0 flex flex-col rounded-xl overflow-hidden flex-[0_0_100%] sm:flex-[0_0_calc((100%-24px)/2)] lg:flex-[0_0_calc((100%-72px)/4)] cursor-pointer shadow-md"
+              type="button"
+              onClick={() => onImageClick?.(item)}
+              className="min-w-0 flex flex-col rounded-xl overflow-hidden flex-[0_0_100%] sm:flex-[0_0_calc((100%-24px)/2)] lg:flex-[0_0_calc((100%-72px)/4)] cursor-pointer shadow-md text-left hover:opacity-95 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
               <div className="flex-shrink-0 h-[380px] bg-muted overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -42,17 +45,17 @@ export default function OfficialSectionCarousel({ images, categoryName }: Offici
                   loading="lazy"
                 />
               </div>
-              <div className="w-full bg-foreground px-3 py-2.5 flex-shrink-0">
-                <h3 className="text-background text-sm font-medium leading-tight truncate">
+              <div className="w-full bg-black/80 px-3 py-2.5 flex-shrink-0">
+                <h3 className="text-white text-sm font-medium leading-tight truncate">
                   {item.title || "—"}
                 </h3>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </div>
 
-      <div className="flex justify-center gap-3 mt-10 mb-10" aria-label={categoryName ? `Carousel navigation for ${categoryName}` : "Carousel navigation"}>
+      <div className="flex justify-center gap-3 mt-4 mb-4 sm:mt-5 sm:mb-5" aria-label={categoryName ? `Carousel navigation for ${categoryName}` : "Carousel navigation"}>
         <button
           type="button"
           onClick={scrollPrev}

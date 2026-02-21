@@ -7,8 +7,8 @@ interface CuratedSectionShimmerProps {
 
 export default function CuratedSectionShimmer({ title }: CuratedSectionShimmerProps) {
   return (
-    <section className="w-full px-4 py-12 bg-white">
-      <div className="text-center mb-8">
+    <section className="w-full px-4 py-6 md:py-8 bg-white">
+      <div className="text-center mb-5 md:mb-6">
         <div
           className="inline-block h-9 w-48 rounded-md shimmer mx-auto"
           style={{ maxWidth: "min(100%, 280px)" }}
@@ -36,7 +36,7 @@ export default function CuratedSectionShimmer({ title }: CuratedSectionShimmerPr
           </div>
         </div>
 
-        <div className="flex justify-center gap-3 mt-10 mb-10">
+        <div className="flex justify-center gap-3 mt-4 mb-4 sm:mt-5 sm:mb-5">
           <div className="w-10 h-10 rounded-full shimmer" aria-hidden />
           <div className="w-10 h-10 rounded-full shimmer" aria-hidden />
         </div>

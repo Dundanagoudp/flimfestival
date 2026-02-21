@@ -2,14 +2,17 @@
 
 import { useEffect, useState } from "react"
 import { getGroupedImages } from "@/services/curatedService"
-import type { CuratedGroupedItem } from "@/types/curatedTypes"
+import type { CuratedGroupedItem, CuratedGroupedImage } from "@/types/curatedTypes"
 import OfficialSectionCarousel from "./OfficialSectionCarousel"
 import CuratedSectionShimmer from "./CuratedSectionShimmer"
+import CuratedImageDetailModal from "./CuratedImageDetailModal"
 
 export default function JurySection() {
   const [grouped, setGrouped] = useState<CuratedGroupedItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [selectedImage, setSelectedImage] = useState<CuratedGroupedImage | null>(null)
+  const [detailModalOpen, setDetailModalOpen] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -47,8 +50,8 @@ export default function JurySection() {
   }
 
   return (
-    <section className="w-full px-4 py-12 bg-white">
-      <h2 className="text-center text-3xl md:text-4xl font-semibold text-primary tracking-tight mb-8">
+    <section className="w-full px-4 py-6 md:py-8 bg-white">
+      <h2 className="text-center text-3xl md:text-4xl font-semibold text-primary tracking-tight mb-5 md:mb-6">
         <span className="border-b-2 border-accent pb-1">Jury</span>
       </h2>
       {juryItems.map((item) => {
@@ -56,14 +59,23 @@ export default function JurySection() {
         if (!images.length) return null
 
         return (
-          <div key={category._id} className="mb-12 last:mb-0">
+          <div key={category._id} className="mb-6 md:mb-8 last:mb-0">
             <OfficialSectionCarousel
               images={images}
               categoryName={category.name}
+              onImageClick={(img) => {
+                setSelectedImage(img)
+                setDetailModalOpen(true)
+              }}
             />
           </div>
         )
       })}
+      <CuratedImageDetailModal
+        open={detailModalOpen}
+        onOpenChange={setDetailModalOpen}
+        image={selectedImage}
+      />
     </section>
   )
 }
