@@ -33,7 +33,7 @@ export default function Footer() {
               <Link href="/" className="text-gray-300 hover:text-white">Home</Link>
               <Link href="/aboutus" className="text-gray-300 hover:text-white">About</Link>
               <Link href="/screenings" className="text-gray-300 hover:text-white">Screenings</Link>
-              <Link href="/digital-archive" className="text-gray-300 hover:text-white">Digital Archive</Link>
+              <Link href="/archive" className="text-gray-300 hover:text-white">Digital Archive</Link>
               <Link href="/blogs" className="text-gray-300 hover:text-white">News</Link>
               <Link href="/contactus" className="text-gray-300 hover:text-white">Contact</Link>
             </nav>
