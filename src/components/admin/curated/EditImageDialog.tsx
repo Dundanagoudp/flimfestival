@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
 import {
   Select,
   SelectContent,
@@ -28,6 +29,7 @@ import { validateFile } from "@/lib/sanitize"
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"]
 const MAX_SIZE_MB = 5
+const STATUS_OPTIONS = ["shows", "hidden"]
 
 interface EditImageDialogProps {
   open: boolean
@@ -45,6 +47,13 @@ export function EditImageDialog({ open, onOpenChange, image, categories, current
   const [order, setOrder] = useState(0)
   const [categoryId, setCategoryId] = useState("")
   const [file, setFile] = useState<File | null>(null)
+  const [jury_name, setJuryName] = useState("")
+  const [designation, setDesignation] = useState("")
+  const [short_bio, setShortBio] = useState("")
+  const [full_biography, setFullBiography] = useState("")
+  const [film_synopsis, setFilmSynopsis] = useState("")
+  const [display_order, setDisplayOrder] = useState(0)
+  const [status, setStatus] = useState("shows")
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { showToast } = useToast()
@@ -56,8 +65,17 @@ export function EditImageDialog({ open, onOpenChange, image, categories, current
       const fromImage =
         typeof image.category === "object" && image.category != null && "_id" in image.category
           ? (image.category as { _id: string })._id
-          : ""
+          : typeof image.category === "string"
+            ? image.category
+            : ""
       setCategoryId(fromImage || currentCategoryId || "")
+      setJuryName(image.jury_name ?? "")
+      setDesignation(image.designation ?? "")
+      setShortBio(image.short_bio ?? "")
+      setFullBiography(image.full_biography ?? "")
+      setFilmSynopsis(image.film_synopsis ?? "")
+      setDisplayOrder(image.display_order ?? 0)
+      setStatus(image.status ?? "shows")
       setFile(null)
       setError(null)
       if (fileInputRef.current) fileInputRef.current.value = ""
@@ -92,6 +110,10 @@ export function EditImageDialog({ open, onOpenChange, image, categories, current
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!image) return
+    if (!title.trim()) {
+      setError("Title is required")
+      return
+    }
     setIsSubmitting(true)
     setError(null)
     try {
@@ -99,11 +121,29 @@ export function EditImageDialog({ open, onOpenChange, image, categories, current
         const formData = new FormData()
         formData.append("image", file)
         formData.append("category", categoryId)
-        formData.append("title", title)
+        formData.append("title", title.trim())
         formData.append("order", String(order))
+        if (jury_name.trim()) formData.append("jury_name", jury_name.trim())
+        if (designation.trim()) formData.append("designation", designation.trim())
+        if (short_bio.trim()) formData.append("short_bio", short_bio.trim())
+        if (full_biography.trim()) formData.append("full_biography", full_biography.trim())
+        if (film_synopsis.trim()) formData.append("film_synopsis", film_synopsis.trim())
+        formData.append("display_order", String(display_order))
+        formData.append("status", status)
         await updateImage(image._id, formData)
       } else {
-        await updateImage(image._id, { title: title || undefined, order, category: categoryId || undefined })
+        await updateImage(image._id, {
+          title: title.trim(),
+          order,
+          category: categoryId || undefined,
+          jury_name: jury_name.trim() || undefined,
+          designation: designation.trim() || undefined,
+          short_bio: short_bio.trim() || undefined,
+          full_biography: full_biography.trim() || undefined,
+          film_synopsis: film_synopsis.trim() || undefined,
+          display_order,
+          status: status || undefined,
+        })
       }
       onSuccess()
       handleClose()
@@ -121,7 +161,7 @@ export function EditImageDialog({ open, onOpenChange, image, categories, current
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-[95vw] max-w-[425px] mx-auto">
+      <DialogContent className="w-[95vw] max-w-[500px] max-h-[90vh] overflow-y-auto mx-auto">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl">Edit Image</DialogTitle>
           <DialogDescription className="text-sm sm:text-base">
@@ -156,21 +196,99 @@ export function EditImageDialog({ open, onOpenChange, image, categories, current
             {file && <p className="text-xs text-muted-foreground">{file.name}</p>}
           </div>
           <div className="space-y-2">
-            <Label>Title (optional)</Label>
+            <Label>Title (required)</Label>
             <Input
               placeholder="Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               disabled={isSubmitting}
+              required
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Order</Label>
+              <Input
+                type="number"
+                value={order}
+                onChange={(e) => setOrder(Number(e.target.value) || 0)}
+                disabled={isSubmitting}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Display order</Label>
+              <Input
+                type="number"
+                value={display_order}
+                onChange={(e) => setDisplayOrder(Number(e.target.value) || 0)}
+                disabled={isSubmitting}
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Status</Label>
+            <Select value={status} onValueChange={setStatus} disabled={isSubmitting}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label>Jury name (optional)</Label>
+            <Input
+              placeholder="e.g. Jane Doe"
+              value={jury_name}
+              onChange={(e) => setJuryName(e.target.value)}
+              disabled={isSubmitting}
             />
           </div>
           <div className="space-y-2">
-            <Label>Order</Label>
+            <Label>Designation (optional)</Label>
             <Input
-              type="number"
-              value={order}
-              onChange={(e) => setOrder(Number(e.target.value) || 0)}
+              placeholder="e.g. Film Director"
+              value={designation}
+              onChange={(e) => setDesignation(e.target.value)}
               disabled={isSubmitting}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Short bio (optional)</Label>
+            <Textarea
+              placeholder="Short bio..."
+              value={short_bio}
+              onChange={(e) => setShortBio(e.target.value)}
+              disabled={isSubmitting}
+              rows={2}
+              className="resize-none"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Full biography (optional, HTML allowed)</Label>
+            <Textarea
+              placeholder="Full biography..."
+              value={full_biography}
+              onChange={(e) => setFullBiography(e.target.value)}
+              disabled={isSubmitting}
+              rows={3}
+              className="resize-none"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Film synopsis (optional)</Label>
+            <Textarea
+              placeholder="Film synopsis..."
+              value={film_synopsis}
+              onChange={(e) => setFilmSynopsis(e.target.value)}
+              disabled={isSubmitting}
+              rows={3}
+              className="resize-none"
             />
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
@@ -178,7 +296,7 @@ export function EditImageDialog({ open, onOpenChange, image, categories, current
             <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting} className="w-full sm:w-auto order-2 sm:order-1">
               Cancel
             </Button>
-            <DynamicButton type="submit" loading={isSubmitting} loadingText="Updating..." disabled={isSubmitting} className="w-full sm:w-auto order-1 sm:order-2">
+            <DynamicButton type="submit" loading={isSubmitting} loadingText="Updating..." disabled={isSubmitting || !title.trim()} className="w-full sm:w-auto order-1 sm:order-2">
               Update
             </DynamicButton>
           </DialogFooter>

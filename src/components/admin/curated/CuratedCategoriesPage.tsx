@@ -49,7 +49,7 @@ export default function CuratedCategoriesPage() {
   const filteredCategories = categories.filter(
     (cat) =>
       cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (cat.subtitle && cat.subtitle.toLowerCase().includes(searchTerm.toLowerCase()))
+      (cat.slug && cat.slug.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
   const totalPages = Math.ceil(filteredCategories.length / itemsPerPage)
@@ -152,7 +152,7 @@ export default function CuratedCategoriesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-xl sm:text-2xl font-bold">
-              {categories.filter((c) => c.isVisible).length}
+              {categories.filter((c) => c.public).length}
             </div>
             <p className="text-xs text-muted-foreground">Public</p>
           </CardContent>
@@ -163,7 +163,7 @@ export default function CuratedCategoriesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-xl sm:text-2xl font-bold">
-              {categories.filter((c) => !c.isVisible).length}
+              {categories.filter((c) => !c.public).length}
             </div>
             <p className="text-xs text-muted-foreground">Not public</p>
           </CardContent>
@@ -178,7 +178,7 @@ export default function CuratedCategoriesPage() {
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name or subtitle..."
+              placeholder="Search by name or slug..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8 text-sm sm:text-base"
@@ -220,14 +220,14 @@ export default function CuratedCategoriesPage() {
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center gap-2">
                         <h3 className="text-base sm:text-lg font-semibold">{category.name}</h3>
-                        {!category.isVisible && (
+                        {!category.public && (
                           <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded">
                             Hidden
                           </span>
                         )}
                       </div>
-                      {category.subtitle && (
-                        <p className="text-sm text-muted-foreground">{category.subtitle}</p>
+                      {category.slug && (
+                        <p className="text-sm text-muted-foreground">{category.slug}</p>
                       )}
                       <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                         <span>Order: {category.order}</span>

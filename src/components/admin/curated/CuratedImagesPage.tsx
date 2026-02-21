@@ -14,23 +14,25 @@ import { useToast } from "@/components/ui/custom-toast"
 import { getCategories, getImagesByCategory } from "@/services/curatedService"
 import type { CuratedCategory } from "@/types/curatedTypes"
 import type { CuratedImage } from "@/types/curatedTypes"
-import { Plus, Edit, Trash2, Images, Loader2, AlertCircle } from "lucide-react"
+import { Plus, Edit, Trash2, Images, Loader2, AlertCircle, Eye } from "lucide-react"
 import { getMediaUrl } from "@/utils/media"
 import { AddImageDialog } from "./AddImageDialog"
 import { EditImageDialog } from "./EditImageDialog"
 import { DeleteImageDialog } from "./DeleteImageDialog"
+import { ViewImageDialog } from "./ViewImageDialog"
 
 export default function CuratedImagesPage() {
   const { showToast } = useToast()
   const [categories, setCategories] = useState<CuratedCategory[]>([])
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
-  const [categoryData, setCategoryData] = useState<{ category: CuratedCategory; images: CuratedImage[] } | null>(null)
+  const [images, setImages] = useState<CuratedImage[]>([])
   const [loadingCategories, setLoadingCategories] = useState(true)
   const [loadingImages, setLoadingImages] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [addDialogOpen, setAddDialogOpen] = useState(false)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [viewDialogOpen, setViewDialogOpen] = useState(false)
   const [selectedImage, setSelectedImage] = useState<CuratedImage | null>(null)
 
   useEffect(() => {
@@ -63,7 +65,7 @@ export default function CuratedImagesPage() {
 
   useEffect(() => {
     if (!selectedCategoryId) {
-      setCategoryData(null)
+      setImages([])
       return
     }
     let cancelled = false
@@ -71,12 +73,12 @@ export default function CuratedImagesPage() {
     setError(null)
     getImagesByCategory(selectedCategoryId)
       .then((data) => {
-        if (!cancelled) setCategoryData(data)
+        if (!cancelled) setImages(data.images ?? [])
       })
       .catch((err: Error) => {
         if (!cancelled) {
           setError(err.message || "Failed to load images")
-          setCategoryData(null)
+          setImages([])
           showToast(err.message || "Failed to load images", "error")
         }
       })
@@ -91,10 +93,12 @@ export default function CuratedImagesPage() {
   const refreshImages = () => {
     if (selectedCategoryId) {
       getImagesByCategory(selectedCategoryId)
-        .then(setCategoryData)
+        .then((data) => setImages(data.images ?? []))
         .catch((err: Error) => showToast(err.message || "Failed to refresh", "error"))
     }
   }
+
+  const selectedCategory = selectedCategoryId ? categories.find((c) => c._id === selectedCategoryId) ?? null : null
 
   const handleAddSuccess = () => {
     setAddDialogOpen(false)
@@ -112,9 +116,6 @@ export default function CuratedImagesPage() {
     setSelectedImage(null)
     refreshImages()
   }
-
-  const images = categoryData?.images ?? []
-  const selectedCategory = categoryData?.category ?? null
 
   if (loadingCategories) {
     return (
@@ -197,7 +198,7 @@ export default function CuratedImagesPage() {
               {selectedCategory ? selectedCategory.name : "Images"}
             </CardTitle>
             <CardDescription className="text-xs sm:text-sm">
-              {selectedCategory?.subtitle}
+              {selectedCategory?.slug && <span className="mr-1">{selectedCategory.slug}</span>}
               {loadingImages ? " Loading…" : ` ${images.length} image(s).`}
             </CardDescription>
           </CardHeader>
@@ -232,17 +233,30 @@ export default function CuratedImagesPage() {
                       />
                     </div>
                     <div className="p-2 space-y-1">
-                      {img.title && (
-                        <p className="text-sm font-medium truncate" title={img.title}>
-                          {img.title}
-                        </p>
-                      )}
-                      <p className="text-xs text-muted-foreground">Order: {img.order}</p>
+                      <p className="text-sm font-medium truncate" title={img.title}>
+                        {img.title}
+                      </p>
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <span>Order: {img.order}</span>
+                        {img.status && <span>· {img.status}</span>}
+                        {img.jury_name && <span className="truncate" title={img.jury_name}>· {img.jury_name}</span>}
+                      </div>
                       <div className="flex gap-1 pt-1">
                         <Button
                           variant="outline"
                           size="sm"
-                          className="flex-1 h-8"
+                          className="h-8 flex-1 min-w-0"
+                          onClick={() => {
+                            setSelectedImage(img)
+                            setViewDialogOpen(true)
+                          }}
+                        >
+                          <Eye className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 flex-1 min-w-0"
                           onClick={() => {
                             setSelectedImage(img)
                             setEditDialogOpen(true)
@@ -253,7 +267,7 @@ export default function CuratedImagesPage() {
                         <Button
                           variant="destructive"
                           size="sm"
-                          className="flex-1 h-8"
+                          className="h-8 flex-1 min-w-0"
                           onClick={() => {
                             setSelectedImage(img)
                             setDeleteDialogOpen(true)
@@ -290,6 +304,11 @@ export default function CuratedImagesPage() {
         onOpenChange={setDeleteDialogOpen}
         image={selectedImage}
         onSuccess={handleDeleteSuccess}
+      />
+      <ViewImageDialog
+        open={viewDialogOpen}
+        onOpenChange={setViewDialogOpen}
+        image={selectedImage}
       />
     </div>
   )

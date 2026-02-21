@@ -30,9 +30,9 @@ import type { CuratedCategory } from "@/types/curatedTypes"
 
 const formSchema = z.object({
   name: z.string().min(1, "Category name is required").min(2, "Category name must be at least 2 characters"),
-  subtitle: z.string().optional(),
+  slug: z.string().optional(),
   order: z.coerce.number().optional(),
-  isVisible: z.boolean().optional(),
+  public: z.boolean().optional(),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -51,9 +51,9 @@ export function AddCategoryDialog({ open, onOpenChange, onSuccess }: AddCategory
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      subtitle: "",
+      slug: "",
       order: 0,
-      isVisible: true,
+      public: true,
     },
   })
 
@@ -62,12 +62,12 @@ export function AddCategoryDialog({ open, onOpenChange, onSuccess }: AddCategory
     try {
       const newCategory = await createCategory({
         name: values.name,
-        subtitle: values.subtitle || undefined,
+        slug: values.slug || undefined,
         order: values.order ?? 0,
-        isVisible: values.isVisible ?? true,
+        public: values.public ?? true,
       })
       onSuccess(newCategory)
-      form.reset({ name: "", subtitle: "", order: 0, isVisible: true })
+      form.reset({ name: "", slug: "", order: 0, public: true })
     } catch (error: unknown) {
       const err = error as Error
       showToast(err.message || "Failed to create category", "error")
@@ -78,7 +78,7 @@ export function AddCategoryDialog({ open, onOpenChange, onSuccess }: AddCategory
 
   const handleClose = () => {
     if (!isSubmitting) {
-      form.reset({ name: "", subtitle: "", order: 0, isVisible: true })
+      form.reset({ name: "", slug: "", order: 0, public: true })
       onOpenChange(false)
     }
   }
@@ -114,13 +114,13 @@ export function AddCategoryDialog({ open, onOpenChange, onSuccess }: AddCategory
             />
             <FormField
               control={form.control}
-              name="subtitle"
+              name="slug"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm sm:text-base">Subtitle (optional)</FormLabel>
+                  <FormLabel className="text-sm sm:text-base">Slug (optional)</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="e.g. A curated selection..."
+                      placeholder="e.g. country-focus-japan"
                       {...field}
                       disabled={isSubmitting}
                       className="text-sm sm:text-base"
@@ -145,14 +145,14 @@ export function AddCategoryDialog({ open, onOpenChange, onSuccess }: AddCategory
             />
             <FormField
               control={form.control}
-              name="isVisible"
+              name="public"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                   <FormControl>
                     <Checkbox checked={field.value} onCheckedChange={field.onChange} disabled={isSubmitting} />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel className="text-sm sm:text-base">Visible to public</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Public</FormLabel>
                   </div>
                 </FormItem>
               )}

@@ -1,13 +1,12 @@
 import apiClient from "@/apiClient"
 import type {
   CuratedCategory,
-  CuratedCategoriesResponse,
   CreateCuratedCategoryPayload,
   UpdateCuratedCategoryPayload,
   CuratedImagesByCategoryResponse,
   CuratedImage,
   UpdateCuratedImagePayload,
-  CuratedGroupedResponse,
+  CuratedGroupedItem,
 } from "@/types/curatedTypes"
 
 const BASE = "/curated"
@@ -17,12 +16,12 @@ function getErrorMessage(error: unknown, fallback: string): string {
   return err?.response?.data?.message || err?.message || fallback
 }
 
-// Categories
-export async function getCategories(publicOnly?: boolean): Promise<CuratedCategoriesResponse> {
+// Categories (API returns { categories: [...] }; we return array for callers)
+export async function getCategories(publicOnly?: boolean): Promise<CuratedCategory[]> {
   try {
     const params = publicOnly ? { public: "true" } : undefined
-    const { data } = await apiClient.get<CuratedCategoriesResponse>(`${BASE}/categories`, { params })
-    return data
+    const { data } = await apiClient.get<{ categories: CuratedCategory[] }>(`${BASE}/categories`, { params })
+    return data.categories ?? []
   } catch (error) {
     throw new Error(getErrorMessage(error, "Failed to fetch categories"))
   }
@@ -102,11 +101,11 @@ export async function deleteImage(id: string): Promise<{ message: string }> {
   }
 }
 
-// Public: all images grouped by category (for carousel on home)
-export async function getGroupedImages(): Promise<CuratedGroupedResponse> {
+// Public: all images grouped by category (for carousel on home) (API returns { grouped: [...] })
+export async function getGroupedImages(): Promise<CuratedGroupedItem[]> {
   try {
-    const { data } = await apiClient.get<CuratedGroupedResponse>(`${BASE}/images/grouped`)
-    return data
+    const { data } = await apiClient.get<{ grouped: CuratedGroupedItem[] }>(`${BASE}/images/grouped`)
+    return data.grouped ?? []
   } catch (error) {
     throw new Error(getErrorMessage(error, "Failed to fetch grouped images"))
   }

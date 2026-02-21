@@ -30,9 +30,9 @@ import type { CuratedCategory } from "@/types/curatedTypes"
 
 const formSchema = z.object({
   name: z.string().min(1, "Category name is required").min(2, "Category name must be at least 2 characters"),
-  subtitle: z.string().optional(),
+  slug: z.string().optional(),
   order: z.coerce.number().optional(),
-  isVisible: z.boolean().optional(),
+  public: z.boolean().optional(),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -52,18 +52,18 @@ export function EditCategoryDialog({ open, onOpenChange, category, onSuccess }: 
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      subtitle: "",
+      slug: "",
       order: 0,
-      isVisible: true,
+      public: true,
     },
   })
 
   useEffect(() => {
     if (category) {
       form.setValue("name", category.name)
-      form.setValue("subtitle", category.subtitle ?? "")
+      form.setValue("slug", category.slug ?? "")
       form.setValue("order", category.order ?? 0)
-      form.setValue("isVisible", category.isVisible ?? true)
+      form.setValue("public", category.public ?? true)
     }
   }, [category, form])
 
@@ -73,9 +73,9 @@ export function EditCategoryDialog({ open, onOpenChange, category, onSuccess }: 
     try {
       const updated = await updateCategory(category._id, {
         name: values.name,
-        subtitle: values.subtitle || undefined,
+        slug: values.slug || undefined,
         order: values.order ?? 0,
-        isVisible: values.isVisible ?? true,
+        public: values.public ?? true,
       })
       onSuccess(updated)
       form.reset()
@@ -122,12 +122,12 @@ export function EditCategoryDialog({ open, onOpenChange, category, onSuccess }: 
             />
             <FormField
               control={form.control}
-              name="subtitle"
+              name="slug"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm sm:text-base">Subtitle (optional)</FormLabel>
+                  <FormLabel className="text-sm sm:text-base">Slug (optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Subtitle" {...field} disabled={isSubmitting} className="text-sm sm:text-base" />
+                    <Input placeholder="e.g. country-focus-japan" {...field} disabled={isSubmitting} className="text-sm sm:text-base" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -148,14 +148,14 @@ export function EditCategoryDialog({ open, onOpenChange, category, onSuccess }: 
             />
             <FormField
               control={form.control}
-              name="isVisible"
+              name="public"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                   <FormControl>
                     <Checkbox checked={field.value} onCheckedChange={field.onChange} disabled={isSubmitting} />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel className="text-sm sm:text-base">Visible to public</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Public</FormLabel>
                   </div>
                 </FormItem>
               )}
