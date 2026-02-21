@@ -52,3 +52,19 @@ export interface UpdateCuratedImagePayload {
   order?: number
   category?: string
 }
+
+// Grouped images (public API: one item per category with its images)
+export interface CuratedGroupedImage {
+  _id: string
+  image: string
+  title?: string
+  order: number
+  createdAt?: string
+}
+
+export interface CuratedGroupedItem {
+  category: CuratedCategoryRef
+  images: CuratedGroupedImage[]
+}
+
+export type CuratedGroupedResponse = CuratedGroupedItem[]

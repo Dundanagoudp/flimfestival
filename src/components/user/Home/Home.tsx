@@ -7,6 +7,7 @@ import EventSchedule from './eventSchedule/EventSchedule'
 import Guest from './guest/Guest'
 import AwardNomination from './award/AwardNomination'
 import Gallery from './Gallery/Gallery'
+import OfficialSection from './officialSection/OfficialSection'
 import BlogsAndMedia from './blog&media/BlogsAndMedia'
 import Footer from './footer/Footer'
 import Contact from './contact/Contact'
@@ -25,6 +26,7 @@ export default function Home() {
       <Reveal y={32} delay={0.15} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><Guest/></Reveal>
       <Reveal y={32} delay={0.15} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><AwardNomination/></Reveal>
       <Reveal y={32} delay={0.3} transition={{ type: 'tween', duration: 1.1, ease: 'easeOut' }}><Gallery/></Reveal>
+      <Reveal y={32} delay={0.32}><OfficialSection/></Reveal>
       <Reveal y={32} delay={0.35}><BlogsAndMedia/></Reveal>
       <Reveal y={32} delay={0.4}><Contact/></Reveal>
       <Reveal y={32} delay={0.45}><YearAward/></Reveal>

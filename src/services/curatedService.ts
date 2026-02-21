@@ -7,6 +7,7 @@ import type {
   CuratedImagesByCategoryResponse,
   CuratedImage,
   UpdateCuratedImagePayload,
+  CuratedGroupedResponse,
 } from "@/types/curatedTypes"
 
 const BASE = "/curated"
@@ -98,5 +99,15 @@ export async function deleteImage(id: string): Promise<{ message: string }> {
     return data
   } catch (error) {
     throw new Error(getErrorMessage(error, "Failed to delete image"))
+  }
+}
+
+// Public: all images grouped by category (for carousel on home)
+export async function getGroupedImages(): Promise<CuratedGroupedResponse> {
+  try {
+    const { data } = await apiClient.get<CuratedGroupedResponse>(`${BASE}/images/grouped`)
+    return data
+  } catch (error) {
+    throw new Error(getErrorMessage(error, "Failed to fetch grouped images"))
   }
 }
