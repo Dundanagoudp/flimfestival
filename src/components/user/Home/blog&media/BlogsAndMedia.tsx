@@ -1,24 +1,32 @@
 "use client";
 import React, { useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { getLatestBlogs } from "@/services/blogsServices";
 import { format } from "date-fns";
 import { BlogPost } from "@/types/blogsTypes";
 import Link from "next/link";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
 import { getMediaUrl } from "@/utils/media";
-import { get } from "http";
-import { useRouter } from "next/navigation";
-import "swiper/css";
-import "swiper/css/pagination";
+
+function BlogCardSkeleton() {
+  return (
+    <div className="bg-white rounded-xl overflow-hidden shadow-md lg:h-[450px] animate-pulse">
+      <div className="p-2">
+        <div className="w-full h-72 bg-gray-200 rounded-xl mb-4" />
+        <div className="h-5 bg-gray-200 rounded w-3/4 mt-4 mb-2" />
+        <div className="h-4 bg-gray-200 rounded w-full mb-2" />
+        <div className="flex justify-between mt-9">
+          <div className="h-6 w-16 bg-gray-200 rounded-full" />
+          <div className="h-4 w-20 bg-gray-200 rounded" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function BlogsAndMedia() {
   const [blogs, setBlogs] = React.useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
-  const router = useRouter();
+
   useEffect(() => {
     const fetchBlogs = async () => {
       setIsLoading(true);
@@ -38,12 +46,6 @@ export default function BlogsAndMedia() {
     fetchBlogs();
   }, []);
 
-  const handleRouteToblog = (id: string) => {
-    router.push(`/blogs/${id}`);
-  }
-  const getImageUrl = (url: string) => {
-    return getMediaUrl(url);
-  };
   const latestBlogs = blogs
     .slice()
     .sort(
@@ -52,146 +54,101 @@ export default function BlogsAndMedia() {
         new Date(a.createdAt || a.publishedDate).getTime()
     )
     .slice(0, 3);
-  const items = latestBlogs.slice(0, 3);
+
   return (
-    <div>
-      <main className="w-full px-4" style={{ backgroundColor: "#ffffff" }}>
-        <div className="px-10 py-10">
-          {/* top header */}
-          <div className="flex justify-between items-center">
-            <div>
-              <h3 className="text-sm">Latest News</h3>
-            </div>
-            <div className="flex items-center gap-3 hidden md:flex">
-              <Link href={"/blogs"}>
-                <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
-                  View All Post
-                </Button>
-              </Link>
-              <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary animate-pulse hover:animate-bounce cursor-pointer">
-                <ArrowRight className="h-3 w-3 text-black" />
-              </span>
-            </div>
-          </div>
-          {/* center title */}
-          <div className="flex justify-center items-center my-8">
-            <h1 className="sm:text-6xl text-3xl font-extrabold text-center">
-              Blogs and Media
-              
-            </h1>
-          </div>
-          {/* Mobile-only CTA under title */}
-          <div className="md:hidden flex justify-center mb-6">
-          <div className="flex items-center ">
-              <Link href={"/blogs"}>
-                <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
-                  View All Post
-                </Button>
-              </Link>
-           
-            </div>
-          </div>
-          {/* DESKTOP GRID */}
-          <div className="hidden md:flex md:h-[360px] md:gap-6">
-            {items.map((blog, i) => {
-              const isHovered = hoveredIndex === i;
-              // when nothing is hovered, all flex = 1 (equal)
-              // when one hovered: hovered ~ 2, others ~ 0.9 (tweak numbers to taste)
-              const flexValue = hoveredIndex === null ? 1 : isHovered ? 2 : 0.9;
-
-              return (
-                <article
-                  key={blog._id}
-                  className="flex flex-col h-full transition-all duration-500"
-                  style={{ flex: flexValue, minWidth: 0 }} // minWidth:0 avoids img overflow
-                >
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    onMouseEnter={() => setHoveredIndex(i)}
-                    onMouseLeave={() => setHoveredIndex(null)}
-                    onFocus={() => setHoveredIndex(i)}
-                    onBlur={() => setHoveredIndex(null)}
-                    className="relative rounded-lg overflow-hidden bg-gray-100 cursor-pointer shadow-sm transition-shadow duration-300 flex-1"
-                  >
-                    {/* image wrapper keeps full height */}
-                    <Link href={`/blogs/${blog._id}`}>
-                      <img
-                        src={getImageUrl(blog.imageUrl) || "default-image.png"}
-                        alt={blog.title}
-                        loading="lazy"
-                        className={`w-full h-full object-cover transition-transform duration-500`}
-                        // small scale-up on the hovered item for extra punch:
-                        style={{
-                          transform: isHovered ? "scale(1.04)" : "scale(1)",
-                        }}
-                      />
-                    </Link>
-
-                    <div className="absolute left-4 top-4 text-xs">
-                      {format(
-                        new Date(blog.publishedDate || blog.createdAt),
-                        "MMM d, yyyy"
-                      )}
-                    </div>
-
-                    <div className="absolute right-4 bottom-4">
-                      <button className="text-xs px-3 py-1 rounded-full bg-primary"
-                      onClick={() => handleRouteToblog(blog._id)}
-                      >
-                        Read More
-                      </button>
-                    </div>
-                  </div>
-
-                  <h2 className="mt-4 text-lg font-semibold truncate">
-                    {blog.title}
-                  </h2>
-                </article>
-              );
-            })}
-          </div>
-          {/* MOBILE / NARROW: Swiper slider */}
-          <div className="md:hidden mt-4">
-            <Swiper
-              modules={[Pagination]}
-              spaceBetween={12}
-              slidesPerView={1.1}
-              pagination={{ clickable: true }}
-              style={{ paddingBottom: 24 }}
-            >
-              {latestBlogs.map((blog) => (
-                <SwiperSlide key={blog._id}>
-                  <article>
-                    <div className="relative rounded-lg overflow-hidden bg-gray-100 group cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-black/20">
-                      <img
-                        src={getMediaUrl(blog.imageUrl) || "default-image.png"}
-                        alt={blog.title}
-                        className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                      <div className="absolute left-3 top-3 text-xs">
-                        {format(
-                          new Date(blog.publishedDate || blog.createdAt),
-                          "MMM d, yyyy"
-                        )}
-                      </div>
-                      <div className="absolute right-3 bottom-3">
-                        <button className="text-xs px-3 py-1 rounded-full bg-yellow-300" 
-                        onClick={() => {
-                          handleRouteToblog(blog._id);
-                        }}>
-                          Read More
-                        </button>
-                      </div>
-                    </div>
-                    <h2 className="mt-3 text-base font-semibold">{blog.title}</h2>
-                  </article>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
+    <div className="min-h-screen bg-white pt-4 px-8 pb-8 relative overflow-hidden">
+      {/* Header */}
+      <div className="text-center mt-4 mb-8 relative z-10">
+        <div className="flex justify-center items-center gap-6">
+          <div className="w-4 h-4 rounded-full bg-primary" />
+          <h2 className="text-primary text-2xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wide">
+            Blogs and Media
+          </h2>
+          <div className="w-4 h-4 rounded-full bg-primary" />
         </div>
-      </main>
+      </div>
+
+      {/* View All Button */}
+      <div className="flex justify-center mb-8 relative z-10">
+        <Link href="/blogs" className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
+          <span className="bg-primary text-primary-foreground px-8 py-3 rounded-full text-lg font-medium">
+            View All
+          </span>
+          <span className="absolute right-0 left-28 translate-x-1/2 bg-primary w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-6 group-hover:rotate-12">
+            <ArrowUpRight className="w-4 h-4 text-primary-foreground transition-transform duration-300 group-hover:rotate-45" />
+          </span>
+        </Link>
+      </div>
+
+      {/* Blog Cards or Skeletons */}
+      <div
+        className="grid gap-6 max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
+        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}
+      >
+        {isLoading ? (
+          <>
+            <BlogCardSkeleton />
+            <BlogCardSkeleton />
+            <BlogCardSkeleton />
+          </>
+        ) : latestBlogs.length === 0 ? (
+          <div className="col-span-full text-center text-gray-500">No blogs found.</div>
+        ) : (
+          latestBlogs.map((blog) => (
+            <div
+              key={blog._id}
+              className="bg-white rounded-xl overflow-hidden shadow-md lg:h-[450px] group"
+            >
+              <div className="p-2">
+                <div className="relative w-full h-72 mb-4 flex-shrink-0 overflow-hidden rounded-xl">
+                  <Link href={`/blogs/${blog._id}`}>
+                    <img
+                      src={getMediaUrl(blog.imageUrl) || "/blogs/blog1.png"}
+                      alt={blog.title}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </Link>
+                </div>
+                <h3 className="text-xl font-bold mt-4 mb-2 truncate" title={blog.title}>
+                  {blog.title}
+                </h3>
+                {blog.contents && (
+                  <p className="text-gray-700 text-base mb-2 truncate" title={blog.contents}>
+                    {blog.contents.length > 40 ? blog.contents.slice(0, 40) + "…" : blog.contents}
+                  </p>
+                )}
+                <div className="flex justify-between items-center mt-9">
+                  <span className="px-3 py-1 bg-primary text-primary-foreground text-sm font-medium rounded-full">
+                    {blog.publishedDate
+                      ? new Date(blog.publishedDate).getFullYear()
+                      : blog.createdAt
+                        ? new Date(blog.createdAt).getFullYear()
+                        : new Date().getFullYear()}
+                  </span>
+                  {blog.contentType === "link" && blog.link ? (
+                    <a
+                      href={blog.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary font-semibold hover:underline text-sm sm:text-base"
+                    >
+                      Read More
+                    </a>
+                  ) : (
+                    <Link
+                      href={`/blogs/${blog._id}`}
+                      className="text-primary font-semibold hover:underline text-sm sm:text-base"
+                    >
+                      Read More
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }
