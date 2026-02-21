@@ -239,6 +239,21 @@ const adminNavData = {
         },
       ],
     },
+    {
+      title: "Official Selections",
+      url: "/admin/dashboard/curated",
+      icon: Images,
+      items: [
+        {
+          title: "Categories",
+          url: "/admin/dashboard/curated/categories",
+        },
+        {
+          title: "Images",
+          url: "/admin/dashboard/curated/images",
+        },
+      ],
+    },
   ],
   projects: [
     {
