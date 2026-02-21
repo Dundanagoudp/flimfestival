@@ -1,9 +1,10 @@
 'use client'
+
 import { Menu } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MegaMenu } from "./popUp/NavbarPopUp";
 
-
+const SCROLL_THRESHOLD_PX = 80;
 
 const sampleMenu: { heading: string; links: { title: string; url?: string }[] }[] = [
   {
@@ -26,8 +27,8 @@ const sampleMenu: { heading: string; links: { title: string; url?: string }[] }[
   {
     heading: "Media",
     links: [
-      { title: "Blogs", url: "/blogs" }, 
-      { title: "Gallery", url: "/gallery" }, 
+      { title: "Blogs", url: "/blogs" },
+      { title: "Gallery", url: "/gallery" },
       { title: "10th AFF Catalogue", url: "/gallery" }
     ],
   },
@@ -39,11 +40,26 @@ const sampleMenu: { heading: string; links: { title: string; url?: string }[] }[
 
 const Navbar = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const toggle = () => setIsPopupOpen((s) => !s);
   const close = () => setIsPopupOpen(false);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY >= SCROLL_THRESHOLD_PX);
+    };
+    handleScroll(); // set initial state
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // When scrolled: clean white header with subtle shadow and blur; smooth theme-friendly transition.
+  const headerClass = isScrolled
+    ? "bg-white/95 backdrop-blur-md shadow-md transition-all duration-300 ease-out"
+    : "bg-transparent transition-all duration-300 ease-out";
+
   return (
-    <section className="bg-transparent py-4 px-4">
+    <section className={`${headerClass} py-4 px-4`}>
       <div className="w-full px-4">
         {/* Desktop Menu */}
         <nav className="hidden items-center justify-between lg:flex">
@@ -57,11 +73,13 @@ const Navbar = () => {
 
           <div className="flex gap-2">
             <button
+              type="button"
               aria-expanded={isPopupOpen}
+              aria-label="Open menu"
               onClick={toggle}
-              className="bg-primary rounded-full p-2 border border-transparent hover:bg-yellow-400 hover:shadow-md active:scale-95 transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
+              className={`bg-primary rounded-full p-2 border border-transparent hover:bg-yellow-400 hover:shadow-md active:scale-95 transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 ${isScrolled ? 'focus:ring-offset-white' : 'focus:ring-offset-transparent'}`}
             >
-              <Menu className="h-5 w-5 transition-transform duration-200 hover:scale-110" />
+              <Menu className="h-5 w-5 text-gray-800 transition-all duration-200 hover:scale-110" aria-hidden="true" />
             </button>
           </div>
         </nav>
@@ -75,11 +93,13 @@ const Navbar = () => {
               <img src="/logo.png" className="max-h-12" alt="Logo" />
             </a>
             <button
+              type="button"
               aria-expanded={isPopupOpen}
+              aria-label="Open menu"
               onClick={toggle}
-              className="bg-primary rounded-full p-2 border border-transparent hover:bg-yellow-400 hover:shadow-md active:scale-95 transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
+              className={`bg-primary rounded-full p-2 border border-transparent hover:bg-yellow-400 hover:shadow-md active:scale-95 transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 ${isScrolled ? 'focus:ring-offset-white' : 'focus:ring-offset-transparent'}`}
             >
-              <Menu className="h-5 w-5 transition-transform duration-200 hover:scale-110" />
+              <Menu className="h-5 w-5 text-gray-800 transition-all duration-200 hover:scale-110" aria-hidden="true" />
             </button>
           </div>
         </div>

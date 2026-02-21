@@ -136,3 +136,49 @@ html {
     -webkit-overflow-scrolling: touch;
   }
 }
+
+/* Hero poster text – subtle fade-up on load */
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.hero-text-reveal {
+  animation: heroFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Shimmer effect for loading skeletons */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--muted) 0%,
+    oklch(0.97 0.01 90) 35%,
+    var(--muted) 70%,
+    var(--muted) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+.dark .shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--muted) 0%,
+    oklch(0.32 0.02 90) 35%,
+    var(--muted) 70%,
+    var(--muted) 100%
+  );
+  background-size: 200% 100%;
+}

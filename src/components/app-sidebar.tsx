@@ -4,6 +4,7 @@ import * as React from "react"
 import {
   Clapperboard,
   Calendar,
+  CalendarDays,
   Award,
   Home,
   FileText,
@@ -218,8 +219,41 @@ const adminNavData = {
           url: "/admin/dashboard/contact",
         }
       ],
-    }
-    
+    },
+    {
+      title: "Session Plans",
+      url: "/admin/dashboard/session-plans",
+      icon: CalendarDays,
+      items: [
+        {
+          title: "All Plans",
+          url: "/admin/dashboard/session-plans",
+        },
+        {
+          title: "Create Plan",
+          url: "/admin/dashboard/session-plans/create",
+        },
+        {
+          title: "Categories",
+          url: "/admin/dashboard/session-plans/categories",
+        },
+      ],
+    },
+    {
+      title: "Official Selections",
+      url: "/admin/dashboard/curated",
+      icon: Images,
+      items: [
+        {
+          title: "Categories",
+          url: "/admin/dashboard/curated/categories",
+        },
+        {
+          title: "Images",
+          url: "/admin/dashboard/curated/images",
+        },
+      ],
+    },
   ],
   projects: [
     {
@@ -322,6 +356,25 @@ const userNavData = {
         {
           title: "Categories",
           url: "/admin/dashboard/award/categories",
+        },
+      ],
+    },
+    {
+      title: "Session Plans",
+      url: "/admin/dashboard/session-plans",
+      icon: CalendarDays,
+      items: [
+        {
+          title: "All Plans",
+          url: "/admin/dashboard/session-plans",
+        },
+        {
+          title: "Create Plan",
+          url: "/admin/dashboard/session-plans/create",
+        },
+        {
+          title: "Categories",
+          url: "/admin/dashboard/session-plans/categories",
         },
       ],
     },

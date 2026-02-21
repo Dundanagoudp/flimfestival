@@ -58,7 +58,7 @@ export default function Gallery() {
   }, []);
 
   return (
-    <div>
+    <div className="bg-white">
       <main className="w-full px-4">
         <div className="px-10 py-10">
           <div>
