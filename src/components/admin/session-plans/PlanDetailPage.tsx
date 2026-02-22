@@ -21,10 +21,6 @@ import {
   createSlot,
   updateSlot,
   deleteSlot,
-  getPlanPdf,
-  uploadPlanPdf,
-  getDayPdf,
-  uploadDayPdf,
 } from "@/services/sessionPlanService"
 import type {
   SessionPlan,
@@ -43,8 +39,6 @@ import {
   CalendarIcon,
   LayoutList,
   CalendarDays,
-  FileUp,
-  Download,
 } from "lucide-react"
 import {
   Dialog,
@@ -100,12 +94,6 @@ export default function PlanDetailPage() {
   const [scheduleView, setScheduleView] = useState(false)
   const [modal, setModal] = useState<ModalType>(null)
   const [submitting, setSubmitting] = useState(false)
-  const [planPdfUrl, setPlanPdfUrl] = useState<string | null>(null)
-  const [dayPdfUrls, setDayPdfUrls] = useState<Record<string, string | null>>({})
-  const [planPdfLoading, setPlanPdfLoading] = useState(false)
-  const [planPdfUploading, setPlanPdfUploading] = useState(false)
-  const [dayPdfLoading, setDayPdfLoading] = useState(false)
-  const [dayPdfUploading, setDayPdfUploading] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState<
     | null
     | { type: "day"; dayId: string }
@@ -114,11 +102,6 @@ export default function PlanDetailPage() {
   >(null)
 
   const pid = plan ? idOfPlan(plan) : planId
-  const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || ""
-  const pdfBaseUrl =
-    apiBase && typeof window !== "undefined"
-      ? new URL(apiBase).origin
-      : ""
 
   const fetchPlan = async () => {
     if (!pid) return
@@ -154,90 +137,6 @@ export default function PlanDetailPage() {
   }, [])
 
   const currentDay = plan?.days?.[activeDayIndex] ?? null
-
-  const fetchPlanPdf = async () => {
-    if (!pid) return
-    setPlanPdfLoading(true)
-    try {
-      const url = await getPlanPdf(pid)
-      setPlanPdfUrl(url)
-    } catch {
-      setPlanPdfUrl(null)
-    } finally {
-      setPlanPdfLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    if (pid) fetchPlanPdf()
-  }, [pid])
-
-  const fetchDayPdf = async (dayId: string) => {
-    if (!pid) return
-    setDayPdfLoading(true)
-    try {
-      const url = await getDayPdf(pid, dayId)
-      setDayPdfUrls((prev) => ({ ...prev, [dayId]: url }))
-    } catch {
-      setDayPdfUrls((prev) => ({ ...prev, [dayId]: null }))
-    } finally {
-      setDayPdfLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    if (pid && currentDay) {
-      const dayId = idOfDay(currentDay)
-      if (dayPdfUrls[dayId] === undefined) fetchDayPdf(dayId)
-    }
-  }, [pid, currentDay])
-
-  const fullPdfUrl = (pdfUrl: string) =>
-    pdfUrl.startsWith("http") ? pdfUrl : `${pdfBaseUrl}${pdfUrl}`
-
-  const MAX_PDF_MB = 10
-  const handlePlanPdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file || !pid) return
-    e.target.value = ""
-    if (file.size > MAX_PDF_MB * 1024 * 1024) {
-      showToast(`PDF must be under ${MAX_PDF_MB}MB`, "error")
-      return
-    }
-    setPlanPdfUploading(true)
-    try {
-      const url = await uploadPlanPdf(pid, file)
-      setPlanPdfUrl(url)
-      showToast("Plan PDF uploaded", "success")
-    } catch (err: any) {
-      showToast(err?.message || "Upload failed", "error")
-    } finally {
-      setPlanPdfUploading(false)
-    }
-  }
-
-  const handleDayPdfUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    dayId: string
-  ) => {
-    const file = e.target.files?.[0]
-    if (!file || !pid) return
-    e.target.value = ""
-    if (file.size > MAX_PDF_MB * 1024 * 1024) {
-      showToast(`PDF must be under ${MAX_PDF_MB}MB`, "error")
-      return
-    }
-    setDayPdfUploading(true)
-    try {
-      const url = await uploadDayPdf(pid, dayId, file)
-      setDayPdfUrls((prev) => ({ ...prev, [dayId]: url }))
-      showToast("Day PDF uploaded", "success")
-    } catch (err: any) {
-      showToast(err?.message || "Upload failed", "error")
-    } finally {
-      setDayPdfUploading(false)
-    }
-  }
 
   const handleAddDay = async (dayNumber: number, date: string) => {
     if (!pid) return
@@ -686,138 +585,6 @@ export default function PlanDetailPage() {
         </Card>
       )}
         </div>
-
-        {/* Session PDFs sidebar */}
-        <aside className="w-full lg:w-72 shrink-0 flex flex-col gap-3">
-          <Card className="lg:sticky lg:top-20">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Session PDFs</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <p className="text-sm font-medium">Plan PDF</p>
-                {planPdfLoading ? (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Checking…
-                  </div>
-                ) : planPdfUrl ? (
-                  <div className="flex flex-col gap-2">
-                    <span className="text-sm text-muted-foreground">Uploaded</span>
-                    <a
-                      href={fullPdfUrl(planPdfUrl)}
-                      download
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
-                    >
-                      <Download className="h-4 w-4" />
-                      Download
-                    </a>
-                  </div>
-                ) : (
-                  <span className="text-sm text-muted-foreground">Not uploaded</span>
-                )}
-                <div className="pt-1">
-                  <Label htmlFor="plan-pdf-upload" className="sr-only">
-                    Upload plan PDF
-                  </Label>
-                  <Input
-                    id="plan-pdf-upload"
-                    type="file"
-                    accept="application/pdf"
-                    className="hidden"
-                    onChange={handlePlanPdfUpload}
-                    disabled={planPdfUploading || !pid}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    onClick={() =>
-                      document.getElementById("plan-pdf-upload")?.click()
-                    }
-                    disabled={planPdfUploading || !pid}
-                  >
-                    {planPdfUploading ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <>
-                        <FileUp className="mr-2 h-4 w-4" />
-                        Upload PDF
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
-
-              {currentDay && (
-                <div className="space-y-2 border-t pt-4">
-                  <p className="text-sm font-medium">
-                    Day {currentDay.dayNumber} PDF
-                  </p>
-                  {dayPdfLoading ? (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Checking…
-                    </div>
-                  ) : dayPdfUrls[idOfDay(currentDay)] ? (
-                    <div className="flex flex-col gap-2">
-                      <span className="text-sm text-muted-foreground">Uploaded</span>
-                      <a
-                        href={fullPdfUrl(dayPdfUrls[idOfDay(currentDay)]!)}
-                        download
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
-                      >
-                        <Download className="h-4 w-4" />
-                        Download
-                      </a>
-                    </div>
-                  ) : (
-                    <span className="text-sm text-muted-foreground">Not uploaded</span>
-                  )}
-                  <div className="pt-1">
-                    <Label htmlFor="day-pdf-upload" className="sr-only">
-                      Upload day PDF
-                    </Label>
-                    <Input
-                      id="day-pdf-upload"
-                      type="file"
-                      accept="application/pdf"
-                      className="hidden"
-                      onChange={(e) =>
-                        handleDayPdfUpload(e, idOfDay(currentDay))
-                      }
-                      disabled={dayPdfUploading || !pid}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="w-full"
-                      onClick={() =>
-                        document.getElementById("day-pdf-upload")?.click()
-                      }
-                      disabled={dayPdfUploading || !pid}
-                    >
-                      {dayPdfUploading ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <>
-                          <FileUp className="mr-2 h-4 w-4" />
-                          Upload PDF
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </aside>
       </div>
 
       {/* Delete confirmation modal */}
