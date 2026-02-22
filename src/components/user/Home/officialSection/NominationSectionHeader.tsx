@@ -19,10 +19,10 @@ const NominationSectionHeader: React.FC<NominationSectionHeaderProps> = ({
   return (
     <div className="px-3 sm:px-6 md:px-10 flex flex-row flex-wrap items-center justify-between gap-3 mb-4 md:mb-6">
       <div className="min-w-0 flex-1">
-        <h2 className="text-sm sm:text-base font-bold text-primary">
+        <h2 className="text-sm md:text-lg font-bold text-primary">
           Arunachal Film Festival
         </h2>
-        <p className="text-base sm:text-lg md:text-xl font-semibold text-foreground mt-0.5 break-words">
+        <p className="text-base md:text-2xl lg:text-4xl font-semibold text-foreground mt-0.5 break-words">
           {title}
         </p>
       </div>

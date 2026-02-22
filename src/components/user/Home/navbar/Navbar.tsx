@@ -12,7 +12,6 @@ const sampleMenu: { heading: string; links: { title: string; url?: string }[] }[
     links: [
       { title: "About AFF", url: "/aboutus" },
       { title: "Glimpses of AFF 2025", url: "/archive" },
-      { title: "Festive Venue", url: "/aboutus" },
       { title: "Contact Us", url: "/contactus" },
     ],
   },
