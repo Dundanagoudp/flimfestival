@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import HeroSection from "./hero/Herosection";
-import Ticker from "./ticker/Ticker";
+import NewsTicker from "./newsTicker/NewsTicker";
 import AboutSection from "./about/AboutSection";
 import AboutItems from "./about/newaboutpage/AboutItems";
 import VideoSection from "./videosection/VideoSection";
@@ -60,7 +60,7 @@ export default function Home() {
     <>
       <div className="-mt-[10rem]" style={{ backgroundColor: "#ffffff" }}>
       <Reveal y={32}><HeroSection {...heroProps} /></Reveal>
-      <Ticker />
+      <NewsTicker />
       <Reveal transition={{ type: 'tween', duration: 0.8, ease: [0.22, 1, 0.36, 1] }}><AboutSection/></Reveal>
       <Reveal y={32} delay={0.1}><VideoSection/></Reveal>
       <Reveal y={32} delay={0.15} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><EventSchedule/></Reveal>
