@@ -17,37 +17,25 @@ const NominationSectionHeader: React.FC<NominationSectionHeaderProps> = ({
   showViewAward = true,
 }) => {
   return (
-    <div className="px-6 sm:px-10 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-5 md:mb-6">
-      <div>
-        <h2 className="md:text-lg text-xl font-bold text-primary">
+    <div className="px-3 sm:px-6 md:px-10 flex flex-row flex-wrap items-center justify-between gap-3 mb-4 md:mb-6">
+      <div className="min-w-0 flex-1">
+        <h2 className="text-sm sm:text-base font-bold text-primary">
           Arunachal Film Festival
         </h2>
-        <p className="md:text-4xl text-2xl font-semibold text-foreground mt-0.5">
+        <p className="text-base sm:text-lg md:text-xl font-semibold text-foreground mt-0.5 break-words">
           {title}
         </p>
-        {showViewAward && (
-          <div className="flex items-center gap-2 mt-4 sm:hidden">
-            <Link href="/films">
-              <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
-                View Films
-              </Button>
-            </Link>
-            <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary">
-              <ArrowRight className="h-3 w-3 text-black" />
-            </span>
-          </div>
-        )}
       </div>
       {showViewAward && (
-        <div className="hidden sm:flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <Link href="/films">
-            <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
+            <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2 h-auto">
               View Films
             </Button>
           </Link>
-          <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary">
-            <ArrowRight className="h-3 w-3 text-black" />
-          </span>
+          <Link href="/films" className="inline-flex items-center justify-center h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-primary hover:opacity-90 transition-opacity">
+            <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 text-black" />
+          </Link>
         </div>
       )}
     </div>

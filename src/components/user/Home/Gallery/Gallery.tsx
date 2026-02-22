@@ -60,28 +60,24 @@ export default function Gallery() {
   return (
     <div className="bg-white">
       <main className="w-full px-4">
-        <div className="px-10 py-10">
-          <div>
-            <div className="flex justify-center items-center flex-col">
-              <h1 className="sm:text-6xl text-3xl font-black">Gallery</h1>
-
-              <div className="flex items-center gap-2 mt-5">
-                <Link href="/archive">
-                  <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
-                    View More
-                  </Button>
-                </Link>
-                <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary animate-pulse hover:animate-bounce cursor-pointer">
-                  <ArrowRight className="h-3 w-3 text-black" />
-                </span>
-              </div>
+        <div className="px-3 sm:px-6 md:px-10 py-6 sm:py-8 md:py-10">
+          <div className="flex flex-row items-center justify-between gap-3">
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-bold shrink-0">Gallery</h1>
+            <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+              <Link href="/archive">
+                <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2 h-auto">
+                  View More
+                </Button>
+              </Link>
+              <Link href="/archive" className="inline-flex items-center justify-center h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-primary hover:opacity-90 transition-opacity">
+                <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 text-black" />
+              </Link>
             </div>
-
           </div>
         </div>
       </main>
-      
-      <div className="w-full px-6 sm:px-0 overflow-hidden rounded-[20px]">
+
+      <div className="w-full px-3 sm:px-6 overflow-hidden rounded-[20px]">
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
