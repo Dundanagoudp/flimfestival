@@ -12,7 +12,6 @@ const sampleMenu: { heading: string; links: { title: string; url?: string }[] }[
     links: [
       { title: "About AFF", url: "/aboutus" },
       { title: "Glimpses of AFF 2025", url: "/archive" },
-      { title: "Festive Venue", url: "/aboutus" },
       { title: "Contact Us", url: "/contactus" },
     ],
   },
@@ -20,8 +19,8 @@ const sampleMenu: { heading: string; links: { title: string; url?: string }[] }[
     heading: "Film Selection",
     links: [
       { title: "Invitees Film", url: "/awards" },
-      { title: "Short Film", url: "/awards" },
-      { title: "Short Documentary", url: "/awards" },
+      { title: "Short Film", url: "/films" },
+      { title: "Short Documentary", url: "/films" },
     ],
   },
   {

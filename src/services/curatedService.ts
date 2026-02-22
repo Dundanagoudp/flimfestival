@@ -7,6 +7,7 @@ import type {
   CuratedImage,
   UpdateCuratedImagePayload,
   CuratedGroupedItem,
+  CuratedSectionResponse,
 } from "@/types/curatedTypes"
 
 const BASE = "/curated"
@@ -108,5 +109,15 @@ export async function getGroupedImages(): Promise<CuratedGroupedItem[]> {
     return data.grouped ?? []
   } catch (error) {
     throw new Error(getErrorMessage(error, "Failed to fetch grouped images"))
+  }
+}
+
+// Public: section by slug (short-film | documentary-film | jury)
+export async function getSectionBySlug(slug: string): Promise<CuratedSectionResponse> {
+  try {
+    const { data } = await apiClient.get<CuratedSectionResponse>(`${BASE}/sections/${slug}`)
+    return data
+  } catch (error) {
+    throw new Error(getErrorMessage(error, "Failed to fetch section"))
   }
 }

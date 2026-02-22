@@ -59,6 +59,12 @@ export interface CuratedImagesByCategoryResponse {
   images: CuratedImage[]
 }
 
+// Section by slug (GET /curated/sections/:slug) — one category + its images
+export interface CuratedSectionResponse {
+  category: CuratedCategory
+  images: CuratedImage[]
+}
+
 // Update image (JSON body when not uploading new file)
 export interface UpdateCuratedImagePayload {
   title?: string
