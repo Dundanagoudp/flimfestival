@@ -181,6 +181,10 @@ const adminNavData = {
          {
           title:"AboutUs",
           url:"/admin/dashboard/home/aboutus"
+        },
+        {
+          title: "About Items",
+          url: "/admin/dashboard/home/about-items"
         }
   
       ]

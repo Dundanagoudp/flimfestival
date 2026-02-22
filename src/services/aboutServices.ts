@@ -2,6 +2,7 @@ import apiClient from "@/apiClient"
 import {
   AboutBanner,
   AboutIntroduction,
+  AboutItem,
   AboutStatistics,
   CreateBannerPayload,
   CreateIntroductionPayload,
@@ -128,4 +129,45 @@ export async function getIntroduction() {
   } catch (error) {
     throw error
   }
+}
+
+// About Items (scrollable section) - public GET, admin CRUD; each item has images[]
+function normalizeAboutItem(raw: { id?: string; _id?: string; [k: string]: unknown }): AboutItem {
+  const id = (raw.id ?? raw._id ?? "") as string
+  let images: string[] = []
+  if (Array.isArray(raw.images)) {
+    images = raw.images.filter((u): u is string => typeof u === "string" && u !== "")
+  } else if (raw.image != null && raw.image !== "") {
+    images = [String(raw.image)]
+  }
+  return {
+    id,
+    index: Number(raw.index) ?? 0,
+    title: String(raw.title ?? ""),
+    subtitle: raw.subtitle != null ? String(raw.subtitle) : undefined,
+    description: raw.description != null ? String(raw.description) : undefined,
+    images: images.length ? images : undefined,
+  }
+}
+
+export async function getAboutItems(): Promise<AboutItem[]> {
+  const response = await apiClient.get<{ success?: boolean; message?: string; data?: unknown[] }>(`${BASE}/items`)
+  const payload = response.data
+  const arr = Array.isArray(payload?.data) ? payload.data : Array.isArray(payload) ? payload : []
+  return arr.map((item: unknown) => normalizeAboutItem(item as Record<string, unknown>))
+}
+
+export async function createAboutItem(formData: FormData): Promise<AboutItem> {
+  const { data } = await apiClient.post<{ success: boolean; message: string; data: unknown }>(`${BASE}/items`, formData)
+  return normalizeAboutItem((data?.data ?? data) as Record<string, unknown>)
+}
+
+export async function updateAboutItem(id: string, formData: FormData): Promise<AboutItem> {
+  const { data } = await apiClient.put<{ success: boolean; message: string; data: unknown }>(`${BASE}/items/${id}`, formData)
+  return normalizeAboutItem((data?.data ?? data) as Record<string, unknown>)
+}
+
+export async function deleteAboutItem(id: string): Promise<{ id: string }> {
+  const { data } = await apiClient.delete<{ success: boolean; message: string; data: { id: string } }>(`${BASE}/items/${id}`)
+  return data?.data ?? { id }
 }
