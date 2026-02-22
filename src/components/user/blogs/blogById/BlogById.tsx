@@ -7,7 +7,7 @@ export default function BlogById() {
   return (
     <div>
       
-      <div className="-mt-[10rem]" style={{ backgroundColor: '#EEEEEE' }}>
+      <div className="-mt-[10rem]" style={{ backgroundColor: '#ffffff' }}>
         <BlogHeroSection/>
       <ShowBlogById/>
      </div>

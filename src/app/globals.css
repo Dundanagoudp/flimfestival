@@ -182,3 +182,8 @@ html {
   );
   background-size: 200% 100%;
 }
+
+/* Tailwind utility for blog/skeleton shimmer (bg-[length:200%_100%] used in components) */
+.animate-shimmer {
+  animation: shimmer 1.8s ease-in-out infinite;
+}
