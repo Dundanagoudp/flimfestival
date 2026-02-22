@@ -187,3 +187,25 @@ html {
 .animate-shimmer {
   animation: shimmer 1.8s ease-in-out infinite;
 }
+
+/* Hide scrollbar for carousel / horizontal scroll areas */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Vertical scrolling posters (About Us page) */
+@keyframes scroll-posters {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+.animate-scroll-posters {
+  animation: scroll-posters 25s linear infinite;
+}

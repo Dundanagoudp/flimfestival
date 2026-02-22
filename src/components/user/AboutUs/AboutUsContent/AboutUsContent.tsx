@@ -56,7 +56,7 @@ export default function AboutUsContent() {
   }
   //aboutus
   return (
-    <section className="bg-gray-100">
+    <section className="bg-white">
       <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="space-y-10">
           {/* First Row: Image + Title & Description */}
