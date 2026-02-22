@@ -39,7 +39,7 @@ export default function Shortfilm() {
 
   if (loading) {
     return (
-      <section className="w-full px-4 py-6 md:py-8 bg-white">
+      <section className="w-full px-4 py-4 md:py-6 bg-white">
         <NominationSectionHeader title="Nomination for the best short film" />
         <CuratedSectionShimmer title="Short Film" />
       </section>
@@ -56,7 +56,7 @@ export default function Shortfilm() {
   }
 
   return (
-    <section className="w-full px-4 py-6 md:py-8 bg-white">
+    <section className="w-full px-4 py-4 md:py-6 bg-white">
       <NominationSectionHeader title="Nomination for the best short film" />
       <div className="mb-6 md:mb-8 last:mb-0">
         <OfficialSectionCarousel

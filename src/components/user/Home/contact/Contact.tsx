@@ -8,7 +8,7 @@ export default function Contact() {
 
   return (
     <section className="w-full bg-[#eeeeee]">
-      <div className="px-6 py-12">
+      <div className="px-6 py-8">
         <h2 className="text-4xl md:text-6xl font-bold mb-8">
           We Welcome Submissions
         </h2>

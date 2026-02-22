@@ -50,7 +50,7 @@ export default function OfficialSection() {
   }
 
   return (
-    <section className="w-full px-4 py-6 md:py-8 bg-white">
+    <section className="w-full px-4 py-4 md:py-6 bg-white">
       <h2 className="text-center text-3xl md:text-4xl font-semibold text-primary tracking-tight mb-5 md:mb-6">
         <span className="border-b-2 border-accent pb-1">{category.name}</span>
       </h2>

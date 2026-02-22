@@ -7,7 +7,7 @@ interface CuratedSectionShimmerProps {
 
 export default function CuratedSectionShimmer({ title }: CuratedSectionShimmerProps) {
   return (
-    <section className="w-full px-4 py-6 md:py-8 bg-white">
+    <section className="w-full px-4 py-4 md:py-6 bg-white">
       <div className="text-center mb-5 md:mb-6">
         <div
           className="inline-block h-9 w-48 rounded-md shimmer mx-auto"
