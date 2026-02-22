@@ -8,6 +8,8 @@ import EventSchedule from './eventSchedule/EventSchedule'
 import Guest from './guest/Guest'
 import AwardNomination from './award/AwardNomination'
 import Gallery from './Gallery/Gallery'
+import Shortfilm from './officialSection/Shortfilm'
+import Documentaryfilm from './officialSection/Documentaryfilm'
 import JurySection from './officialSection/jurySection'
 import OfficialSection from './officialSection/OfficialSection'
 import BlogsAndMedia from './blog&media/BlogsAndMedia'
@@ -26,11 +28,13 @@ export default function Home() {
       <Reveal y={32} delay={0.1}><VideoSection/></Reveal>
       <Reveal y={32} delay={0.15} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><EventSchedule/></Reveal>
       <Reveal y={32} delay={0.15} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><Guest/></Reveal>
-      <Reveal y={32} delay={0.15} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><AwardNomination/></Reveal>
+      {/* <Reveal y={32} delay={0.15} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><AwardNomination/></Reveal> */}
+      <Reveal y={32} delay={0.32}><Shortfilm/></Reveal>
+      <Reveal y={32} delay={0.33}><Documentaryfilm/></Reveal>
       <Reveal y={32} delay={0.3} transition={{ type: 'tween', duration: 1.1, ease: 'easeOut' }}><Gallery/></Reveal>
-      <Reveal y={32} delay={0.32}><JurySection/></Reveal>
-      <Reveal y={32} delay={0.33}><OfficialSection/></Reveal>
-      <Reveal y={32} delay={0.35}><BlogsAndMedia/></Reveal>
+      <Reveal y={32} delay={0.34}><JurySection/></Reveal>
+      <Reveal y={32} delay={0.35}><OfficialSection/></Reveal>
+      <Reveal y={32} delay={0.36}><BlogsAndMedia/></Reveal>
       <Reveal y={32} delay={0.4}><Contact/></Reveal>
       <Reveal y={32} delay={0.45}><YearAward/></Reveal>
   

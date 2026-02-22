@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react"
 import { getSectionBySlug } from "@/services/curatedService"
 import type { CuratedGroupedImage, CuratedSectionResponse } from "@/types/curatedTypes"
+import NominationSectionHeader from "./NominationSectionHeader"
 import OfficialSectionCarousel from "./OfficialSectionCarousel"
 import CuratedSectionShimmer from "./CuratedSectionShimmer"
 import CuratedImageDetailModal from "./CuratedImageDetailModal"
 
-export default function OfficialSection() {
+export default function Shortfilm() {
   const [section, setSection] = useState<CuratedSectionResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -18,7 +19,7 @@ export default function OfficialSection() {
     let cancelled = false
     setLoading(true)
     setError(null)
-    getSectionBySlug("official-selection")
+    getSectionBySlug("short-film")
       .then((data) => {
         if (!cancelled) setSection(data)
       })
@@ -37,7 +38,12 @@ export default function OfficialSection() {
   }, [])
 
   if (loading) {
-    return <CuratedSectionShimmer title="Official Selections" />
+    return (
+      <section className="w-full px-4 py-6 md:py-8 bg-white">
+        <NominationSectionHeader title="Nomination for the best short film" />
+        <CuratedSectionShimmer title="Short Film" />
+      </section>
+    )
   }
 
   if (error || !section) {
@@ -51,9 +57,7 @@ export default function OfficialSection() {
 
   return (
     <section className="w-full px-4 py-6 md:py-8 bg-white">
-      <h2 className="text-center text-3xl md:text-4xl font-semibold text-primary tracking-tight mb-5 md:mb-6">
-        <span className="border-b-2 border-accent pb-1">{category.name}</span>
-      </h2>
+      <NominationSectionHeader title="Nomination for the best short film" />
       <div className="mb-6 md:mb-8 last:mb-0">
         <OfficialSectionCarousel
           images={images as CuratedGroupedImage[]}
