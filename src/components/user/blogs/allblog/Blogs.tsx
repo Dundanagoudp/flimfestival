@@ -9,7 +9,7 @@ export default function Blogs() {
   return (
     <div>
           
-      <div className="-mt-[10rem]" style={{ backgroundColor: '#EEEEEE' }}>
+      <div className="-mt-[10rem]" style={{ backgroundColor: '#ffffff' }}>
         <BlogHeroSection/>
       <ShowBlogs/>
     </div>

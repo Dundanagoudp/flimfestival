@@ -66,7 +66,7 @@ export default function Gallery() {
               <h1 className="sm:text-6xl text-3xl font-black">Gallery</h1>
 
               <div className="flex items-center gap-2 mt-5">
-                <Link href={'/gallery'}>
+                <Link href="/archive">
                   <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">
                     View More
                   </Button>

@@ -65,3 +65,30 @@ export interface UpdateIntroductionPayload {
   image?: File
 }
 
+// About Us - Items (scrollable section); each item has multiple images
+export interface AboutItem {
+  id: string
+  index: number
+  title: string
+  subtitle?: string
+  description?: string
+  images?: string[]
+}
+
+export interface CreateAboutItemPayload {
+  title: string
+  index?: number
+  subtitle?: string
+  description?: string
+  images?: File[]
+}
+
+export interface UpdateAboutItemPayload {
+  title?: string
+  index?: number
+  subtitle?: string
+  description?: string
+  images?: File[]
+  removeImageIndices?: number[]
+}
+

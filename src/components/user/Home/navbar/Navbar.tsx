@@ -11,7 +11,7 @@ const sampleMenu: { heading: string; links: { title: string; url?: string }[] }[
     heading: "About Us",
     links: [
       { title: "About AFF", url: "/aboutus" },
-      { title: "Glimpses of AFF 2025", url: "/gallery" },
+      { title: "Glimpses of AFF 2025", url: "/archive" },
       { title: "Festive Venue", url: "/aboutus" },
       { title: "Contact Us", url: "/contactus" },
     ],
@@ -28,8 +28,8 @@ const sampleMenu: { heading: string; links: { title: string; url?: string }[] }[
     heading: "Media",
     links: [
       { title: "Blogs", url: "/blogs" },
-      { title: "Gallery", url: "/gallery" },
-      { title: "10th AFF Catalogue", url: "/gallery" }
+      { title: "Gallery", url: "/archive" },
+      { title: "10th AFF Catalogue", url: "/archive" }
     ],
   },
   {
