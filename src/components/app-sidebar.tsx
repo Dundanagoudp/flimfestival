@@ -241,6 +241,10 @@ const adminNavData = {
           title: "Categories",
           url: "/admin/dashboard/session-plans/categories",
         },
+        {
+          title: "PDF Upload",
+          url: "/admin/dashboard/session-plans/pdfs",
+        },
       ],
     },
     {
@@ -379,6 +383,10 @@ const userNavData = {
         {
           title: "Categories",
           url: "/admin/dashboard/session-plans/categories",
+        },
+        {
+          title: "PDF Upload",
+          url: "/admin/dashboard/session-plans/pdfs",
         },
       ],
     },
