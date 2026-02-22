@@ -101,7 +101,7 @@ export default function ScheduleSection() {
 
   if (loading) {
     return (
-      <section className="relative overflow-hidden bg-background pt-12 md:pt-16 pb-0">
+      <section className="relative overflow-hidden bg-gray-50 pt-12 md:pt-16 pb-0 dark:bg-zinc-900/50">
         <div className="container relative mx-auto max-w-6xl px-4">
           <div className="flex items-center justify-center gap-2 py-20 text-muted-foreground">
             <Loader2 className="h-6 w-6 animate-spin" />
@@ -113,7 +113,7 @@ export default function ScheduleSection() {
   }
 
   return (
-    <section className="relative overflow-hidden bg-background pt-12 md:pt-16 pb-0">
+    <section className="relative overflow-hidden bg-gray-50 pt-12 md:pt-16 pb-0 dark:bg-zinc-900/50">
       <div className="container relative mx-auto max-w-6xl px-4">
         {/* Header */}
         <div className="mb-12 text-center md:mb-16">
