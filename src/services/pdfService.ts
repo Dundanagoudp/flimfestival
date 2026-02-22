@@ -64,7 +64,7 @@ export function getPreviewUrl(id: string): string {
  * URL for downloading a PDF by document id.
  * Backend: GET /api/v1/pdfs/:id/download (or {NEXT_PUBLIC_API_BASE_URL}/pdfs/:id/download).
  * Returns 200 with Content-Type: application/pdf and Content-Disposition: attachment; filename="<name>.pdf".
- * Use this as the href for "Download" links so the browser saves the PDF file.
+ * Use document._id with getDownloadUrl for download links (do not use pdfUrl).
  */
 export function getDownloadUrl(id: string): string {
   const base = process.env.NEXT_PUBLIC_API_BASE_URL
