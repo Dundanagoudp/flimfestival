@@ -65,6 +65,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 function idOfPlan(p: SessionPlan) {
   return p.id ?? p._id
@@ -105,6 +106,12 @@ export default function PlanDetailPage() {
   const [planPdfUploading, setPlanPdfUploading] = useState(false)
   const [dayPdfLoading, setDayPdfLoading] = useState(false)
   const [dayPdfUploading, setDayPdfUploading] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState<
+    | null
+    | { type: "day"; dayId: string }
+    | { type: "screen"; dayId: string; screenId: string }
+    | { type: "slot"; dayId: string; screenId: string; slotId: string }
+  >(null)
 
   const pid = plan ? idOfPlan(plan) : planId
   const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || ""
@@ -480,6 +487,27 @@ export default function PlanDetailPage() {
     }
   }
 
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirm) return
+    setSubmitting(true)
+    try {
+      if (deleteConfirm.type === "day") {
+        await handleDeleteDay(deleteConfirm.dayId)
+      } else if (deleteConfirm.type === "screen") {
+        await handleDeleteScreen(deleteConfirm.dayId, deleteConfirm.screenId)
+      } else {
+        await handleDeleteSlot(
+          deleteConfirm.dayId,
+          deleteConfirm.screenId,
+          deleteConfirm.slotId
+        )
+      }
+      setDeleteConfirm(null)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   if (loading || !plan) {
     return (
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -531,21 +559,28 @@ export default function PlanDetailPage() {
       </div>
 
       {/* Day tabs */}
-      <div className="flex flex-wrap items-center gap-1 border-b">
-        {(plan.days || []).map((day, i) => (
-          <Button
-            key={idOfDay(day)}
-            variant={activeDayIndex === i ? "secondary" : "ghost"}
-            size="sm"
-            onClick={() => setActiveDayIndex(i)}
-          >
-            Day {day.dayNumber} · {day.date}
-          </Button>
-        ))}
+      <div className="flex items-center gap-2 border-b">
+        <Tabs
+          value={String(activeDayIndex)}
+          onValueChange={(v) => setActiveDayIndex(Number(v))}
+          className="flex-1 min-w-0"
+        >
+          <TabsList className="flex-wrap h-auto p-0 gap-0 bg-transparent border-0 rounded-none overflow-x-auto w-full justify-start">
+            {(plan.days || []).map((day, i) => (
+              <TabsTrigger
+                key={idOfDay(day)}
+                value={String(i)}
+                className="rounded-b-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              >
+                Day {day.dayNumber} · {day.date}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
         <Button
           variant="outline"
           size="sm"
-          className="border-dashed"
+          className="border-dashed shrink-0"
           onClick={() => setModal({ type: "addDay" })}
         >
           <Plus className="h-4 w-4" />
@@ -557,59 +592,96 @@ export default function PlanDetailPage() {
         scheduleView ? (
           <ScheduleTableView day={currentDay} />
         ) : (
-          <AdminGridView
-            day={currentDay}
-            onAddScreen={() =>
-              setModal({ type: "addScreen", dayId: idOfDay(currentDay) })
-            }
-            onRenameScreen={(screenId, current) =>
-              setModal({
-                type: "renameScreen",
-                dayId: idOfDay(currentDay),
-                screenId,
-                current,
-              })
-            }
-            onDeleteScreen={(screenId) => {
-              if (
-                confirm(
-                  "Delete this screen and all its slots?"
-                )
-              ) {
-                handleDeleteScreen(idOfDay(currentDay), screenId)
-              }
-            }}
-            onAddSlot={(screenId) =>
-              setModal({
-                type: "addSlot",
-                dayId: idOfDay(currentDay),
-                screenId,
-              })
-            }
-            onEditSlot={(slot) =>
-              setModal({
-                type: "editSlot",
-                dayId: idOfDay(currentDay),
-                screenId: (slot as any).screenId ?? "",
-                slot,
-              })
-            }
-            onDeleteSlot={(screenId, slotId) => {
-              if (confirm("Delete this slot?")) {
-                handleDeleteSlot(idOfDay(currentDay), screenId, slotId)
-              }
-            }}
-            onDeleteDay={() => {
-              if (confirm("Delete this day and all its data?")) {
-                handleDeleteDay(idOfDay(currentDay))
-              }
-            }}
-          />
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
+              <CardTitle className="text-sm sm:text-base">
+                Day {currentDay.dayNumber} · {currentDay.date}
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={() =>
+                    setModal({ type: "addScreen", dayId: idOfDay(currentDay) })
+                  }
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add screen
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() =>
+                    setDeleteConfirm({
+                      type: "day",
+                      dayId: idOfDay(currentDay),
+                    })
+                  }
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete day
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <AdminGridView
+                day={currentDay}
+                onAddScreen={() =>
+                  setModal({ type: "addScreen", dayId: idOfDay(currentDay) })
+                }
+                onRenameScreen={(screenId, current) =>
+                  setModal({
+                    type: "renameScreen",
+                    dayId: idOfDay(currentDay),
+                    screenId,
+                    current,
+                  })
+                }
+                onDeleteScreen={(screenId) =>
+                  setDeleteConfirm({
+                    type: "screen",
+                    dayId: idOfDay(currentDay),
+                    screenId,
+                  })
+                }
+                onAddSlot={(screenId) =>
+                  setModal({
+                    type: "addSlot",
+                    dayId: idOfDay(currentDay),
+                    screenId,
+                  })
+                }
+                onEditSlot={(slot) =>
+                  setModal({
+                    type: "editSlot",
+                    dayId: idOfDay(currentDay),
+                    screenId: (slot as any).screenId ?? "",
+                    slot,
+                  })
+                }
+                onDeleteSlot={(screenId, slotId) =>
+                  setDeleteConfirm({
+                    type: "slot",
+                    dayId: idOfDay(currentDay),
+                    screenId,
+                    slotId,
+                  })
+                }
+              />
+            </CardContent>
+          </Card>
         )
       ) : (
         <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            No days yet. Click &quot;+ Day&quot; to add a day.
+          <CardContent className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground min-h-[200px]">
+            <CalendarDays className="h-10 w-10 sm:h-12 sm:w-12 mb-4 opacity-50" />
+            <p className="mb-4">No days yet. Click &quot;+ Day&quot; to add a day.</p>
+            <Button
+              variant="outline"
+              className="border-dashed"
+              onClick={() => setModal({ type: "addDay" })}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Day
+            </Button>
           </CardContent>
         </Card>
       )}
@@ -748,6 +820,49 @@ export default function PlanDetailPage() {
         </aside>
       </div>
 
+      {/* Delete confirmation modal */}
+      <AlertDialog
+        open={!!deleteConfirm}
+        onOpenChange={(open) => !open && setDeleteConfirm(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {deleteConfirm?.type === "day" && "Delete this day?"}
+              {deleteConfirm?.type === "screen" && "Delete this screen?"}
+              {deleteConfirm?.type === "slot" && "Delete this slot?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleteConfirm?.type === "day" &&
+                "This will delete this day and all its screens and slots. This cannot be undone."}
+              {deleteConfirm?.type === "screen" &&
+                "This will delete this screen and all its slots. This cannot be undone."}
+              {deleteConfirm?.type === "slot" &&
+                "This slot will be removed. This cannot be undone."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteConfirm(null)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault()
+                handleDeleteConfirm()
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={submitting}
+            >
+              {submitting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Delete"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Add Day modal: date picker is inline so no portal/outside-click issues */}
       <Dialog
         open={modal?.type === "addDay"}
@@ -874,6 +989,12 @@ function formatDayDate(d: Date): string {
   return `${day}${suffix} ${month}, ${year}`
 }
 
+function startOfToday() {
+  const d = new Date()
+  d.setHours(0, 0, 0, 0)
+  return d
+}
+
 function AddDayForm({
   onSubmit,
   onCancel,
@@ -886,6 +1007,7 @@ function AddDayForm({
   const [dayNumber, setDayNumber] = useState("")
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [datePickerOpen, setDatePickerOpen] = useState(false)
+  const today = startOfToday()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -940,6 +1062,7 @@ function AddDayForm({
                   setDatePickerOpen(false)
                 }
               }}
+              disabled={(date) => date < today}
             />
           </div>
         )}
@@ -1096,7 +1219,6 @@ function AdminGridView({
   onAddSlot,
   onEditSlot,
   onDeleteSlot,
-  onDeleteDay,
 }: {
   day: SessionPlanDay
   onAddScreen: () => void
@@ -1105,28 +1227,16 @@ function AdminGridView({
   onAddSlot: (screenId: string) => void
   onEditSlot: (slot: SessionPlanSlot) => void
   onDeleteSlot: (screenId: string, slotId: string) => void
-  onDeleteDay: () => void
 }) {
   const screens = day.screens || []
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <Button onClick={onAddScreen}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add screen
-        </Button>
-        <Button variant="destructive" size="sm" onClick={onDeleteDay}>
-          <Trash2 className="mr-2 h-4 w-4" />
-          Delete day
-        </Button>
-      </div>
-      <div
-        className="grid gap-4"
-        style={{
-          gridTemplateColumns: `repeat(${Math.max(screens.length, 1)}, minmax(260px, 1fr))`,
-        }}
-      >
-        {screens.map((screen) => (
+    <div
+      className="grid gap-4"
+      style={{
+        gridTemplateColumns: `repeat(${Math.max(screens.length, 1)}, minmax(260px, 1fr))`,
+      }}
+    >
+      {screens.map((screen) => (
           <Card key={idOfScreen(screen)} className="flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
@@ -1226,14 +1336,16 @@ function AdminGridView({
             </CardContent>
           </Card>
         ))}
-        {screens.length === 0 && (
-          <Card className="col-span-full">
-            <CardContent className="py-8 text-center text-muted-foreground">
-              No screens yet. Click &quot;Add screen&quot; to start.
-            </CardContent>
-          </Card>
-        )}
-      </div>
+      {screens.length === 0 && (
+        <div className="col-span-full flex flex-col items-center justify-center py-12 px-4 text-center text-muted-foreground min-h-[200px] rounded-lg border border-dashed">
+          <LayoutList className="h-10 w-10 sm:h-12 sm:w-12 mb-4 opacity-50" />
+          <p className="mb-4">No screens yet. Click &quot;Add screen&quot; to start.</p>
+          <Button onClick={onAddScreen}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add screen
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
