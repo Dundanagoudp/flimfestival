@@ -31,22 +31,14 @@ export function MegaMenu({ open, onClose, menu }: MegaMenuProps) {
   }, [open, onClose]);
 
   React.useEffect(() => {
-    const html = document.documentElement;
-    const body = document.body;
-    const prevHtmlOverflow = html.style.overflow;
-    const prevBodyOverflow = body.style.overflow;
-    const prevScrollY = window.scrollY;
+    const originalOverflow = document.body.style.overflow;
     if (open) {
-      html.style.overflow = "hidden";
-      body.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
     } else {
-      html.style.overflow = prevHtmlOverflow;
-      body.style.overflow = prevBodyOverflow;
+      document.body.style.overflow = originalOverflow;
     }
     return () => {
-      html.style.overflow = prevHtmlOverflow;
-      body.style.overflow = prevBodyOverflow;
-      window.scrollTo(0, prevScrollY);
+      document.body.style.overflow = originalOverflow;
     };
   }, [open]);
 
@@ -64,13 +56,13 @@ export function MegaMenu({ open, onClose, menu }: MegaMenuProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/30 transition-opacity duration-300 ease-out"
+      className="fixed inset-0 z-50 bg-black/30 transition-opacity duration-300 ease-out"
       onClick={onClose}
       aria-hidden={!open}
     >
-      {/* ========== MOBILE ONLY: Sidebar (slide-in from right) – unchanged ========== */}
+      {/* ========== MOBILE ONLY: Sidebar (slide-in from right) ========== */}
       <div
-        className={`sm:hidden fixed top-0 right-0 z-[100] h-full w-[min(100%,320px)] bg-[#1b1b1b] border-l border-gray-800 shadow-2xl flex flex-col overflow-hidden transition-transform duration-300 ease-out ${open ? "translate-x-0" : "translate-x-full"}`}
+        className={`sm:hidden fixed top-0 right-0 z-50 h-full w-[min(100%,320px)] bg-[#1b1b1b] border-l border-gray-800 shadow-2xl flex flex-col overflow-hidden transition-transform duration-300 ease-out ${open ? "translate-x-0" : "translate-x-full"}`}
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
@@ -132,6 +124,51 @@ export function MegaMenu({ open, onClose, menu }: MegaMenuProps) {
               })}
             </ul>
           </nav>
+        </div>
+      </div>
+
+      {/* ========== DESKTOP ONLY: Original modal (floating close + rounded panel) ========== */}
+      <button
+        type="button"
+        onClick={onClose}
+        className="hidden sm:inline-flex items-center justify-center absolute top-5 right-8 z-50 rounded-full bg-primary p-2 shadow-md hover:bg-yellow-400 hover:shadow-lg hover:scale-110 active:scale-95 transition-all duration-300 ease-out"
+        aria-label="Close menu"
+      >
+        <X className="w-5 h-5 text-gray-800" aria-hidden="true" />
+      </button>
+      <div
+        className="hidden sm:block absolute right-0 top-0 h-full w-full sm:top-20 sm:w-2/3 md:w-1/2 transition-transform duration-400 ease-out translate-x-0 overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation menu"
+      >
+        <div>
+          <div className="rounded-xl bg-[#1b1b1b] border border-gray-800 shadow-2xl p-4 sm:p-6">
+            <div className="flex flex-row flex-wrap gap-6 sm:gap-8">
+              {menu.map((section, index) => (
+                <div
+                  key={section.heading}
+                  className="min-w-[160px] flex-1 w-full sm:w-auto"
+                >
+                  <h3 className="text-sm font-semibold mb-3 text-yellow-400">
+                    {section.heading}
+                  </h3>
+                  <ul className="list-none m-0 p-0 space-y-2">
+                    {section.links.map((link, linkIndex) => (
+                      <ListItem
+                        key={link.title}
+                        title={link.title}
+                        href={sanitizeUrl(link.url || "") || "#"}
+                        onClick={onClose}
+                        delay={open ? `${300 + index * 100 + linkIndex * 50}ms` : undefined}
+                      />
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
