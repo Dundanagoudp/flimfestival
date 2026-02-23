@@ -65,7 +65,7 @@ const AboutItems = () => {
 
   if (loading) {
     return (
-      <section className="bg-white py-10 sm:py-14 md:py-16 lg:py-24">
+      <section className="bg-white py-8 sm:py-10 md:py-12 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6">
           {/* Shimmer header */}
           <div className="mb-8 sm:mb-10 md:mb-12 text-center">
@@ -108,7 +108,7 @@ const AboutItems = () => {
   }
 
   return (
-    <section className="bg-white py-10 sm:py-14 md:py-16 lg:py-24">
+    <section className="bg-white py-8 sm:py-10 md:py-12 lg:py-16">
       <div className="container mx-auto px-4 sm:px-6">
         {/* Section Header - responsive typography */}
         <div className="mb-8 sm:mb-10 md:mb-12 text-center">

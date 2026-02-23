@@ -185,8 +185,15 @@ const adminNavData = {
         {
           title: "About Items",
           url: "/admin/dashboard/home/about-items"
+        },
+        {
+          title: "Hero Banner",
+          url: "/admin/dashboard/home/hero-banner"
+        },
+        {
+          title: "Ticker Announcements",
+          url: "/admin/dashboard/home/ticker-announcements"
         }
-  
       ]
 
     },

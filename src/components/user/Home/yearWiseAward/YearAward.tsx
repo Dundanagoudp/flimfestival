@@ -25,7 +25,7 @@ export default function YearAward() {
 
   return (
     <main className="w-full px-4" style={{ backgroundColor: "#ffffff" }}>
-    <div className="px-10 py-10">
+    <div className="px-6 md:px-10 py-6 md:py-8">
       <h1 className="text-2xl">Arunachal Film Festival</h1>
       <h1 className="md:text-6xl text-4xl font-bold">Awards</h1>
     </div>

@@ -22,9 +22,7 @@ export default function DynamicPagination({
   showItemsInfo = true,
   maxVisiblePages = 5,
 }: DynamicPaginationProps) {
-  if (totalPages <= 1) return null;
-
-  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   const getVisiblePages = () => {
@@ -60,56 +58,57 @@ export default function DynamicPagination({
 
   return (
     <div className={`flex flex-col space-y-4 sm:flex-row sm:justify-between sm:items-center sm:space-y-0 px-4 py-3 ${className}`}>
-      {/* Items info - Left side */}
+      {/* Items info - Left side (always show when showItemsInfo and there are items or loading state) */}
       {showItemsInfo && (
         <div className="text-sm text-gray-600 text-center sm:text-left">
-          {`Showing ${startItem}-${endItem} of ${totalItems} items`}
+          {totalItems === 0
+            ? "0 items"
+            : `Showing ${startItem}-${endItem} of ${totalItems} items`}
         </div>
       )}
 
-      {/* Pagination Controls - Right side */}
-      <div className={`flex items-center gap-2 ${showItemsInfo ? 'justify-center sm:justify-end' : 'justify-center'}`}>
-        {/* Previous Button */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-          disabled={currentPage === 1}
-          className="px-3 py-1 text-sm"
-        >
-          &lt; Previous
-        </Button>
+      {/* Pagination Controls - Right side (only when more than one page) */}
+      {totalPages > 1 && (
+        <div className={`flex items-center gap-2 ${showItemsInfo ? "justify-center sm:justify-end" : "justify-center"}`}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 text-sm"
+          >
+            &lt; Previous
+          </Button>
 
-        {/* Page Numbers */}
-        <div className="flex items-center gap-1">
-          {getVisiblePages().map((pageNum) => (
-            <Button
-              key={pageNum}
-              variant={currentPage === pageNum ? "default" : "outline"}
-              size="sm"
-              onClick={() => onPageChange(pageNum)}
-              className={`min-w-[32px] h-8 px-2 text-sm ${
-                currentPage === pageNum
-                  ? "bg-gray-900 text-white hover:bg-gray-800"
-                  : "bg-white border-gray-200 hover:bg-gray-50"
-              }`}
-            >
-              {pageNum}
-            </Button>
-          ))}
+          <div className="flex items-center gap-1">
+            {getVisiblePages().map((pageNum) => (
+              <Button
+                key={pageNum}
+                variant={currentPage === pageNum ? "default" : "outline"}
+                size="sm"
+                onClick={() => onPageChange(pageNum)}
+                className={`min-w-[32px] h-8 px-2 text-sm ${
+                  currentPage === pageNum
+                    ? "bg-gray-900 text-white hover:bg-gray-800"
+                    : "bg-white border-gray-200 hover:bg-gray-50"
+                }`}
+              >
+                {pageNum}
+              </Button>
+            ))}
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 text-sm"
+          >
+            Next &gt;
+          </Button>
         </div>
-
-        {/* Next Button */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 text-sm"
-        >
-          Next &gt;
-        </Button>
-      </div>
+      )}
     </div>
   );
 }

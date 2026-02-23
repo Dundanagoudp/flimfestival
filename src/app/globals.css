@@ -209,3 +209,56 @@ html {
 .animate-scroll-posters {
   animation: scroll-posters 25s linear infinite;
 }
+
+/* Home ticker marquee */
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+.animate-ticker {
+  animation: ticker 40s linear infinite;
+}
+
+/* News ticker bar (below video section) – gradient from/via/to */
+.ticker-bar {
+  --ticker-from: 43 90% 40%;
+  --ticker-via: 38 85% 50%;
+  --ticker-to: 30 80% 45%;
+  background: linear-gradient(
+    90deg,
+    hsl(var(--ticker-from)) 0%,
+    hsl(var(--ticker-via)) 50%,
+    hsl(var(--ticker-to)) 100%
+  );
+  color: #fff;
+  border-top: 1px solid oklch(0 0 0 / 15%);
+  border-bottom: 1px solid oklch(0 0 0 / 15%);
+}
+.ticker-glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(1 0 0 / 8%) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+.ticker-item {
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+.ticker-item:hover {
+  color: #fff;
+}
+.ticker-separator {
+  color: #fff;
+  opacity: 0.85;
+  user-select: none;
+}

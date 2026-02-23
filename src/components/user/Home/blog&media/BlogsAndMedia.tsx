@@ -56,7 +56,7 @@ export default function BlogsAndMedia() {
     .slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-white pt-4 px-8 pb-8 relative overflow-hidden">
+    <div className="min-h-screen bg-white pt-4 px-6 md:px-8 pb-6 relative overflow-hidden">
       {/* Header */}
       <div className="text-center mt-4 mb-8 relative z-10">
         <div className="flex justify-center items-center gap-6">

@@ -60,6 +60,19 @@ export function getPreviewUrl(id: string): string {
   return `${trimmed}${BASE}/${id}/preview`
 }
 
+/**
+ * URL for downloading a PDF by document id.
+ * Backend: GET /api/v1/pdfs/:id/download (or {NEXT_PUBLIC_API_BASE_URL}/pdfs/:id/download).
+ * Returns 200 with Content-Type: application/pdf and Content-Disposition: attachment; filename="<name>.pdf".
+ * Use document._id with getDownloadUrl for download links (do not use pdfUrl).
+ */
+export function getDownloadUrl(id: string): string {
+  const base = process.env.NEXT_PUBLIC_API_BASE_URL
+  if (!base) throw new Error("NEXT_PUBLIC_API_BASE_URL is not set")
+  const trimmed = base.replace(/\/$/, "")
+  return `${trimmed}${BASE}/${id}/download`
+}
+
 export async function updatePdf(id: string, formData: FormData): Promise<PdfItem> {
   return request<PdfItem>("put", `${BASE}/${id}`, formData)
 }

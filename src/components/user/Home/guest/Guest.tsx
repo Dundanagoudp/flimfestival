@@ -31,7 +31,7 @@ function Guest() {
   if (loading) {
     return (
       <div className="w-full px-4">
-        <div className="px-10 py-10">
+        <div className="px-6 md:px-10 py-6 md:py-8">
           <div className="flex justify-center items-center h-96">
             <p className="text-lg">Loading guests...</p>
           </div>
@@ -43,7 +43,7 @@ function Guest() {
   return (
     <div>
       <main className="w-full px-4">
-        <div className="px-3 sm:px-4 md:px-10 py-6 sm:py-8 md:py-10">
+        <div className="px-3 sm:px-4 md:px-10 py-4 sm:py-6 md:py-8">
           <div className="flex flex-row items-center justify-between gap-3">
             <h1 className="text-xl sm:text-3xl md:text-4xl font-bold shrink-0">Guest</h1>
             <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">

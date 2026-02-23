@@ -30,7 +30,7 @@ export default function VideoSection() {
   return (
     <div style={{ backgroundColor: '#1A1A1A' }}>
       <main className="w-full px-4">
-        <div className="px-10 py-10 relative">
+        <div className="px-6 md:px-10 py-6 md:py-8 relative">
           {/* <div className="absolute top-0 right-0 flex items-center gap-2 group mt-10">
             <Link href="/videos">
               <Button className="rounded-full bg-primary text-black hover:bg-yellow-300 hover:scale-105 hover:shadow-lg transition-all duration-200 ease-out">

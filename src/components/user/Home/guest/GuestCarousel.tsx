@@ -77,7 +77,7 @@ export default function GuestCarousel({ guests, getImageUrl }: GuestCarouselProp
 
   if (guests.length === 0) {
     return (
-      <div className="text-center py-16 md:py-20">
+      <div className="text-center py-10 md:py-14">
         <p className="text-muted-foreground text-lg">No guests available</p>
       </div>
     );
