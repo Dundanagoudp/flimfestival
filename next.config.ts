@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV !== 'production';
 const isVercel = !!process.env.VERCEL;
+// Set USE_HTTPS=1 only when the app is served over HTTPS (domain + nginx/TLS).
+// For IP-only (public/private IP, no domain, no TLS), leave USE_HTTPS unset.
+const useHttps = process.env.USE_HTTPS === '1';
 
 const nextConfig: NextConfig = {
   // Do NOT use standalone on Vercel; enable it only for self-host/Docker
@@ -29,10 +32,9 @@ const nextConfig: NextConfig = {
             value:
               "camera=(), microphone=(), geolocation=(), usb=(), payment=(), clipboard-read=(), clipboard-write=(), accelerometer=(), autoplay=(), encrypted-media=(), fullscreen=(self), gyroscope=(), magnetometer=(), midi=(), picture-in-picture=()",
           },
-          {
-            key: "Strict-Transport-Security",
-            value: "max-age=31536000; includeSubDomains; preload",
-          },
+          ...(useHttps
+            ? [{ key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains; preload" }]
+            : []),
           { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
           { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
           {
@@ -51,7 +53,7 @@ const nextConfig: NextConfig = {
               "base-uri 'self'",
               "form-action 'self'",
               "frame-ancestors 'none'",
-              "upgrade-insecure-requests",
+              ...(useHttps ? ["upgrade-insecure-requests"] : []),
             ].join("; "),
           },
           { key: "X-DNS-Prefetch-Control", value: isDev ? "on" : "off" },

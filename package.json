@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=--max-old-space-size=4096 next dev --turbopack",
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=4096 next build",
+    "postbuild": "node scripts/copy-standalone-assets.js",
     "start": "next start",
+    "start:standalone": "node .next/standalone/server.js",
     "lint": "next lint",
     "test:e2e": "playwright test"
   },

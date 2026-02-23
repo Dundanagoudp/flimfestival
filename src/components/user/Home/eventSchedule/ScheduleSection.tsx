@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Clock, MapPin, Film, Users, ArrowRight } from "lucide-react";
 import {
-  scheduleData,
   sessionPlanToDaySchedules,
   type DaySchedule,
   type ScheduleEvent,
@@ -75,12 +74,10 @@ export default function ScheduleSection() {
     };
   }, []);
 
-  const displayDays =
-    scheduleDays.length > 0 ? scheduleDays : scheduleData;
-  const daysForTabs = displayDays.slice(0, 3);
+  const daysForTabs = scheduleDays.slice(0, 3);
   const currentDaySchedule = useMemo(
-    () => displayDays.find((d) => d.day === activeDay),
-    [displayDays, activeDay]
+    () => scheduleDays.find((d) => d.day === activeDay),
+    [scheduleDays, activeDay]
   );
 
   const screensForDay = useMemo(
@@ -106,6 +103,30 @@ export default function ScheduleSection() {
           <div className="flex items-center justify-center gap-2 py-20 text-muted-foreground">
             <Loader2 className="h-6 w-6 animate-spin" />
             <span>Loading schedule...</span>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (scheduleDays.length === 0) {
+    return (
+      <section className="relative overflow-hidden bg-gray-50 pt-12 md:pt-16 pb-0 dark:bg-zinc-900/50">
+        <div className="container relative mx-auto max-w-6xl px-4">
+          <div className="mb-12 text-center md:mb-16">
+            <p className="mb-3 font-body text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+              Arunachal Film Festival
+            </p>
+            <h2 className="font-display text-4xl font-bold text-foreground md:text-5xl lg:text-6xl">
+              Schedule 2026
+            </h2>
+            <div className="mx-auto mt-4 h-1 w-16 rounded-full bg-accent" />
+          </div>
+          <div className="flex flex-col items-center justify-center rounded-xl border border-zinc-200 bg-card py-16 text-center shadow-card dark:border-zinc-700">
+            <Film className="mb-3 h-10 w-10 text-muted-foreground/40" />
+            <p className="font-body text-muted-foreground">
+              No schedule available at the moment.
+            </p>
           </div>
         </div>
       </section>
