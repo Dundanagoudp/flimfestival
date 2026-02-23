@@ -142,7 +142,7 @@ export function MegaMenu({ open, onClose, menu }: MegaMenuProps) {
           </motion.div>
 
           {/* ===== DESKTOP MODAL ===== */}
-          <div className="hidden lg:flex items-start justify-center pt-24 z-[9999] relative">
+          <div className="hidden lg:flex items-start justify-end pt-24 z-[9999] relative">
             <motion.div
               initial={{ opacity: 0, y: -20, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
