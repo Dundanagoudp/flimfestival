@@ -18,6 +18,7 @@ interface DynamicButtonProps {
   children: React.ReactNode
   className?: string
   type?: "button" | "submit" | "reset"
+  title?: string
 }
 
 export default function DynamicButton({
