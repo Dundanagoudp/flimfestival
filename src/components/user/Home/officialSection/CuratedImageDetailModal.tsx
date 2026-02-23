@@ -45,7 +45,7 @@ export default function CuratedImageDetailModal({ open, onOpenChange, image }: C
           {image.title ? `${image.title} – Details` : "Selection details"}
         </DialogTitle>
         {/* Image header - fixed height, no scroll */}
-        <div className="relative aspect-[16/10] w-full bg-muted flex-shrink-0 overflow-hidden">
+        <div className="relative aspect-square w-full bg-muted flex-shrink-0 overflow-hidden">
           <DialogClose
             className="absolute top-4 right-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent transition-colors"
             aria-label="Close"
