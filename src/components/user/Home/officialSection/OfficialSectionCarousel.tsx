@@ -36,7 +36,7 @@ export default function OfficialSectionCarousel({ images, categoryName, onImageC
               onClick={() => onImageClick?.(item)}
               className="min-w-0 flex flex-col rounded-xl overflow-hidden flex-[0_0_100%] sm:flex-[0_0_calc((100%-24px)/2)] lg:flex-[0_0_calc((100%-72px)/4)] cursor-pointer shadow-md text-left hover:opacity-95 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
-              <div className="flex-shrink-0 h-[380px] bg-muted overflow-hidden">
+              <div className="flex-shrink-0 aspect-square w-full bg-muted overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={getMediaUrl(item.image) || "/placeholder.svg"}

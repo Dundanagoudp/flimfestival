@@ -29,7 +29,7 @@ export default function CuratedSectionShimmer({ title }: CuratedSectionShimmerPr
                 key={i}
                 className="min-w-0 flex flex-col rounded-xl overflow-hidden flex-[0_0_100%] sm:flex-[0_0_calc((100%-24px)/2)] lg:flex-[0_0_calc((100%-72px)/4)] shadow-md"
               >
-                <div className="flex-shrink-0 h-[380px] w-full rounded-t-xl shimmer" />
+                <div className="flex-shrink-0 aspect-square w-full rounded-t-xl shimmer" />
                 <div className="w-full h-11 rounded-b-xl bg-muted shimmer flex-shrink-0" />
               </div>
             ))}
