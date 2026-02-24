@@ -12,10 +12,11 @@ const GALLERY_MAX_SIZE_MB = 5
 
 type Props = {
   yearId: string
+  dayId: string
   onDone?: () => void
 }
 
-export default function UploadImages({ yearId, onDone }: Props) {
+export default function UploadImages({ yearId, dayId, onDone }: Props) {
   const { showToast } = useToast()
   const [files, setFiles] = React.useState<FileList | null>(null)
   const [loading, setLoading] = React.useState(false)
@@ -26,7 +27,10 @@ export default function UploadImages({ yearId, onDone }: Props) {
       setError("Please select images first")
       return
     }
-    
+    if (!dayId) {
+      setError("Day is required")
+      return
+    }
     for (const file of Array.from(files)) {
       const result = validateFile(file, GALLERY_ALLOWED_TYPES, GALLERY_MAX_SIZE_MB)
       if (!result.valid) {
@@ -38,7 +42,7 @@ export default function UploadImages({ yearId, onDone }: Props) {
     try {
       setLoading(true)
       setError(null)
-      await addImages(yearId, Array.from(files))
+      await addImages(yearId, dayId, Array.from(files))
       showToast("Images uploaded successfully", "success")
       setFiles(null)
       onDone?.()
@@ -71,7 +75,7 @@ export default function UploadImages({ yearId, onDone }: Props) {
           onChange={handleFileChange}
           className="w-full sm:max-w-xs"
         />
-        <DynamicButton onClick={(e) => onUpload()} disabled={loading || !files?.length} className="w-full sm:w-auto">
+        <DynamicButton onClick={() => onUpload()} disabled={loading || !files?.length || !dayId} className="w-full sm:w-auto">
           {loading ? "Uploading..." : "Upload"}
         </DynamicButton>
       </div>

@@ -13,16 +13,48 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/custom-toast"
-import { getAllYears, getAllGalleryByYear, deleteYear, bulkDeleteImages } from "@/services/galleryServices"
-import type { GalleryImage, GalleryYear, GetAllGalleryResponse } from "@/types/galleryTypes"
+import { getAllYears, getDaysByYear, getAllGalleryByYear, deleteYear, deleteDay, bulkDeleteImages } from "@/services/galleryServices"
+import type {
+  GalleryImage,
+  GalleryYear,
+  GalleryDay,
+  GetAllGalleryByYearResponse,
+  GalleryDayWithImages,
+} from "@/types/galleryTypes"
 import AddYearModal from "@/components/admin/gallery/modules/popups/addyearpopup"
 import UpdateYearModal from "@/components/admin/gallery/modules/popups/updateyear"
+import AddDayModal from "@/components/admin/gallery/modules/popups/adddaypopup"
+import UpdateDayModal from "@/components/admin/gallery/modules/popups/updateday"
 import ConfirmDeleteModal from "@/components/admin/gallery/modules/popups/confirm-delete-modal"
 import ImageModal from "@/components/admin/gallery/modules/popups/image-modal"
 import ImageCard from "@/components/admin/gallery/modules/image-card"
 import DynamicPagination from "@/components/common/DynamicPagination"
 import { useAuth } from "@/context/auth-context"
 import { getMediaUrl } from "@/utils/media"
+
+function isGalleryByYearResponse(
+  data: GetAllGalleryByYearResponse | { year: number; images?: GalleryImage[] }
+): data is GetAllGalleryByYearResponse {
+  return "days" in data && Array.isArray((data as GetAllGalleryByYearResponse).days)
+}
+
+type GalleryImageWithDay = GalleryImage & { dayName?: string }
+
+function getFlatImagesAndDays(
+  yearData: GetAllGalleryByYearResponse | { year: number; images?: GalleryImage[] } | undefined
+): { flatImages: GalleryImageWithDay[]; days: GalleryDayWithImages[]; imagesWithoutDay: GalleryImage[] } {
+  if (!yearData) return { flatImages: [], days: [], imagesWithoutDay: [] }
+  if (isGalleryByYearResponse(yearData)) {
+    const days = yearData.days ?? []
+    const imagesWithoutDay = yearData.imagesWithoutDay ?? []
+    const fromDays = days.flatMap((d) => d.images.map((img) => ({ ...img, dayName: d.name })))
+    const uncategorized = imagesWithoutDay.map((img) => ({ ...img, dayName: "Uncategorized" }))
+    const flatImages = fromDays.concat(uncategorized)
+    return { flatImages, days, imagesWithoutDay }
+  }
+  const images = (yearData as { images?: GalleryImage[] }).images ?? []
+  return { flatImages: images.map((img) => ({ ...img })), days: [], imagesWithoutDay: images }
+}
 
 export default function GalleryPage() {
   const { showToast } = useToast()
@@ -52,7 +84,15 @@ export default function GalleryPage() {
     }
   }, [years, selectedYearId])
 
-  const { data: yearData, isLoading: imagesLoading, error: imagesError } = useSWR<GetAllGalleryResponse>(
+  const { data: days, mutate: mutateDays } = useSWR<GalleryDay[]>(
+    selectedYearId ? ["days", selectedYearId] : null,
+    () => getDaysByYear(selectedYearId as string),
+    { onError: (err) => console.error("Error fetching days:", err) }
+  )
+
+  const { data: yearData, isLoading: imagesLoading, error: imagesError } = useSWR<
+    GetAllGalleryByYearResponse | { year: number; images?: GalleryImage[] }
+  >(
     selectedYearId ? ["images", selectedYearId] : null,
     () => getAllGalleryByYear(selectedYearId as string),
     {
@@ -63,8 +103,7 @@ export default function GalleryPage() {
     }
   )
 
-  // Extract images from the year data
-  const images = yearData?.images || []
+  const { flatImages: images, days: daysWithImages, imagesWithoutDay } = getFlatImagesAndDays(yearData)
 
   // Clear error when data loads successfully
   React.useEffect(() => {
@@ -75,6 +114,7 @@ export default function GalleryPage() {
   // selection
   const [selected, setSelected] = React.useState<Set<string>>(new Set())
   React.useEffect(() => setSelected(new Set()), [selectedYearId])
+  React.useEffect(() => setSelectedDayId(null), [selectedYearId])
   const toggleCheck = (id: string, v: boolean) => {
     setSelected((prev) => {
       const next = new Set(prev)
@@ -110,10 +150,29 @@ export default function GalleryPage() {
     return images.slice(startIndex, endIndex)
   }, [images, currentPage, imagesPerPage])
 
+  // Group current page by day for section display (when API returns days)
+  const paginatedByDay = React.useMemo(() => {
+    const withDay = paginatedImages as GalleryImageWithDay[]
+    const order = [...new Set(withDay.map((i) => i.dayName ?? "Uncategorized"))]
+    return order.map((dayName) => ({
+      dayName,
+      images: withDay.filter((i) => (i.dayName ?? "Uncategorized") === dayName),
+    }))
+  }, [paginatedImages])
+  const showByDaySections = daysWithImages.length > 0
+
   // modals
   const [updateOpen, setUpdateOpen] = React.useState(false)
   const [deleteOpen, setDeleteOpen] = React.useState(false)
+  const [updateDayOpen, setUpdateDayOpen] = React.useState(false)
+  const [deleteDayOpen, setDeleteDayOpen] = React.useState(false)
+  const [selectedDayId, setSelectedDayId] = React.useState<string | null>(null)
   const year = years?.find((y) => y._id === selectedYearId) ?? null
+  const selectedDay = days?.find((d) => d._id === selectedDayId) ?? null
+
+  const refreshDays = async () => {
+    if (selectedYearId) await mutateDays()
+  }
 
   const refreshYears = async () => {
     try {
@@ -131,12 +190,30 @@ export default function GalleryPage() {
     if (!selectedYearId) return
     try {
       await mutate(["images", selectedYearId])
+      await refreshDays()
       setError(null)
       showToast("Images refreshed successfully", "success")
     } catch (err) {
       console.error("Error fetching images:", err)
       setError("Failed to refresh images")
       showToast("Failed to refresh images", "error")
+    }
+  }
+
+  const handleDeleteDay = async () => {
+    if (!canDelete || !selectedDayId) return
+    try {
+      await deleteDay(selectedDayId)
+      showToast("Day deleted successfully", "success")
+      await refreshDays()
+      await mutate(["images", selectedYearId!])
+      setSelectedDayId(null)
+      setDeleteDayOpen(false)
+      setError(null)
+    } catch (e: any) {
+      const msg = e?.message || "Failed to delete day"
+      showToast(msg, "error")
+      // Keep modal open so user can read "delete images first" etc.
     }
   }
   const getImageSrc = (url: string) => {
@@ -315,6 +392,42 @@ export default function GalleryPage() {
               </SelectContent>
             </Select>
           </div>
+          <div className="grid gap-2">
+            <Label className="text-sm sm:text-base">Day (for edit/delete)</Label>
+            <Select value={selectedDayId ?? "all"} onValueChange={(v) => setSelectedDayId(v === "all" ? null : v)}>
+              <SelectTrigger className="text-sm sm:text-base">
+                <SelectValue placeholder={!selectedYearId ? "Select year first" : "All days"} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All days</SelectItem>
+                {days?.map((d) => (
+                  <SelectItem key={d._id} value={d._id}>
+                    {d.name} {d.date ? `— ${d.date}` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {selectedYearId && (
+            <div className="flex items-end gap-2">
+              <AddDayModal yearId={selectedYearId} onCreated={refreshDays} />
+              {selectedDayId && (
+                <>
+                  <DynamicButton size="sm" variant="outline" onClick={() => setUpdateDayOpen(true)}>
+                    <Pencil className="mr-2 h-4 w-4" /> Edit Day
+                  </DynamicButton>
+                  <DynamicButton
+                    size="sm"
+                    variant="destructive"
+                    disabled={!canDelete}
+                    onClick={() => setDeleteDayOpen(true)}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" /> Delete Day
+                  </DynamicButton>
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         <Separator className="my-4" />
@@ -357,30 +470,61 @@ export default function GalleryPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-5">
-          {imagesLoading ? (
-            Array.from({ length: 6 }).map((_, i) => <Card key={i} className="h-40 animate-pulse bg-muted/40" />)
-          ) : paginatedImages && paginatedImages.length > 0 ? (
-            paginatedImages.map((img) => {
-              const imgSrc = getImageSrc(img.photo)
-              return (
-                <ImageCard
-                  key={img._id}
-                  item={{ ...img, photo: imgSrc }}
-                checked={selected.has(img._id)}
-                onCheckedChange={toggleCheck}
-                onImageClick={openImageModal}
-              />
-            )})
+        {imagesLoading ? (
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-5">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Card key={i} className="h-40 animate-pulse bg-muted/40" />
+            ))}
+          </div>
+        ) : paginatedImages.length > 0 ? (
+          showByDaySections ? (
+            <div className="space-y-6">
+              {paginatedByDay.map(({ dayName, images: dayImages }) => (
+                <div key={dayName}>
+                  <h4 className="mb-2 text-sm font-medium text-muted-foreground">
+                    {dayName}
+                  </h4>
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-5">
+                    {dayImages.map((img) => {
+                      const imgSrc = getImageSrc(img.photo)
+                      return (
+                        <ImageCard
+                          key={img._id}
+                          item={{ ...img, photo: imgSrc }}
+                          checked={selected.has(img._id)}
+                          onCheckedChange={toggleCheck}
+                          onImageClick={openImageModal}
+                        />
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
-            <Card className="col-span-full">
-              <CardContent className="flex items-center gap-3 p-4 sm:p-6 text-muted-foreground">
-                <Images className="h-5 w-5" />
-                <span>No images yet for this year. Use Upload Images to add images.</span>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-5">
+              {paginatedImages.map((img) => {
+                const imgSrc = getImageSrc(img.photo)
+                return (
+                  <ImageCard
+                    key={img._id}
+                    item={{ ...img, photo: imgSrc }}
+                    checked={selected.has(img._id)}
+                    onCheckedChange={toggleCheck}
+                    onImageClick={openImageModal}
+                  />
+                )
+              })}
+            </div>
+          )
+        ) : (
+          <Card className="col-span-full">
+            <CardContent className="flex items-center gap-3 p-4 sm:p-6 text-muted-foreground">
+              <Images className="h-5 w-5" />
+              <span>No images yet for this year. Use Upload Images to add images.</span>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Pagination */}
         {totalPages > 1 && (
@@ -404,6 +548,22 @@ export default function GalleryPage() {
         onConfirm={handleDeleteYear}
         title="Delete this year?"
         description="This will remove the year. Images may also be removed by your API. Proceed?"
+      />
+      <UpdateDayModal
+        day={selectedDay}
+        open={updateDayOpen}
+        onOpenChange={setUpdateDayOpen}
+        onUpdated={() => {
+          refreshDays()
+          refreshImages()
+        }}
+      />
+      <ConfirmDeleteModal
+        open={deleteDayOpen}
+        onOpenChange={setDeleteDayOpen}
+        onConfirm={handleDeleteDay}
+        title="Delete this day?"
+        description="This will remove the day. If it has images, delete them first or the server may reject."
       />
       
       {/* Image Modal */}

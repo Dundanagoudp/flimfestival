@@ -29,16 +29,23 @@ export default function ImageCard({ item, checked, onCheckedChange, onImageClick
         />
       </div>
       
-      <div className="h-full w-full" onClick={handleImageClick}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={src || "/placeholder.svg?height=400&width=400&query=gallery%20image"}
-          alt="Gallery image"
-          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-200"
-          loading="lazy"
-        />
+      <div className="h-full w-full flex flex-col">
+        <div className="flex-1 min-h-0" onClick={handleImageClick}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={src || "/placeholder.svg?height=400&width=400&query=gallery%20image"}
+            alt={item.caption || "Gallery image"}
+            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-200"
+            loading="lazy"
+          />
+        </div>
+        {item.caption && (
+          <p className="p-1.5 text-xs text-muted-foreground truncate border-t bg-muted/30" title={item.caption}>
+            {item.caption}
+          </p>
+        )}
       </div>
-      
+
       {/* Click overlay hint */}
       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 pointer-events-none" />
     </Card>

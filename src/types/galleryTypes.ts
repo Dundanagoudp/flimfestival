@@ -25,9 +25,48 @@ export interface YearCreateResponse {
 
 export type YearsResponse = GalleryYear[]
 
+// Day (year → days → images)
+export interface GalleryDay {
+  _id: string
+  year: string
+  name: string
+  date?: string
+  order?: number
+  createdAt: string
+  updatedAt: string
+  __v?: number
+}
+
+export interface CreateDayPayload {
+  yearId: string
+  name: string
+  date?: string
+  order?: number
+}
+
+export interface UpdateDayPayload {
+  name?: string
+  date?: string
+  order?: number
+}
+
+export interface DayCreateResponse {
+  message: string
+  item: GalleryDay
+}
+
+export interface DayUpdateResponse {
+  message: string
+  item: GalleryDay
+}
+
+export type DaysResponse = GalleryDay[]
+
 export interface GalleryImage {
   _id: string
   photo: string
+  caption?: string
+  day?: string | GalleryDay
 }
 
 export interface YearwiseItem {
@@ -37,8 +76,33 @@ export interface YearwiseItem {
 
 export type YearwiseResponse = YearwiseItem[]
 
-// Updated: This now represents the response from getallgallery endpoint
-export interface GetAllGalleryResponse {
+// Response when fetching gallery by year (no dayId): days + imagesWithoutDay
+export interface GalleryDayWithImages {
+  _id: string
+  name: string
+  date?: string
+  order?: number
+  images: GalleryImage[]
+}
+
+export interface GetAllGalleryByYearResponse {
+  year: number
+  days: GalleryDayWithImages[]
+  imagesWithoutDay: GalleryImage[]
+}
+
+// Response when fetching gallery by year + dayId: single day's images
+export interface GetAllGalleryByDayResponse {
+  year: number
+  dayId: string
+  images: GalleryImage[]
+}
+
+// Union for getallgallery; callers can narrow by usage
+export type GetAllGalleryResponse = GetAllGalleryByYearResponse | GetAllGalleryByDayResponse
+
+// Legacy flat shape for backward compatibility where backend might still return it
+export interface GetAllGalleryLegacyResponse {
   year: number
   images: GalleryImage[]
 }
