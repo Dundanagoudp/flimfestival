@@ -23,7 +23,7 @@ export interface HeroSectionProps {
 
 const DEFAULT_SUBTITLE = '11th'
 const DEFAULT_TITLE = 'Arunachal Film Festival'
-const DEFAULT_DATE = '6th – 8th February, 2026'
+const DEFAULT_DATE = '6th - 8th March, 2026'
 const DEFAULT_VIDEO_MP4 = '/HeroVideo.mp4'
 const DEFAULT_VIDEO_WEBM = '/HeroVideo.webm'
 const FESTIVAL_GOLD = '#f4b400'
@@ -76,26 +76,28 @@ const HeroSection = ({
         aria-hidden="true"
       />
 
-      {/* Content – flex: top row (11th + title same row), then date below; vertically centered; top padding */}
-      <div className="absolute inset-0 flex items-center justify-start px-10 md:px-20 pt-16 md:pt-32">
-        <div className="hero-text-reveal max-w-5xl w-full flex flex-col text-center md:text-left">
-          {/* Top row: 11th and title in same row on desktop; column on mobile */}
-          <div className="flex flex-col md:flex-row md:items-start gap-4 md:gap-10">
-            <div className="font-extrabold text-white leading-none shrink-0 text-[60px] md:text-[90px] lg:text-[140px]">
-              {heroSubtitle}
-            </div>
-            <h1 className="font-bold text-white uppercase leading-[1.1] tracking-wide shrink-0 text-[28px] md:text-[48px] lg:text-[70px]">
-              <div>{titleLine1}</div>
-              {titleLine2 && <div>{titleLine2}</div>}
-            </h1>
-          </div>
-          {/* Date – full width below top row */}
-          <div
-            className="mt-6 md:mt-8 w-full text-base md:text-[22px] lg:text-[32px] font-medium uppercase tracking-[0.2em] md:tracking-[0.15em]"
+      {/* Content – left-aligned text on black panel, stacked vertically */}
+      <div className="absolute inset-0 flex items-center justify-start px-6 sm:px-10 md:px-16 lg:px-20 pt-20 md:pt-28">
+        <div
+          className="hero-text-reveal px-8 py-10 md:px-12 md:py-14 max-w-2xl md:max-w-3xl flex flex-col text-left gap-3 md:gap-4"
+          aria-hidden="false"
+        >
+          {/* 11th Edition – white */}
+          <p className="text-white text-lg md:text-xl lg:text-2xl xl:text-3xl font-medium tracking-wide">
+            {heroSubtitle} Edition
+          </p>
+          {/* ARUNACHAL / FILM FESTIVAL – large, bold, uppercase white, two lines */}
+          <h1 className="font-bold text-white uppercase leading-[1.05] tracking-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
+            <div>{titleLine1}</div>
+            {titleLine2 && <div className="tracking-wider">{titleLine2}</div>}
+          </h1>
+          {/* Date – golden */}
+          <p
+            className="text-base md:text-lg lg:text-xl font-medium uppercase tracking-widest"
             style={{ color: FESTIVAL_GOLD }}
           >
             {heroDate}
-          </div>
+          </p>
         </div>
       </div>
     </section>
