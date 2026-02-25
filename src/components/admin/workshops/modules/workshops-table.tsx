@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import type { Workshop } from "@/types/workshop-Types";
@@ -14,9 +13,6 @@ interface WorkshopsTableProps {
   loading: boolean;
   searchTerm: string;
   onSearchChange: (val: string) => void;
-  filterEvent: string;
-  onFilterChange: (val: string) => void;
-  uniqueEvents: string[];
   onView: (workshop: Workshop) => void;
   onEdit: (workshop: Workshop) => void;
   onDelete: (workshop: Workshop) => void;
@@ -29,9 +25,6 @@ export default function WorkshopsTable({
   loading,
   searchTerm,
   onSearchChange,
-  filterEvent,
-  onFilterChange,
-  uniqueEvents,
   onView,
   onEdit,
   onDelete,
@@ -47,24 +40,6 @@ export default function WorkshopsTable({
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
           />
-        </div>
-        <div className="w-full sm:w-56">
-          <Select
-            value={filterEvent}
-            onValueChange={(val) => onFilterChange(val)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by event" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Events</SelectItem>
-              {uniqueEvents.map((eventId) => (
-                <SelectItem key={eventId} value={eventId}>
-                  Event {eventId.slice(-6)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
       </div>
 
@@ -102,7 +77,7 @@ export default function WorkshopsTable({
                           <span className="cursor-help">{w.name}</span>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <span className="text-xs">ID: {w._id.slice(-6)}</span>
+                          <span className="text-xs">ID: {w._id?.slice(-6) ?? "—"}</span>
                         </TooltipContent>
                       </Tooltip>
                     </TableCell>
@@ -129,7 +104,7 @@ export default function WorkshopsTable({
                         </TooltipContent>
                       </Tooltip>
                     </TableCell>
-                    <TableCell>{new Date(w.createdAt).toLocaleString()}</TableCell>
+                    <TableCell>{w.createdAt ? new Date(w.createdAt).toLocaleString() : "—"}</TableCell>
                     <TableCell className="space-x-2 text-right whitespace-nowrap">
                       <Tooltip>
                         <TooltipTrigger asChild>

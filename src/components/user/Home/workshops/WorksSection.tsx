@@ -1,30 +1,38 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
-import { getWorkshops } from "@/services/workshopService";
-import type { Workshop } from "@/types/workShopTypes";
+import { getWorkshopsGrouped } from "@/services/workshop-Services";
+import type { GroupedWorkshopsResponse } from "@/types/workshop-Types";
 import { getMediaUrl } from "@/utils/media";
 import { LoadingSpinner } from "@/components/common/LoaderSpinner";
 import { Button } from "@/components/ui/button";
 
+type TabItem = { id: string; name: string };
+
 const WorksSection = () => {
-  const [workshops, setWorkshops] = useState<Workshop[]>([]);
+  const [grouped, setGrouped] = useState<GroupedWorkshopsResponse>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTabId, setActiveTabId] = useState<string>("");
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
-    getWorkshops()
+    getWorkshopsGrouped()
       .then((data) => {
         if (!cancelled) {
-          setWorkshops(Array.isArray(data) ? data : []);
+          const list = Array.isArray(data) ? data : [];
+          setGrouped(list);
           setActiveIndex(0);
+          const firstId = list[0]
+            ? (list[0].category?._id ?? "uncategorized")
+            : "";
+          setActiveTabId(firstId);
         }
       })
       .catch(() => {
-        if (!cancelled) setWorkshops([]);
+        if (!cancelled) setGrouped([]);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -34,7 +42,21 @@ const WorksSection = () => {
     };
   }, []);
 
-  const works = workshops.map((w) => ({
+  const tabs: TabItem[] = useMemo(() => {
+    return grouped.map((g) => ({
+      id: g.category?._id ?? "uncategorized",
+      name: g.category?.name ?? "Uncategorized",
+    }));
+  }, [grouped]);
+
+  const workshopsForTab = useMemo(() => {
+    const group = grouped.find(
+      (g) => (g.category?._id ?? "uncategorized") === activeTabId
+    );
+    return group?.workshops ?? [];
+  }, [grouped, activeTabId]);
+
+  const works = workshopsForTab.map((w) => ({
     image: getMediaUrl(w.imageUrl) || "/placeholder.svg",
     title: w.name || "Workshop",
     id: w._id,
@@ -42,6 +64,11 @@ const WorksSection = () => {
 
   const prev = () => setActiveIndex((i) => (i - 1 + works.length) % Math.max(works.length, 1));
   const next = () => setActiveIndex((i) => (i + 1) % Math.max(works.length, 1));
+
+  const onTabChange = (tabId: string) => {
+    setActiveTabId(tabId);
+    setActiveIndex(0);
+  };
 
   const getOffset = (index: number) => {
     if (works.length === 0) return 0;
@@ -53,99 +80,123 @@ const WorksSection = () => {
 
   if (loading) {
     return (
-      <section className="w-full py-16 bg-background overflow-hidden">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-primary">
-            Workshops
+      <section className="w-full px-4 sm:px-6 py-12 sm:py-16 bg-background overflow-hidden">
+        <div className="text-center mb-8 sm:mb-10">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">
+            Workshop and Master Class
           </h2>
           <div className="mx-auto mt-2 h-0.5 w-16 bg-accent rounded-full" />
         </div>
-        <div className="flex items-center justify-center min-h-[420px]">
+        <div className="flex items-center justify-center min-h-[320px] sm:min-h-[420px]">
           <LoadingSpinner />
         </div>
       </section>
     );
   }
 
-  if (works.length === 0) {
+  if (works.length === 0 && tabs.length <= 1) {
     return null;
   }
 
   return (
-    <section className="w-full py-16 bg-background overflow-hidden">
-      <div className="text-center mb-10">
-        <h2 className="text-3xl md:text-4xl font-bold text-primary">
-          Workshops
+    <section className="w-full px-4 sm:px-6 py-12 sm:py-16 bg-background overflow-hidden">
+      <div className="text-center mb-8 sm:mb-10 max-w-4xl mx-auto">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary leading-tight">
+          Workshop and Master Class
         </h2>
         <div className="mx-auto mt-2 h-0.5 w-16 bg-accent rounded-full" />
-        <div className="flex justify-center mt-6">
-          <Button asChild variant="default" className="rounded-full gap-2">
+        <div className="flex justify-center mt-4 sm:mt-6">
+          <Button asChild variant="default" className="rounded-full gap-2 text-sm sm:text-base">
             <Link href="/workshop">
-              View all workshops
-              <ArrowRight className="w-4 h-4" />
+              View all
+              <ArrowRight className="w-4 h-4 shrink-0" />
             </Link>
           </Button>
         </div>
       </div>
 
-      <div className="relative flex items-center justify-center h-[420px] md:h-[500px]">
-        {works.map((work, index) => {
-          const offset = getOffset(index);
-          const isActive = offset === 0;
-          const absOffset = Math.abs(offset);
-
-          if (absOffset > 2) return null;
-
-          return (
-            <div
-              key={work.id}
-              onClick={() => setActiveIndex(index)}
-              className="absolute cursor-pointer transition-all duration-500 ease-out"
-              style={{
-                transform: `translateX(${offset * 260}px) scale(${isActive ? 1 : 0.8 - absOffset * 0.05})`,
-                zIndex: 10 - absOffset,
-                opacity: absOffset > 1 ? 0.5 : 1,
-                filter: isActive ? "none" : "brightness(0.7)",
-              }}
+      {tabs.length > 1 && (
+        <div className="flex justify-center gap-2 mb-6 flex-wrap">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => onTabChange(tab.id)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                activeTabId === tab.id
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
             >
-              <div
-                className={`relative rounded-xl overflow-hidden shadow-2xl transition-shadow duration-500 ${
-                  isActive ? "shadow-[0_20px_60px_-10px_hsl(var(--primary)/0.3)]" : ""
-                }`}
-                style={{ width: isActive ? 340 : 280, height: isActive ? 400 : 350 }}
-              >
-                <img
-                  src={work.image}
-                  alt={work.title}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = "/placeholder.svg";
-                  }}
-                />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-6">
-                  <h3 className="text-lg font-semibold text-white">{work.title}</h3>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+              {tab.name}
+            </button>
+          ))}
+        </div>
+      )}
 
-        <button
-          onClick={prev}
-          className="absolute left-4 md:left-12 z-20 p-2 rounded-full bg-card/80 backdrop-blur border border-border hover:bg-card transition-colors"
-          aria-label="Previous"
-        >
-          <ChevronLeft className="w-5 h-5 text-foreground" />
-        </button>
-        <button
-          onClick={next}
-          className="absolute right-4 md:right-12 z-20 p-2 rounded-full bg-card/80 backdrop-blur border border-border hover:bg-card transition-colors"
-          aria-label="Next"
-        >
-          <ChevronRight className="w-5 h-5 text-foreground" />
-        </button>
+      <div className="relative flex items-center justify-center min-h-[420px] md:min-h-[500px]">
+        {works.length === 0 ? (
+          <p className="text-muted-foreground text-sm">No workshops in this category.</p>
+        ) : (
+          <>
+            {works.map((work, index) => {
+              const offset = getOffset(index);
+              const isActive = offset === 0;
+              const absOffset = Math.abs(offset);
+
+              if (absOffset > 2) return null;
+
+              return (
+                <div
+                  key={work.id}
+                  onClick={() => setActiveIndex(index)}
+                  className="absolute cursor-pointer transition-all duration-500 ease-out"
+                  style={{
+                    transform: `translateX(${offset * 260}px) scale(${isActive ? 1 : 0.8 - absOffset * 0.05})`,
+                    zIndex: 10 - absOffset,
+                    opacity: absOffset > 1 ? 0.5 : 1,
+                    filter: isActive ? "none" : "brightness(0.7)",
+                  }}
+                >
+                  <div
+                    className={`relative rounded-xl overflow-hidden shadow-2xl transition-shadow duration-500 ${
+                      isActive ? "shadow-[0_20px_60px_-10px_hsl(var(--primary)/0.3)]" : ""
+                    }`}
+                    style={{ width: isActive ? 340 : 280, height: isActive ? 400 : 350 }}
+                  >
+                    <img
+                      src={work.image}
+                      alt={work.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "/placeholder.svg";
+                      }}
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                      <h3 className="text-lg font-semibold text-white">{work.title}</h3>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            <button
+              onClick={prev}
+              className="absolute left-4 md:left-12 z-20 p-2 rounded-full bg-card/80 backdrop-blur border border-border hover:bg-card transition-colors"
+              aria-label="Previous"
+            >
+              <ChevronLeft className="w-5 h-5 text-foreground" />
+            </button>
+            <button
+              onClick={next}
+              className="absolute right-4 md:right-12 z-20 p-2 rounded-full bg-card/80 backdrop-blur border border-border hover:bg-card transition-colors"
+              aria-label="Next"
+            >
+              <ChevronRight className="w-5 h-5 text-foreground" />
+            </button>
+          </>
+        )}
       </div>
 
+      {works.length > 0 && (
       <div className="flex justify-center gap-2 mt-6">
         {works.map((_, i) => (
           <button
@@ -157,6 +208,7 @@ const WorksSection = () => {
           />
         ))}
       </div>
+      )}
     </section>
   );
 };

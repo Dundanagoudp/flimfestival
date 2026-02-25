@@ -44,9 +44,11 @@ export default function ViewWorkshopModal({ isOpen, onClose, workshop }: ViewWor
           <div className="space-y-4">
             <div>
               <h3 className="text-lg font-semibold text-gray-900">{workshop.name}</h3>
-              <Badge variant="secondary" className="mt-1">
-                Event {workshop.eventRef.slice(-6)}
-              </Badge>
+              {workshop.eventRef && (
+                <Badge variant="secondary" className="mt-1">
+                  Event {workshop.eventRef.slice(-6)}
+                </Badge>
+              )}
             </div>
 
             <div>
@@ -60,7 +62,9 @@ export default function ViewWorkshopModal({ isOpen, onClose, workshop }: ViewWor
                 <div>
                   <p className="text-xs text-gray-500">Created</p>
                   <p className="text-sm font-medium">
-                    {new Date(workshop.createdAt).toLocaleDateString()}
+                    {workshop.createdAt
+                      ? new Date(workshop.createdAt).toLocaleDateString()
+                      : "—"}
                   </p>
                 </div>
               </div>

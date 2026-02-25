@@ -6,19 +6,21 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DynamicButton from "@/components/common/DynamicButton";
 import { useToast } from "@/components/ui/custom-toast";
 import { updateWorkshop } from "@/services/workshop-Services";
-import type { Workshop, UpdateWorkshopPayload } from "@/types/workshop-Types";
+import type { Workshop, UpdateWorkshopPayload, WorkshopCategory } from "@/types/workshop-Types";
 
 interface EditWorkshopModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
   workshop: Workshop | null;
+  categories?: WorkshopCategory[];
 }
 
-export default function EditWorkshopModal({ isOpen, onClose, onSuccess, workshop }: EditWorkshopModalProps) {
+export default function EditWorkshopModal({ isOpen, onClose, onSuccess, workshop, categories = [] }: EditWorkshopModalProps) {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<UpdateWorkshopPayload>({
@@ -26,6 +28,7 @@ export default function EditWorkshopModal({ isOpen, onClose, onSuccess, workshop
     about: "",
     registrationFormUrl: "",
     imageFile: null,
+    categoryId: null,
   });
 
   useEffect(() => {
@@ -35,6 +38,7 @@ export default function EditWorkshopModal({ isOpen, onClose, onSuccess, workshop
         about: workshop.about,
         registrationFormUrl: workshop.registrationFormUrl,
         imageFile: null,
+        categoryId: workshop.categoryRef ?? null,
       });
     }
   }, [workshop]);
@@ -49,8 +53,8 @@ export default function EditWorkshopModal({ isOpen, onClose, onSuccess, workshop
       showToast("Workshop updated successfully", "success");
       onSuccess();
       handleClose();
-    } catch (error) {
-      showToast("Failed to update workshop", "error");
+    } catch (error: any) {
+      showToast(error?.message || "Failed to update workshop", "error");
     } finally {
       setLoading(false);
     }
@@ -62,6 +66,7 @@ export default function EditWorkshopModal({ isOpen, onClose, onSuccess, workshop
       about: "",
       registrationFormUrl: "",
       imageFile: null,
+      categoryId: null,
     });
     onClose();
   };
@@ -111,6 +116,26 @@ export default function EditWorkshopModal({ isOpen, onClose, onSuccess, workshop
               placeholder="https://forms.gle/..."
               required 
             />
+          </div>
+
+          <div>
+            <Label>Category</Label>
+            <Select
+              value={form.categoryId ?? "none"}
+              onValueChange={(v) => setForm({ ...form, categoryId: v === "none" ? null : v })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Uncategorized" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Uncategorized</SelectItem>
+                {categories.map((c) => (
+                  <SelectItem key={c._id} value={c._id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           
           <div>

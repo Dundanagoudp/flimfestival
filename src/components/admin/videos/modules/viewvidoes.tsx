@@ -106,21 +106,36 @@ export default function VideoDetailPage() {
   }
 
   const handleShare = async () => {
-    if (navigator.share && video) {
+    const url = typeof window !== "undefined" ? window.location.href : ""
+    if (!video || !url) return
+
+    const copyToClipboard = async (): Promise<boolean> => {
+      if (typeof navigator === "undefined" || !navigator.clipboard?.writeText) return false
+      try {
+        await navigator.clipboard.writeText(url)
+        return true
+      } catch {
+        return false
+      }
+    }
+
+    if (navigator.share) {
       try {
         await navigator.share({
           title: video.title,
           text: `Check out this video: ${video.title}`,
-          url: window.location.href,
+          url,
         })
-      } catch (error) {
-        // Fallback to clipboard
-        navigator.clipboard.writeText(window.location.href)
-        showToast("Video link copied to clipboard", "success")
+        showToast("Shared successfully", "success")
+      } catch (err) {
+        const copied = await copyToClipboard()
+        if (copied) showToast("Video link copied to clipboard", "success")
+        else showToast(`Link: ${url}`, "info")
       }
-    } else if (video) {
-      navigator.clipboard.writeText(window.location.href)
-      showToast("Video link copied to clipboard", "success")
+    } else {
+      const copied = await copyToClipboard()
+      if (copied) showToast("Video link copied to clipboard", "success")
+      else showToast(`Link: ${url}`, "info")
     }
   }
 

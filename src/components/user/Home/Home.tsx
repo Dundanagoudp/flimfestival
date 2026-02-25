@@ -74,7 +74,7 @@ export default function Home() {
       <Reveal y={32} delay={0.34}><JurySection/></Reveal>
       <Reveal y={32} delay={0.35}><OfficialSection/></Reveal>
       <Reveal y={32} delay={0.36}><BlogsAndMedia/></Reveal>
-      <Reveal y={32} delay={0.4}><Contact/></Reveal>
+      {/* <Reveal y={32} delay={0.4}><Contact/></Reveal> */}
       <Reveal y={32} delay={0.45}><YearAward/></Reveal>
   
       </div>

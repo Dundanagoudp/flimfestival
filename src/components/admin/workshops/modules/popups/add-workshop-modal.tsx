@@ -6,18 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DynamicButton from "@/components/common/DynamicButton";
 import { useToast } from "@/components/ui/custom-toast";
 import { addWorkshop } from "@/services/workshop-Services";
-import type { CreateWorkshopPayload } from "@/types/workshop-Types";
+import type { CreateWorkshopPayload, WorkshopCategory } from "@/types/workshop-Types";
 
 interface AddWorkshopModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  categories?: WorkshopCategory[];
 }
 
-export default function AddWorkshopModal({ isOpen, onClose, onSuccess }: AddWorkshopModalProps) {
+export default function AddWorkshopModal({ isOpen, onClose, onSuccess, categories = [] }: AddWorkshopModalProps) {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<CreateWorkshopPayload>({
@@ -25,6 +27,7 @@ export default function AddWorkshopModal({ isOpen, onClose, onSuccess }: AddWork
     about: "",
     registrationFormUrl: "",
     imageFile: null,
+    categoryId: null,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,16 +39,15 @@ export default function AddWorkshopModal({ isOpen, onClose, onSuccess }: AddWork
 
     setLoading(true);
     try {
-      // You'll need to get the event ID from context or props
-      // For now, using a placeholder - you should pass this as a prop
-      const eventId = "68b6c9fd1ca206fb0e2ce9f0"; // This should come from props or context
-      
-      await addWorkshop(eventId, form);
+      await addWorkshop({
+        ...form,
+        categoryId: form.categoryId || undefined,
+      });
       showToast("Workshop created successfully", "success");
       onSuccess();
       handleClose();
-    } catch (error) {
-      showToast("Failed to create workshop", "error");
+    } catch (error: any) {
+      showToast(error?.message || "Failed to create workshop", "error");
     } finally {
       setLoading(false);
     }
@@ -57,6 +59,7 @@ export default function AddWorkshopModal({ isOpen, onClose, onSuccess }: AddWork
       about: "",
       registrationFormUrl: "",
       imageFile: null,
+      categoryId: null,
     });
     onClose();
   };
@@ -106,6 +109,26 @@ export default function AddWorkshopModal({ isOpen, onClose, onSuccess }: AddWork
               placeholder="https://forms.gle/..."
               required 
             />
+          </div>
+
+          <div>
+            <Label>Category</Label>
+            <Select
+              value={form.categoryId ?? "none"}
+              onValueChange={(v) => setForm({ ...form, categoryId: v === "none" ? null : v })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Uncategorized" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Uncategorized</SelectItem>
+                {categories.map((c) => (
+                  <SelectItem key={c._id} value={c._id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           
           <div>
