@@ -85,13 +85,10 @@ export default function Videosection() {
     <div className="min-h-screen" style={{ backgroundColor: "#FFF8ED" }}>
       <VideoHero />
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-8">
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 font-dm-serif">Videos</h1>
-        </div>
 
         <div className="flex gap-4 mb-8">
           <button
-            className={`px-4 py-2 rounded-t-lg font-semibold border-b-2 transition-colors font-bilo ${activeTab === "youtube" ? "border-orange-500 text-orange-600 bg-orange-50" : "border-transparent text-gray-600 bg-transparent"}`}
+            className={`px-4 py-2 rounded-t-lg font-semibold border-b-2 transition-colors font-bilo ${activeTab === "youtube" ? "border-primary text-gray-900 bg-gradient-to-r from-primary to-white" : "border-transparent text-gray-600 bg-transparent"}`}
             onClick={() => {
               setActiveTab("youtube")
               setCurrentPage(1)
@@ -101,7 +98,7 @@ export default function Videosection() {
           </button>
           {uploadedVideos.length > 0 && (
             <button
-              className={`px-4 py-2 rounded-t-lg font-semibold border-b-2 transition-colors font-bilo ${activeTab === "uploaded" ? "border-orange-500 text-orange-600 bg-orange-50" : "border-transparent text-gray-600 bg-transparent"}`}
+              className={`px-4 py-2 rounded-t-lg font-semibold border-b-2 transition-colors font-bilo ${activeTab === "uploaded" ? "border-primary text-gray-900 bg-gradient-to-r from-primary to-white" : "border-transparent text-gray-600 bg-transparent"}`}
               onClick={() => {
                 setActiveTab("uploaded")
                 setCurrentPage(1)

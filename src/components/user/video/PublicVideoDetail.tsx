@@ -30,7 +30,7 @@ export default function PublicVideoDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#fffaee] flex items-center justify-center">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-gray-600 text-lg">Loading...</div>
       </div>
     )
@@ -38,7 +38,7 @@ export default function PublicVideoDetail() {
 
   if (!video) {
     return (
-      <div className="min-h-screen bg-[#fffaee] flex items-center justify-center">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="text-gray-700 text-xl mb-4">Video not found</div>
           <Button
@@ -54,7 +54,7 @@ export default function PublicVideoDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fffaee] px-2 sm:px-4 py-4 sm:py-8">
+    <div className="min-h-screen bg-gray-100 px-2 sm:px-4 py-4 sm:py-8">
       <div className="max-w-6xl mx-auto mb-4 sm:mb-6">
         <Button
           onClick={() => router.back()}
@@ -82,23 +82,36 @@ export default function PublicVideoDetail() {
                 className="w-full h-full relative z-10 transition-opacity duration-300 hover:opacity-95"
               />
             ) : video.videoType === "video" && video.video_url ? (
-              <video
-                controls
-                className="w-full h-full object-cover relative z-10 transition-transform duration-300 hover:scale-[1.01]"
-                src={getVideoUrl(video.video_url)}
-                poster={getThumbnailUrl(video.imageUrl)}
-                preload="metadata"
-                crossOrigin="anonymous"
-                onError={() => {
-                  showToast(
-                    "There was an issue playing this video. Please try refreshing the page.",
-                    "error"
+              (() => {
+                const videoSrc = getVideoUrl(video.video_url)
+                const isPlaceholder = !videoSrc || videoSrc === "/placeholder.svg"
+                if (isPlaceholder) {
+                  return (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100 relative z-10 p-4">
+                      <p className="text-gray-600 text-center">Video source is not available.</p>
+                    </div>
                   )
-                }}
-              >
-                <source src={getVideoUrl(video.video_url)} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+                }
+                return (
+                  <video
+                    key={video.video_url}
+                    controls
+                    playsInline
+                    className="w-full h-full object-contain relative z-10 bg-black"
+                    poster={getThumbnailUrl(video.imageUrl) || undefined}
+                    preload="auto"
+                    onError={() => {
+                      showToast(
+                        "There was an issue playing this video. Please try refreshing the page.",
+                        "error"
+                      )
+                    }}
+                  >
+                    <source src={videoSrc} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                )
+              })()
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 relative z-10">
                 <div className="text-center text-gray-500 animate-bounce">
