@@ -72,7 +72,7 @@ export default function NewsTicker() {
           <a
             key={`${item.id}-${i}`}
             href={item.link}
-            className="ticker-item group mx-6 inline-flex items-center gap-2 text-sm font-bold tracking-wide transition-all duration-200"
+            className="ticker-item group mx-6 inline-flex items-center gap-2 text-base font-bold tracking-wide transition-all duration-200"
           >
             <span>{item.text}</span>
             <span className="ticker-separator mx-4">||</span>

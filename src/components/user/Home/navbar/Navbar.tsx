@@ -27,13 +27,17 @@ const sampleMenu: { heading: string; links: { title: string; url?: string }[] }[
     heading: "Media",
     links: [
       { title: "Blogs", url: "/blogs" },
+      { title: "Videos", url: "/videos" },
       { title: "Gallery", url: "/archive" },
-      { title: "10th AFF Catalogue", url: "/archive" }
+      { title: "10th AFF Catalogue", url: "/archive" },
     ],
   },
   {
     heading: "Master Class/Workshop",
-    links: [{ title: "10th AFF Schedule", url: "/workshop" }],
+    links: [
+      { title: "Master Class", url: "/workshop" },
+      { title: "Workshop", url: "/workshop" },
+    ],
   },
 ];
 

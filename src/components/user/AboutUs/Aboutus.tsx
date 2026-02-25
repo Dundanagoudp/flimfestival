@@ -13,9 +13,9 @@ export default function AboutUs() {
           <Reveal delay={0.1} y={-10} transition={{ type: 'spring', stiffness: 90, damping: 18, mass: 0.8 }}>
             <HeroSection />
           </Reveal>
-          <Reveal delay={0.2} y={-10} transition={{ type: 'spring', stiffness: 90, damping: 18, mass: 0.8 }}>
+          {/* <Reveal delay={0.2} y={-10} transition={{ type: 'spring', stiffness: 90, damping: 18, mass: 0.8 }}>
             <AboutPageSection />
-          </Reveal>
+          </Reveal> */}
           <Reveal delay={0.3} y={-10} transition={{ type: 'spring', stiffness: 90, damping: 18, mass: 0.8 }}>
             <AboutUsContent />
           </Reveal>
