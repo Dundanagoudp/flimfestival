@@ -44,8 +44,8 @@ export default function CuratedImageDetailModal({ open, onOpenChange, image }: C
         <DialogTitle className="sr-only">
           {image.title ? `${image.title} – Details` : "Selection details"}
         </DialogTitle>
-        {/* Image header - fixed height, no scroll */}
-        <div className="relative aspect-square w-full bg-muted flex-shrink-0 overflow-hidden">
+        {/* Image header - fixed 48vh, no scroll */}
+        <div className="relative w-full h-[48vh] min-h-[200px] bg-muted flex-shrink-0 overflow-hidden">
           <DialogClose
             className="absolute top-4 right-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent transition-colors"
             aria-label="Close"
@@ -69,8 +69,13 @@ export default function CuratedImageDetailModal({ open, onOpenChange, image }: C
           </div>
         </div>
 
-        {/* Scrollable details */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-6">
+        {/* Content section - takes remaining height, scrolls independently */}
+        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-6 space-y-6">
+          {/* Category and title at top of content */}
+          <div className="space-y-1.5 pb-2 border-b border-border">
+            {categoryName && <DetailLabel>{categoryName}</DetailLabel>}
+            <h3 className="text-lg font-bold text-foreground">{image.title || "—"}</h3>
+          </div>
           {image.jury_name && (
             <DetailBlock label="Jury">
               <p className="font-medium">{image.jury_name}</p>
