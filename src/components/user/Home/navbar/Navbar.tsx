@@ -11,7 +11,7 @@ const sampleMenu: { heading: string; links: { title: string; url?: string }[] }[
     heading: "About Us",
     links: [
       { title: "About AFF", url: "/aboutus" },
-      { title: "Glimpses of AFF 2025", url: "/archive" },
+      { title: "Glimpses of AFF 2025", url: "/glimpses" },
       { title: "Contact Us", url: "/contactus" },
     ],
   },
