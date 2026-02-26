@@ -60,18 +60,18 @@ const adminNavData = {
       url: "/admin/events",
       icon: Calendar,
       items: [
-        {
-          title: "All Events",
-          url: "/admin/dashboard/events",
-        },
-        {
-          title: "Create Event",
-          url: "/admin/dashboard/events/create",
-        },
-        {
-          title: "Add Time Slot",
-          url: "/admin/dashboard/events/add-time",
-        },
+        // {
+        //   title: "All Events",
+        //   url: "/admin/dashboard/events",
+        // },
+        // {
+        //   title: "Create Event",
+        //   url: "/admin/dashboard/events/create",
+        // },
+        // {
+        //   title: "Add Time Slot",
+        //   url: "/admin/dashboard/events/add-time",
+        // },
         {
           title: "registrations",
           url: "/admin/dashboard/events/registrations"
@@ -174,10 +174,10 @@ const adminNavData = {
           title:"nominations",
           url:"/admin/dashboard/home/nominations"
         },
-        {
-          title:"HomeVideo",
-          url:"/admin/dashboard/home/homevideo"
-        },
+        // {
+        //   title:"HomeVideo",
+        //   url:"/admin/dashboard/home/homevideo"
+        // },
          {
           title:"AboutUs",
           url:"/admin/dashboard/home/aboutus"
