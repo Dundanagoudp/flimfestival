@@ -80,7 +80,7 @@ const HeroSection = ({
         aria-hidden="true"
       >
         <iframe
-          src="https://www.youtube-nocookie.com/embed/f3J2oXrq-WE?autoplay=1&mute=1&loop=1&playlist=f3J2oXrq-WE&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&playsinline=1"
+          src="https://www.youtube.com/embed/f3J2oXrq-WE?autoplay=1&mute=1&loop=1&playlist=f3J2oXrq-WE&controls=0&showinfo=0"
           style={{
             border: 'none',
             position: 'absolute',
