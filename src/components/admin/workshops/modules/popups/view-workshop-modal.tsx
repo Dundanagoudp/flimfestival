@@ -74,7 +74,9 @@ export default function ViewWorkshopModal({ isOpen, onClose, workshop }: ViewWor
                 <div>
                   <p className="text-xs text-gray-500">Last Updated</p>
                   <p className="text-sm font-medium">
-                    {new Date(workshop.updatedAt).toLocaleDateString()}
+                    {workshop.updatedAt
+                      ? new Date(workshop.updatedAt).toLocaleDateString()
+                      : '—'}
                   </p>
                 </div>
               </div>

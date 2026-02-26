@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { getAllYears, getAllGalleryByYear } from "@/services/galleryServices";
 import type {
   GalleryYear,
-  GetAllGalleryResponse,
+  GetAllGalleryByYearResponse,
   GalleryImage,
 } from "@/types/galleryTypes";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -57,8 +57,14 @@ export default function GalleryPage() {
       try {
         setLoadingImages(true);
         setError(null);
-        const resp: GetAllGalleryResponse = await getAllGalleryByYear(activeYearId);
-        setImages(resp?.images ?? []);
+        const resp = await getAllGalleryByYear(activeYearId);
+        const imagesList =
+          resp && "images" in resp && Array.isArray(resp.images)
+            ? resp.images
+            : resp && "days" in resp
+              ? (resp as GetAllGalleryByYearResponse).days.flatMap((d) => d.images).concat((resp as GetAllGalleryByYearResponse).imagesWithoutDay ?? [])
+              : [];
+        setImages(imagesList);
       } catch (e: any) {
         setError(e?.message || "Failed to load gallery");
         setImages([]);
