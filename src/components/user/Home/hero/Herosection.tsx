@@ -53,21 +53,45 @@ const HeroSection = ({
       className="w-full min-h-[780px] sm:min-h-screen sm:h-screen relative overflow-hidden mt-10 sm:mt-0"
       aria-label="Hero"
     >
-      {/* Video background – unchanged */}
-      <video
-        className="absolute inset-0 w-full h-full object-cover"
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        poster={posterUrl || undefined}
+      {/* Fallback video background – plays immediately, behind YouTube */}
+      <div
+        className="absolute inset-0 overflow-hidden"
+        style={{ background: 'hsl(30 10% 8%)' }}
         aria-hidden="true"
       >
-        <source src={videoUrl} type="video/mp4" />
-        {videoUrlWebm && <source src={videoUrlWebm} type="video/webm" />}
-        Your browser does not support the video tag.
-      </video>
+        <video
+          className="absolute inset-0 w-full h-full object-cover"
+          src="/videoplayback.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-hidden="true"
+        />
+      </div>
+
+      {/* YouTube video background – full-bleed cover, on top when loaded */}
+      <div
+        className="absolute inset-0 z-10 pointer-events-none overflow-hidden"
+        style={{ background: 'hsl(30 10% 8%)' }}
+        aria-hidden="true"
+      >
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/f3J2oXrq-WE?autoplay=1&mute=1&loop=1&playlist=f3J2oXrq-WE&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&playsinline=1"
+          style={{
+            border: 'none',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 'calc(max(177.78vh, 100vw) + 100px)',
+            height: 'calc(max(100vh, 56.25vw) + 100px)',
+          }}
+          allow="autoplay; encrypted-media"
+          referrerPolicy="strict-origin-when-cross-origin"
+          title="Background Video"
+        />
+      </div>
 
       {/* Dark overlay – unchanged */}
       <div
@@ -83,17 +107,17 @@ const HeroSection = ({
           aria-hidden="false"
         >
           {/* 11th Edition – white */}
-          <p className="text-white text-lg md:text-xl lg:text-2xl xl:text-3xl font-medium tracking-wide">
+          <p className="text-white text-xl md:text-xl lg:text-2xl xl:text-3xl font-medium tracking-wide">
             {heroSubtitle} Edition
           </p>
           {/* ARUNACHAL / FILM FESTIVAL – large, bold, uppercase white, two lines */}
-          <h1 className="font-bold text-white uppercase leading-[1.05] tracking-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
+          <h1 className="font-bold text-white uppercase leading-[1.05] tracking-tight text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl">
             <div>{titleLine1}</div>
             {titleLine2 && <div className="tracking-wider">{titleLine2}</div>}
           </h1>
           {/* Date – golden */}
           <p
-            className="text-base md:text-lg lg:text-xl font-medium uppercase tracking-widest"
+            className="text-lg md:text-lg lg:text-xl font-medium uppercase tracking-widest"
             style={{ color: FESTIVAL_GOLD }}
           >
             {heroDate}

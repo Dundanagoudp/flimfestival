@@ -26,11 +26,11 @@ const nextConfig: NextConfig = {
         headers: [
           { key: "X-Frame-Options", value: "DENY" },
           { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "Referrer-Policy", value: "no-referrer" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           {
             key: "Permissions-Policy",
             value:
-              "camera=(), microphone=(), geolocation=(), usb=(), payment=(), clipboard-read=(), clipboard-write=(), accelerometer=(), autoplay=(), encrypted-media=(), fullscreen=(self), gyroscope=(), magnetometer=(), midi=(), picture-in-picture=()",
+              "camera=(), microphone=(), geolocation=(), usb=(), payment=(), clipboard-read=(), clipboard-write=(), accelerometer=(), autoplay=(self \"https://www.youtube.com\" \"https://www.youtube-nocookie.com\"), encrypted-media=(self \"https://www.youtube.com\" \"https://www.youtube-nocookie.com\"), fullscreen=(self), gyroscope=(), magnetometer=(), midi=(), picture-in-picture=(self \"https://www.youtube.com\" \"https://www.youtube-nocookie.com\")",
           },
           ...(useHttps
             ? [{ key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains; preload" }]
@@ -48,7 +48,7 @@ const nextConfig: NextConfig = {
               "img-src 'self' data: https: http: blob:",
               "media-src 'self' https: http: blob:",
               "connect-src 'self' data: https: http: ws: wss:",
-              "frame-src 'self' https://www.youtube.com",
+              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
