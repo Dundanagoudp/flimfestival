@@ -39,14 +39,17 @@ function splitTitle(title: string): { line1: string; line2: string } {
 }
 
 const HeroSection = ({
-  heroSubtitle = DEFAULT_SUBTITLE,
-  heroTitle = DEFAULT_TITLE,
-  heroDate = DEFAULT_DATE,
+  heroSubtitle,
+  heroTitle,
+  heroDate,
   videoUrl = DEFAULT_VIDEO_MP4,
   videoUrlWebm = DEFAULT_VIDEO_WEBM,
   posterUrl,
 }: HeroSectionProps) => {
-  const { line1: titleLine1, line2: titleLine2 } = splitTitle(heroTitle)
+  const subtitle = heroSubtitle ?? DEFAULT_SUBTITLE
+  const title = heroTitle ?? DEFAULT_TITLE
+  const date = heroDate ?? DEFAULT_DATE
+  const { line1: titleLine1, line2: titleLine2 } = splitTitle(title)
 
   return (
     <section
@@ -93,22 +96,22 @@ const HeroSection = ({
         />
       </div>
 
-      {/* Dark overlay – unchanged */}
+      {/* Dark overlay */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 z-[11]"
         style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
         aria-hidden="true"
       />
 
-      {/* Content – left-aligned text on black panel, stacked vertically */}
-      <div className="absolute inset-0 flex items-center justify-start px-6 sm:px-10 md:px-16 lg:px-20 pt-20 md:pt-28">
+      {/* Content – above overlay so text is always visible */}
+      <div className="absolute inset-0 z-20 flex items-center justify-start px-6 sm:px-10 md:px-16 lg:px-20 pt-20 md:pt-28">
         <div
           className="hero-text-reveal px-8 py-10 md:px-12 md:py-14 max-w-2xl md:max-w-3xl flex flex-col text-left gap-3 md:gap-4"
           aria-hidden="false"
         >
           {/* 11th Edition – white */}
-          <p className="text-white text-xl md:text-xl lg:text-2xl xl:text-3xl font-medium tracking-wide">
-            {heroSubtitle} Edition
+          <p className="text-white text-2xl md:text-2xl lg:text-3xl xl:text-4xl font-medium tracking-wide">
+            {subtitle} Edition
           </p>
           {/* ARUNACHAL / FILM FESTIVAL – large, bold, uppercase white, two lines */}
           <h1 className="font-bold text-white uppercase leading-[1.05] tracking-tight text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl">
@@ -120,7 +123,7 @@ const HeroSection = ({
             className="text-lg md:text-lg lg:text-xl font-medium uppercase tracking-widest"
             style={{ color: FESTIVAL_GOLD }}
           >
-            {heroDate}
+            {date}
           </p>
         </div>
       </div>

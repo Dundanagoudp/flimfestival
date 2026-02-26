@@ -60,7 +60,7 @@ export default function Home() {
   return (
     <>
       <div className="-mt-[10rem]" style={{ backgroundColor: "#ffffff" }}>
-      <Reveal y={32}><HeroSection {...heroProps} /></Reveal>
+      <HeroSection {...heroProps} />
       <NewsTicker />
       <Reveal transition={{ type: 'tween', duration: 0.8, ease: [0.22, 1, 0.36, 1] }}><AboutSection/></Reveal>
       <Reveal y={32} delay={0.1} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><WorksSection/></Reveal>
