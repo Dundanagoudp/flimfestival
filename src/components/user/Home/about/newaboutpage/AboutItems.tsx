@@ -6,15 +6,15 @@ import Link from "next/link";
 import PosterCarousel from "../PosterCarousel";
 import type { PosterItem } from "../PosterCarousel";
 import { getAboutItems } from "@/services/aboutServices";
-import type { AboutItem } from "@/types/aboutTypes";
-import { getMediaUrl } from "@/utils/media";
-
 const DEFAULT_HEADING = "IFFI";
 const DEFAULT_PARAGRAPHS = [
   "IFFI is the only film festival in South Asia that is accredited by the International Federation of Film Producers' Associations (FIAPF) of the international festivals in the Competitive Feature Films Category.",
   "Since its inception in 1952, IFFI has been curating spectacular films from all over the world. Its goal is to provide a single platform for ambitious filmmakers, cineastes, and industry professionals to have access to excellent cinema from across the world.",
   "IFFI's International Cinema section is an assortment of culturally and aesthetically remarkable films from around the world. It has kept its stature high by committing to promote art by showcasing the international films of the year shortlisted by the eminent members associated with the Film Industry.",
 ];
+
+import type { AboutItem } from "@/types/aboutTypes";
+import { getMediaUrl } from "@/utils/media";
 
 function buildCarouselItems(items: AboutItem[]): PosterItem[] {
   const sorted = [...items].sort((a, b) => a.index - b.index);
@@ -29,7 +29,7 @@ function buildCarouselItems(items: AboutItem[]): PosterItem[] {
 }
 
 function descriptionToParagraphs(description: string | undefined): string[] {
-  if (!description || !description.trim()) return DEFAULT_PARAGRAPHS;
+  if (!description || !description.trim()) return [];
   return description
     .split(/\n\n+/)
     .map((p) => p.trim())
@@ -59,8 +59,8 @@ const AboutItems = () => {
 
   const sorted = [...items].sort((a, b) => a.index - b.index);
   const first = sorted[0];
-  const heading = first?.title?.trim() || DEFAULT_HEADING;
-  const paragraphs = first ? descriptionToParagraphs(first.description) : DEFAULT_PARAGRAPHS;
+  const heading = first?.title?.trim() ?? "";
+  const paragraphs = first ? descriptionToParagraphs(first.description) : [];
   const carouselItems = buildCarouselItems(items);
 
   if (loading) {

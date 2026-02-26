@@ -23,7 +23,7 @@ export interface HeroSectionProps {
 
 const DEFAULT_SUBTITLE = '11th'
 const DEFAULT_TITLE = 'Arunachal Film Festival'
-const DEFAULT_DATE = '6th – 8th February, 2026'
+const DEFAULT_DATE = '6th - 8th March, 2026'
 const DEFAULT_VIDEO_MP4 = '/HeroVideo.mp4'
 const DEFAULT_VIDEO_WEBM = '/HeroVideo.webm'
 const FESTIVAL_GOLD = '#f4b400'
@@ -39,63 +39,92 @@ function splitTitle(title: string): { line1: string; line2: string } {
 }
 
 const HeroSection = ({
-  heroSubtitle = DEFAULT_SUBTITLE,
-  heroTitle = DEFAULT_TITLE,
-  heroDate = DEFAULT_DATE,
+  heroSubtitle,
+  heroTitle,
+  heroDate,
   videoUrl = DEFAULT_VIDEO_MP4,
   videoUrlWebm = DEFAULT_VIDEO_WEBM,
   posterUrl,
 }: HeroSectionProps) => {
-  const { line1: titleLine1, line2: titleLine2 } = splitTitle(heroTitle)
+  const subtitle = heroSubtitle ?? DEFAULT_SUBTITLE
+  const title = heroTitle ?? DEFAULT_TITLE
+  const date = heroDate ?? DEFAULT_DATE
+  const { line1: titleLine1, line2: titleLine2 } = splitTitle(title)
 
   return (
     <section
       className="w-full min-h-[780px] sm:min-h-screen sm:h-screen relative overflow-hidden mt-10 sm:mt-0"
       aria-label="Hero"
     >
-      {/* Video background – unchanged */}
-      <video
-        className="absolute inset-0 w-full h-full object-cover"
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        poster={posterUrl || undefined}
+      {/* Fallback video background – plays immediately, behind YouTube */}
+      <div
+        className="absolute inset-0 overflow-hidden"
+        style={{ background: 'hsl(30 10% 8%)' }}
         aria-hidden="true"
       >
-        <source src={videoUrl} type="video/mp4" />
-        {videoUrlWebm && <source src={videoUrlWebm} type="video/webm" />}
-        Your browser does not support the video tag.
-      </video>
+        <video
+          className="absolute inset-0 w-full h-full object-cover"
+          src="/videoplayback.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-hidden="true"
+        />
+      </div>
 
-      {/* Dark overlay – unchanged */}
+      {/* YouTube video background – full-bleed cover, on top when loaded */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 z-10 pointer-events-none overflow-hidden"
+        style={{ background: 'hsl(30 10% 8%)' }}
+        aria-hidden="true"
+      >
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/f3J2oXrq-WE?autoplay=1&mute=1&loop=1&playlist=f3J2oXrq-WE&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&playsinline=1"
+          style={{
+            border: 'none',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 'calc(max(177.78vh, 100vw) + 100px)',
+            height: 'calc(max(100vh, 56.25vw) + 100px)',
+          }}
+          allow="autoplay; encrypted-media"
+          referrerPolicy="strict-origin-when-cross-origin"
+          title="Background Video"
+        />
+      </div>
+
+      {/* Dark overlay */}
+      <div
+        className="absolute inset-0 z-[11]"
         style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
         aria-hidden="true"
       />
 
-      {/* Content – flex: top row (11th + title same row), then date below; vertically centered; top padding */}
-      <div className="absolute inset-0 flex items-center justify-start px-10 md:px-20 pt-16 md:pt-32">
-        <div className="hero-text-reveal max-w-5xl w-full flex flex-col text-center md:text-left">
-          {/* Top row: 11th and title in same row on desktop; column on mobile */}
-          <div className="flex flex-col md:flex-row md:items-start gap-4 md:gap-10">
-            <div className="font-extrabold text-white leading-none shrink-0 text-[60px] md:text-[90px] lg:text-[140px]">
-              {heroSubtitle}
-            </div>
-            <h1 className="font-bold text-white uppercase leading-[1.1] tracking-wide shrink-0 text-[28px] md:text-[48px] lg:text-[70px]">
-              <div>{titleLine1}</div>
-              {titleLine2 && <div>{titleLine2}</div>}
-            </h1>
-          </div>
-          {/* Date – full width below top row */}
-          <div
-            className="mt-6 md:mt-8 w-full text-base md:text-[22px] lg:text-[32px] font-medium uppercase tracking-[0.2em] md:tracking-[0.15em]"
+      {/* Content – above overlay so text is always visible */}
+      <div className="absolute inset-0 z-20 flex items-center justify-start px-6 sm:px-10 md:px-16 lg:px-20 pt-20 md:pt-28">
+        <div
+          className="hero-text-reveal px-8 py-10 md:px-12 md:py-14 max-w-2xl md:max-w-3xl flex flex-col text-left gap-3 md:gap-4"
+          aria-hidden="false"
+        >
+          {/* 11th Edition – white */}
+          <p className="text-white text-2xl md:text-2xl lg:text-3xl xl:text-4xl font-medium tracking-wide">
+            {subtitle} Edition
+          </p>
+          {/* ARUNACHAL / FILM FESTIVAL – large, bold, uppercase white, two lines */}
+          <h1 className="font-bold text-white uppercase leading-[1.05] tracking-tight text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl">
+            <div>{titleLine1}</div>
+            {titleLine2 && <div className="tracking-wider">{titleLine2}</div>}
+          </h1>
+          {/* Date – golden */}
+          <p
+            className="text-lg md:text-lg lg:text-xl font-medium uppercase tracking-widest"
             style={{ color: FESTIVAL_GOLD }}
           >
-            {heroDate}
-          </div>
+            {date}
+          </p>
         </div>
       </div>
     </section>

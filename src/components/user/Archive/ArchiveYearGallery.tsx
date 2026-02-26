@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/pagination";
 import { useParams, useSearchParams } from "next/navigation";
 import { getAllGalleryByYear } from "@/services/galleryServices";
-import type { GalleryImage } from "@/types/galleryTypes";
+import type { GalleryImage, GalleryDayWithImages } from "@/types/galleryTypes";
 import { getMediaUrl } from "@/utils/media";
 
 const IMAGES_PER_PAGE = 12;
@@ -170,6 +170,8 @@ export default function ArchiveYearGallery() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [images, setImages] = useState<GalleryImage[]>([]);
+  const [days, setDays] = useState<GalleryDayWithImages[]>([]);
+  const [activeDayId, setActiveDayId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -182,11 +184,17 @@ export default function ArchiveYearGallery() {
       try {
         setIsLoading(true);
         setError(null);
-        const resp = await getAllGalleryByYear(yearId);
+        const resp = (await getAllGalleryByYear(yearId)) as
+          | { images?: GalleryImage[]; days?: GalleryDayWithImages[] }
+          | null
+          | undefined;
         setImages(resp?.images ?? []);
+        setDays(resp?.days && Array.isArray(resp.days) ? resp.days : []);
+        setActiveDayId(null);
       } catch (err) {
         setError("Failed to load gallery");
         setImages([]);
+        setDays([]);
       } finally {
         setIsLoading(false);
       }
@@ -194,10 +202,15 @@ export default function ArchiveYearGallery() {
     fetchImages();
   }, [yearId]);
 
-  const totalPages = Math.ceil(images.length / IMAGES_PER_PAGE);
+  const displayImages =
+    activeDayId === null
+      ? images
+      : (days.find((d) => d._id === activeDayId)?.images ?? []);
+
+  const totalPages = Math.ceil(displayImages.length / IMAGES_PER_PAGE);
   const startIndex = (currentPage - 1) * IMAGES_PER_PAGE;
   const endIndex = startIndex + IMAGES_PER_PAGE;
-  const currentImages = images.slice(startIndex, endIndex);
+  const currentImages = displayImages.slice(startIndex, endIndex);
 
   const handleDownload = async () => {
     if (!selectedImage) return;
@@ -278,6 +291,51 @@ export default function ArchiveYearGallery() {
         ) : (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <h2 className="text-4xl font-bold text-center bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 bg-clip-text text-transparent mb-8">GALLERY {year}</h2>
+
+            {days.length > 0 && (
+              <div
+                className="flex flex-wrap justify-center gap-2 mb-6"
+                role="tablist"
+                aria-label="Filter by day"
+              >
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeDayId === null}
+                  onClick={() => {
+                    setActiveDayId(null);
+                    setCurrentPage(1);
+                  }}
+                  className={
+                    activeDayId === null
+                      ? "rounded-lg bg-blue-800 px-4 py-2 text-sm font-medium text-white"
+                      : "rounded-lg px-4 py-2 text-sm font-medium text-blue-800 hover:bg-blue-50"
+                  }
+                >
+                  ALL
+                </button>
+                {days.map((day, index) => (
+                  <button
+                    key={day._id}
+                    type="button"
+                    role="tab"
+                    aria-selected={activeDayId === day._id}
+                    onClick={() => {
+                      setActiveDayId(day._id);
+                      setCurrentPage(1);
+                    }}
+                    className={
+                      activeDayId === day._id
+                        ? "rounded-lg bg-blue-800 px-4 py-2 text-sm font-medium text-white"
+                        : "rounded-lg px-4 py-2 text-sm font-medium text-blue-800 hover:bg-blue-50"
+                    }
+                  >
+                    {day.name?.trim() ? day.name : `DAY ${index + 1}`}
+                  </button>
+                ))}
+              </div>
+            )}
+
             <motion.div
               className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
               variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
@@ -366,7 +424,7 @@ export default function ArchiveYearGallery() {
                 </Pagination>
                 <p className="text-center mt-4 text-sm text-gray-600">
                   Page {currentPage} of {totalPages} · Showing {startIndex + 1}–
-                  {Math.min(endIndex, images.length)} of {images.length} images
+                  {Math.min(endIndex, displayImages.length)} of {displayImages.length} images
                 </p>
               </motion.div>
             )}

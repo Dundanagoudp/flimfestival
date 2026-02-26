@@ -8,6 +8,7 @@ import AboutItems from "./about/newaboutpage/AboutItems";
 import VideoSection from "./videosection/VideoSection";
 import EventSchedule from "./eventSchedule/EventSchedule";
 import Guest from "./guest/Guest"
+import WorksSection from "./workshops/WorksSection"
 import AwardNomination from "./award/AwardNomination"
 import Gallery from "./Gallery/Gallery"
 import Shortfilm from "./officialSection/Shortfilm"
@@ -59,9 +60,10 @@ export default function Home() {
   return (
     <>
       <div className="-mt-[10rem]" style={{ backgroundColor: "#ffffff" }}>
-      <Reveal y={32}><HeroSection {...heroProps} /></Reveal>
+      <HeroSection {...heroProps} />
       <NewsTicker />
       <Reveal transition={{ type: 'tween', duration: 0.8, ease: [0.22, 1, 0.36, 1] }}><AboutSection/></Reveal>
+      <Reveal y={32} delay={0.1} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><WorksSection/></Reveal>
       <Reveal y={32} delay={0.1}><VideoSection/></Reveal>
       <Reveal y={32} delay={0.15} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><EventSchedule/></Reveal>
       <Reveal y={32} delay={0.15} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><Guest/></Reveal>
@@ -72,7 +74,7 @@ export default function Home() {
       <Reveal y={32} delay={0.34}><JurySection/></Reveal>
       <Reveal y={32} delay={0.35}><OfficialSection/></Reveal>
       <Reveal y={32} delay={0.36}><BlogsAndMedia/></Reveal>
-      <Reveal y={32} delay={0.4}><Contact/></Reveal>
+      {/* <Reveal y={32} delay={0.4}><Contact/></Reveal> */}
       <Reveal y={32} delay={0.45}><YearAward/></Reveal>
   
       </div>

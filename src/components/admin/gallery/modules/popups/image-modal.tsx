@@ -10,9 +10,10 @@ type Props = {
   open: boolean
   onOpenChange: (open: boolean) => void
   yearValue?: number
+  dayName?: string
 }
 
-export default function ImageModal({ image, open, onOpenChange, yearValue }: Props) {
+export default function ImageModal({ image, open, onOpenChange, yearValue, dayName }: Props) {
   if (!open || !image) return null
 
   const handleDownload = () => {
@@ -54,9 +55,22 @@ export default function ImageModal({ image, open, onOpenChange, yearValue }: Pro
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Year:</span>
-                    <span className="font-medium">{yearValue || 'Unknown'}</span>
+                    <span className="font-medium">{yearValue ?? "Unknown"}</span>
                   </div>
-                
+                  {image.caption && (
+                    <div>
+                      <span className="text-gray-600">Caption:</span>
+                      <p className="mt-1 text-gray-900">{image.caption}</p>
+                    </div>
+                  )}
+                  {image.day && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Day:</span>
+                      <span className="font-medium">
+                        {typeof image.day === "string" ? image.day : (image.day as { name?: string }).name ?? "—"}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
               

@@ -2,9 +2,15 @@ import apiClient from "@/apiClient"
 import {
   AddImagesResponse,
   BulkDeleteImagesRequest,
+  CreateDayPayload,
   CreateYearPayload,
-  GetAllGalleryResponse,
+  DaysResponse,
+  DayCreateResponse,
+  DayUpdateResponse,
+  GetAllGalleryByDayResponse,
+  GetAllGalleryByYearResponse,
   SimpleMessageResponse,
+  UpdateDayPayload,
   UpdateYearPayload,
   YearCreateResponse,
   YearwiseResponse,
@@ -51,11 +57,50 @@ export async function deleteYear(id: string) {
   }
 }
 
+// Days
+export async function getDaysByYear(yearId: string) {
+  try {
+    const { data } = await apiClient.get<DaysResponse>(`${BASE}/getdaysbyyear`, { params: { yearId } })
+    return data
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to get days")
+  }
+}
+
+export async function createDay(payload: CreateDayPayload) {
+  try {
+    const { data } = await apiClient.post<DayCreateResponse>(`${BASE}/gallerycreateDay`, payload)
+    return data
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to create day")
+  }
+}
+
+export async function updateDay(id: string, payload: UpdateDayPayload) {
+  try {
+    const { data } = await apiClient.put<DayUpdateResponse>(`${BASE}/updateday/${id}`, payload)
+    return data
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to update day")
+  }
+}
+
+export async function deleteDay(id: string) {
+  try {
+    const { data } = await apiClient.delete<SimpleMessageResponse>(`${BASE}/deleteday/${id}`)
+    return data
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message || error?.message || "Failed to delete day")
+  }
+}
+
 // Images
-export async function addImages(yearId: string, files: File[]) {
+export async function addImages(yearId: string, dayId: string, files: File[], caption?: string) {
   try {
     const fd = new FormData()
     fd.append("year", yearId)
+    fd.append("day", dayId)
+    if (caption != null && caption.trim() !== "") fd.append("caption", caption.trim())
     for (const f of files) {
       fd.append("photo", f)
     }
@@ -66,14 +111,19 @@ export async function addImages(yearId: string, files: File[]) {
   }
 }
 
-export async function getAllGalleryByYear(yearId: string) {
+export async function getAllGalleryByYear(yearId: string, dayId?: string) {
   try {
     const url = `${BASE}/getallgallery`
-    const params = { yearId }
-    // Fixed: Use the correct endpoint with query parameter as your backend expects
-    const { data } = await apiClient.get<GetAllGalleryResponse>(url, {
-      params: params
+    const params = dayId ? { yearId, dayId } : { yearId }
+    const { data } = await apiClient.get<GetAllGalleryByYearResponse | GetAllGalleryByDayResponse>(url, {
+      params,
     })
+    // When no dayId: normalize new shape (days + imagesWithoutDay) to include .images for backward compatibility
+    if (!dayId && data && "days" in data && Array.isArray((data as GetAllGalleryByYearResponse).days)) {
+      const byYear = data as GetAllGalleryByYearResponse
+      const images = byYear.days.flatMap((d) => d.images).concat(byYear.imagesWithoutDay ?? [])
+      return { ...byYear, images }
+    }
     return data
   } catch (error: any) {
     throw new Error(error?.response?.data?.message || error?.message || "Failed to get gallery by year")

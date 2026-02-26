@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import useSWR from "swr"
+import useSWR, { mutate } from "swr"
 import { Upload, Images, AlertCircle, CheckCircle, Eye, Trash2, Plus, Calendar, FileImage, Download } from "lucide-react"
 import { DynamicButton } from "@/components/common"
 import DynamicPagination from "@/components/common/DynamicPagination"
@@ -11,9 +11,9 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
-import { getAllYears, getAllGalleryByYear, deleteImage } from "@/services/galleryServices"
+import { getAllYears, getDaysByYear, getAllGalleryByYear, deleteImage } from "@/services/galleryServices"
 import { addImages } from "@/services/galleryServices"
-import type { GalleryYear, GalleryImage } from "@/types/galleryTypes"
+import type { GalleryYear, GalleryImage, GetAllGalleryByYearResponse, GalleryDayWithImages } from "@/types/galleryTypes"
 import { useToast } from "@/components/ui/custom-toast"
 import { useAuth } from "@/context/auth-context"
 import { getMediaUrl } from "@/utils/media"
@@ -22,20 +22,42 @@ import { validateFile } from "@/lib/sanitize"
 const GALLERY_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"]
 const GALLERY_MAX_SIZE_MB = 5
 
+function isGalleryByYearResponse(
+  data: GetAllGalleryByYearResponse | { year: number; images?: GalleryImage[] }
+): data is GetAllGalleryByYearResponse {
+  return "days" in data && Array.isArray((data as GetAllGalleryByYearResponse).days)
+}
+
+function getFlatImagesAndDays(
+  yearData: GetAllGalleryByYearResponse | { year: number; images?: GalleryImage[] } | undefined
+): { flatImages: GalleryImage[]; days: GalleryDayWithImages[]; imagesWithoutDay: GalleryImage[] } {
+  if (!yearData) return { flatImages: [], days: [], imagesWithoutDay: [] }
+  if (isGalleryByYearResponse(yearData)) {
+    const days = yearData.days ?? []
+    const imagesWithoutDay = yearData.imagesWithoutDay ?? []
+    const flatImages = days.flatMap((d) => d.images).concat(imagesWithoutDay)
+    return { flatImages, days, imagesWithoutDay }
+  }
+  const images = (yearData as { images?: GalleryImage[] }).images ?? []
+  return { flatImages: images, days: [], imagesWithoutDay: images }
+}
+
 export default function ImageUploadPage() {
   const { showToast } = useToast()
   const { userRole } = useAuth()
   const canDelete = userRole === "admin"
   const [selectedYearId, setSelectedYearId] = React.useState<string | null>(null)
+  const [selectedDayId, setSelectedDayId] = React.useState<string | null>(null)
+  const [caption, setCaption] = React.useState("")
   const [files, setFiles] = React.useState<FileList | null>(null)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const [success, setSuccess] = React.useState<string | null>(null)
   const [selectedImage, setSelectedImage] = React.useState<GalleryImage | null>(null)
   const [showImageModal, setShowImageModal] = React.useState(false)
-  
+
   const { data: years, isLoading: yearsLoading, error: yearsError } = useSWR<GalleryYear[]>(
-    "years", 
+    "years",
     () => getAllYears(),
     {
       onError: (err) => {
@@ -43,6 +65,12 @@ export default function ImageUploadPage() {
         setError("Failed to load years")
       }
     }
+  )
+
+  const { data: days } = useSWR(
+    selectedYearId ? ["days", selectedYearId] : null,
+    () => getDaysByYear(selectedYearId as string),
+    { onError: (err) => console.error("Error fetching days:", err) }
   )
 
   const { data: yearData, isLoading: imagesLoading, error: imagesError } = useSWR(
@@ -56,7 +84,11 @@ export default function ImageUploadPage() {
     }
   )
 
-  const images = yearData?.images || []
+  const { flatImages: images, days: daysWithImages } = getFlatImagesAndDays(yearData)
+
+  React.useEffect(() => {
+    setSelectedDayId(null)
+  }, [selectedYearId])
 
   // pagination
   const [currentPage, setCurrentPage] = React.useState(1)
@@ -90,12 +122,15 @@ export default function ImageUploadPage() {
       setError("Please select a year first")
       return
     }
-    
+    if (!selectedDayId) {
+      setError("Please select a day first")
+      return
+    }
     if (!files?.length) {
       setError("Please select images first")
       return
     }
-    
+
     for (const file of Array.from(files)) {
       const result = validateFile(file, GALLERY_ALLOWED_TYPES, GALLERY_MAX_SIZE_MB)
       if (!result.valid) {
@@ -108,14 +143,17 @@ export default function ImageUploadPage() {
       setLoading(true)
       setError(null)
       setSuccess(null)
-      await addImages(selectedYearId, Array.from(files))
-      showToast(`Successfully uploaded ${files.length} image(s) to ${selectedYear?.value || 'selected year'}`, "success")
+      await addImages(selectedYearId, selectedDayId, Array.from(files), caption.trim() || undefined)
+      showToast(
+        `Successfully uploaded ${files.length} image(s) to ${selectedYear?.value ?? "selected year"}`,
+        "success"
+      )
       setFiles(null)
-      // Reset file input
-      const fileInput = document.getElementById('file-input') as HTMLInputElement
-      if (fileInput) fileInput.value = ''
-      // Refresh images
-      window.location.reload()
+      setCaption("")
+      const fileInput = document.getElementById("file-input") as HTMLInputElement
+      if (fileInput) fileInput.value = ""
+      await mutate(["images", selectedYearId])
+      if (selectedYearId) await mutate(["days", selectedYearId])
     } catch (e: any) {
       console.error("Error uploading images:", e)
       setError(e?.message || "Failed to upload images")
@@ -144,8 +182,7 @@ export default function ImageUploadPage() {
     try {
       await deleteImage(imageId)
       showToast("Image deleted successfully", "success")
-      // Refresh images
-      window.location.reload()
+      if (selectedYearId) await mutate(["images", selectedYearId])
     } catch (e: any) {
       console.error("Error deleting image:", e)
       setError(e?.message || "Failed to delete image")
@@ -220,9 +257,42 @@ export default function ImageUploadPage() {
             </Select>
             {selectedYear && (
               <p className="text-sm text-muted-foreground">
-                Selected: Year {selectedYear.value} {selectedYear.name ? `(${selectedYear.name})` : ''}
+                Selected: Year {selectedYear.value} {selectedYear.name ? `(${selectedYear.name})` : ""}
               </p>
             )}
+          </div>
+
+          {/* Day Selection (required) */}
+          <div className="grid gap-2">
+            <Label htmlFor="day-select">Select Day</Label>
+            <Select value={selectedDayId ?? undefined} onValueChange={(v) => setSelectedDayId(v)}>
+              <SelectTrigger id="day-select" className="max-w-xs">
+                <SelectValue placeholder={!selectedYearId ? "Select year first" : "Select a day"} />
+              </SelectTrigger>
+              <SelectContent>
+                {days?.map((d) => (
+                  <SelectItem key={d._id} value={d._id}>
+                    {d.name} {d.date ? `— ${d.date}` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {selectedYearId && (!days || days.length === 0) && (
+              <p className="text-sm text-amber-600">
+                No days for this year. Create a day on the main Gallery page first.
+              </p>
+            )}
+          </div>
+
+          {/* Optional caption */}
+          <div className="grid gap-2">
+            <Label htmlFor="caption">Caption (optional)</Label>
+            <Input
+              id="caption"
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              placeholder="Caption for uploaded images"
+            />
           </div>
 
           <Separator />
@@ -280,9 +350,9 @@ export default function ImageUploadPage() {
 
           {/* Upload Button */}
           <div className="flex items-center gap-3">
-            <DynamicButton 
-              onClick={(e) => onUpload()} 
-              disabled={!files?.length || !selectedYearId}
+            <DynamicButton
+              onClick={() => onUpload()}
+              disabled={!files?.length || !selectedYearId || !selectedDayId}
               loading={loading}
               loadingText="Uploading..."
               className="w-full sm:w-auto min-w-[140px]"
