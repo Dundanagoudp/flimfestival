@@ -29,7 +29,6 @@ const sampleMenu: { heading: string; links: { title: string; url?: string }[] }[
       { title: "Blogs", url: "/blogs" },
       { title: "Videos", url: "/videos" },
       { title: "Gallery", url: "/archive" },
-      { title: "10th AFF Catalogue", url: "/archive" },
     ],
   },
   {
