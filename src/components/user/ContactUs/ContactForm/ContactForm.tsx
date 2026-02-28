@@ -5,13 +5,10 @@ import ContactService from "@/services/contactServices";
 import type { Contact, ContactForm } from "@/types/contactTypes";
 import { useToast } from "@/components/ui/custom-toast";
 
-const PHONE_PREFIX = "+91";
-
 export default function ContactForm() {
   const [form, setForm] = useState<ContactForm>({
     name: "",
     email: "",
-    phone: PHONE_PREFIX, // default prefix
     message: "",
   });
   const toast = useToast();
@@ -32,35 +29,9 @@ export default function ContactForm() {
       setForm((f) => ({ ...f, [key]: e.target.value }));
     };
 
-  // Fixed phone handler
-  const onPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value;
-
-    // If the value doesn't start with the prefix, we'll force it
-    if (!raw.startsWith(PHONE_PREFIX)) {
-      // Extract digits from anywhere in the input
-      const digits = raw.replace(/[^\d]/g, "");
-      // Format with prefix and limit to 10 digits after prefix
-      const formatted = PHONE_PREFIX + digits.slice(0, 10);
-      setForm((f) => ({ ...f, phone: formatted }));
-    } else {
-      // If it starts with the prefix, we can process normally
-      // Get everything after the prefix
-      const afterPrefix = raw.slice(PHONE_PREFIX.length);
-      // Keep only digits
-      let digits = afterPrefix.replace(/[^\d]/g, "");
-      // limit to 10 digits
-      digits = digits.slice(0, 10);
-      const formatted = PHONE_PREFIX + digits;
-      setForm((f) => ({ ...f, phone: formatted }));
-    }
-  };
-
   function validate(f: ContactForm): string | null {
     if (!f.name.trim() || f.name.trim().length < 2) return "Please enter your full name.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) return "Please enter a valid email.";
-    // Require "+91" followed by exactly 10 digits
-    if (!/^\+91\d{10}$/.test(f.phone)) return "Phone must be +91 followed by 10 digits.";
     if (!f.message.trim()) return "Please write a short message.";
     return null;
   }
@@ -79,7 +50,7 @@ export default function ContactForm() {
 
       toast.showToast("Thanks! We’ll get back to you shortly.", "success");
       setNotice({ type: "success", text: "Thanks! We’ll get back to you shortly." });
-      setForm({ name: "", email: "", phone: PHONE_PREFIX, message: "" });
+      setForm({ name: "", email: "", message: "" });
     } catch (err: any) {
       toast.showToast("Something went wrong. Please try again.", "error");
       const msg =
@@ -101,9 +72,9 @@ export default function ContactForm() {
             If there is anything you would like to talk about, please feel free to contact us.
           </h2>
         </div>
-        {/* 3 info items */}
-        <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
-          {/* Location */}
+        {/* 2 info items: Location + Email (from footer) */}
+        <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2">
+          {/* Location - matches footer Office address */}
           <div className="flex items-start gap-4 border-y md:border-y-0 md:border-x md:px-6 border-border/70 py-6 md:py-8">
             <span className="inline-flex h-10 w-10 flex-none items-center justify-center rounded-full bg-primary text-primary-foreground">
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
@@ -111,25 +82,13 @@ export default function ContactForm() {
               </svg>
             </span>
             <div>
-              <p className="font-montserrat text-lg font-semibold">Location</p>
+              <p className="font-montserrat text-lg font-semibold">Office address</p>
               <p className="mt-1 text-sm text-muted-foreground">
-                401 Broadway, 24th Floor, Orchard View, London
+                Directorate of Information and Public Relations (Soochna bhawan), papu nallah, Naharlagun, Arunachal Pradesh Pin - 791110
               </p>
             </div>
           </div>
-          {/* Phone */}
-          <div className="flex items-start gap-4 border-y md:border-y-0 md:border-x md:px-6 border-border/70 py-6 md:py-8">
-            <span className="inline-flex h-10 w-10 flex-none items-center justify-center rounded-full bg-primary text-primary-foreground">
-              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
-                <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.11.37 2.3.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C11.85 21 3 12.15 3 1a1 1 0 0 1 1-1h3.49a1 1 0 0 1 1 1c0 1.28.2 2.47.57 3.58a1 1 0 0 1-.24 1.01l-2.2 2.2Z" />
-              </svg>
-            </span>
-            <div>
-              <p className="font-montserrat text-lg font-semibold">Phone number</p>
-              <p className="mt-1 text-sm text-muted-foreground">+(084) 123 - 456 88</p>
-            </div>
-          </div>
-          {/* Email */}
+          {/* Email - matches footer */}
           <div className="flex items-start gap-4 border-y md:border-y-0 md:border-x md:px-6 md:last:border-r border-border/70 py-6 md:py-8">
             <span className="inline-flex h-10 w-10 flex-none items-center justify-center rounded-full bg-primary text-primary-foreground">
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
@@ -138,7 +97,7 @@ export default function ContactForm() {
             </span>
             <div>
               <p className="font-montserrat text-lg font-semibold">Support email</p>
-              <p className="mt-1 text-sm text-muted-foreground">support@example.com</p>
+              <p className="mt-1 text-sm text-muted-foreground">affdipr2013@gmail.com</p>
             </div>
           </div>
         </div>
@@ -148,8 +107,8 @@ export default function ContactForm() {
           <div className="rounded-2xl bg-card p-1 shadow-sm">
             <div className="overflow-hidden rounded-xl">
               <Image
-                src="/video.png"
-                alt="Studio / event photo"
+                src="/ContactUs.png"
+                alt="Contact Us"
                 width={1200}
                 height={800}
                 className="h-full w-full object-cover"
@@ -201,24 +160,6 @@ export default function ContactForm() {
                       className="w-full bg-transparent px-1 pb-2 pt-1 text-sm outline-none placeholder:text-muted-foreground/80 border-0 border-b border-input focus:border-b-transparent focus:ring-2 focus:ring-ring"
                     />
                   </div>
-                </div>
-                <div className="mt-6">
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    pattern="^\+91\d{10}$"
-                    placeholder="+91XXXXXXXXXX"
-                    value={form.phone}
-                    onChange={onPhoneChange}
-                    onFocus={() => {
-                      // Ensure prefix remains if the field gets cleared by browser autofill quirks
-                      if (!form.phone.startsWith(PHONE_PREFIX)) {
-                        setForm((f) => ({ ...f, phone: PHONE_PREFIX }));
-                      }
-                    }}
-                    maxLength={13} // "+91" (3 chars inc '+') + 10 digits
-                    className="w-full bg-transparent px-1 pb-2 pt-1 text-sm outline-none placeholder:text-muted-foreground/80 border-0 border-b border-input focus:border-b-transparent focus:ring-2 focus:ring-ring"
-                  />
                 </div>
                 <div className="mt-6">
                   <textarea
