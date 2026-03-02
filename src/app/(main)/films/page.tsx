@@ -6,10 +6,8 @@ import FilmsPageContent from "@/components/user/Films/FilmsPageContent"
 export default function FilmsPage() {
   return (
     <div className="-mt-[10rem]" style={{ backgroundColor: "#ffffff" }}>
-      <Navbar />
       <FilmsHero />
       <FilmsPageContent />
-      <Footer />
     </div>
   )
 }

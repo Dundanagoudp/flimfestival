@@ -13,6 +13,7 @@ const sampleMenu: { heading: string; links: { title: string; url?: string }[] }[
       { title: "About AFF", url: "/aboutus" },
       { title: "Glimpses of AFF 2025", url: "/glimpses" },
       { title: "Contact Us", url: "/contactus" },
+      { title: "Event Schedule", url: "/schedules" },
     ],
   },
   {
@@ -31,6 +32,7 @@ const sampleMenu: { heading: string; links: { title: string; url?: string }[] }[
       { title: "Gallery", url: "/archive" },
     ],
   },
+
   {
     heading: "Master Class/Workshop",
     links: [
