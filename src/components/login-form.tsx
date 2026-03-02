@@ -4,15 +4,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import React, { FormEvent, useEffect, useState } from "react"
-import { loginUser } from "@/services/authService"
+import React, { FormEvent, useCallback, useEffect, useState } from "react"
+import { generateCaptcha, loginUser } from "@/services/authService"
 import { getMyProfile } from "@/services/userServices"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/custom-toast"
 import { useAuth } from "@/context/auth-context"
-
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:7000/api/v1"
-const captchaUrl = `${apiBaseUrl}/captcha/generate`
 
 const LOCK_DURATION_MS = 5 * 60 * 1000
 const LOCK_STORAGE_KEY = "loginLockUntil"
@@ -44,7 +41,6 @@ function getLockUntilFromHeaders(headers: Record<string, string> | undefined): n
     const value = headers[lower] ?? headers[key]
     return typeof value === "string" ? value.trim() : ""
   }
-  // RateLimit-Reset: Unix timestamp in seconds
   const reset = get("ratelimit-reset")
   if (reset) {
     const sec = parseInt(reset, 10)
@@ -53,7 +49,6 @@ function getLockUntilFromHeaders(headers: Record<string, string> | undefined): n
       return ms > Date.now() ? ms : null
     }
   }
-  // Retry-After: seconds until retry
   const retryAfter = get("retry-after")
   if (retryAfter) {
     const sec = parseInt(retryAfter, 10)
@@ -68,9 +63,11 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const [altchaKey, setAltchaKey] = useState(Date.now())
+  const [captchaId, setCaptchaId] = useState("")
+  const [captchaSvg, setCaptchaSvg] = useState("")
+  const [captchaCode, setCaptchaCode] = useState("")
+  const [captchaLoading, setCaptchaLoading] = useState(false)
   const [captchaError, setCaptchaError] = useState("")
-  const [mounted, setMounted] = useState(false)
   const [lockUntil, setLockUntil] = useState<number | null>(null)
   const [loginError, setLoginError] = useState("")
   const [countdownSeconds, setCountdownSeconds] = useState<number | null>(null)
@@ -78,13 +75,30 @@ export function LoginForm({
   const { showToast } = useToast()
   const { login } = useAuth()
 
-  // Hydrate lock from sessionStorage on mount
+  const fetchCaptcha = useCallback(async () => {
+    setCaptchaLoading(true)
+    setCaptchaError("")
+    setCaptchaCode("")
+    try {
+      const res = await generateCaptcha()
+      if (res.success && res.captchaId && res.svg) {
+        setCaptchaId(res.captchaId)
+        setCaptchaSvg(res.svg)
+      } else {
+        setCaptchaError("Failed to load CAPTCHA")
+      }
+    } catch {
+      setCaptchaError("Failed to load CAPTCHA. Please try again.")
+    } finally {
+      setCaptchaLoading(false)
+    }
+  }, [])
+
   useEffect(() => {
     const stored = getStoredLockUntil()
     if (stored) setLockUntil(stored)
   }, [])
 
-  // Countdown timer when locked
   useEffect(() => {
     if (lockUntil == null || lockUntil <= Date.now()) {
       if (lockUntil != null) {
@@ -111,17 +125,10 @@ export function LoginForm({
     return () => clearInterval(interval)
   }, [lockUntil])
 
-  // Load ALTCHA on mount. The widget fetches the challenge from captchaUrl (GET /captcha/generate).
   useEffect(() => {
-    if (typeof window === "undefined") return
-    setMounted(true)
-    Promise.all([
-      import("altcha/external"),
-      import("altcha/altcha.css"),
-    ]).catch(console.error)
-  }, [])
+    fetchCaptcha()
+  }, [fetchCaptcha])
 
-  // Prevent inspect / devtools on login page (right-click and common shortcuts).
   useEffect(() => {
     if (typeof document === "undefined") return
     const preventContextMenu = (e: MouseEvent) => e.preventDefault()
@@ -169,22 +176,18 @@ export function LoginForm({
       return
     }
 
-    const widget = form.querySelector("altcha-widget") as HTMLElement & { value?: string }
-    const hiddenInput = form.querySelector('input[name="altcha"]') as HTMLInputElement | null
-    const altchaPayload = hiddenInput?.value?.trim() || widget?.value?.trim()
-
-    if (!widget) {
-      setCaptchaError("CAPTCHA widget not loaded")
+    if (!captchaId) {
+      setCaptchaError("CAPTCHA not loaded. Please refresh.")
       return
     }
-    if (!altchaPayload) {
-      setCaptchaError("Please complete the CAPTCHA")
+    if (!captchaCode.trim()) {
+      setCaptchaError("Please enter the CAPTCHA code")
       return
     }
 
     try {
       setIsSubmitting(true)
-      const res = await loginUser({ email, password, altchaPayload })
+      const res = await loginUser({ email, password, captchaId, captchaCode: captchaCode.trim() })
 
       if (!res.success) {
         const msg = res.message || "Login failed"
@@ -198,18 +201,18 @@ export function LoginForm({
             /* ignore */
           }
           showToast(msg, "error")
-          setAltchaKey(Date.now())
+          fetchCaptcha()
           return
         }
         showToast(msg, "error")
-        setAltchaKey(Date.now())
+        fetchCaptcha()
         return
       }
 
       const profileResponse = await getMyProfile()
       if (!profileResponse.success || !profileResponse.data) {
         showToast("Login succeeded but could not load your profile. Please refresh.", "error")
-        setAltchaKey(Date.now())
+        fetchCaptcha()
         return
       }
 
@@ -247,11 +250,14 @@ export function LoginForm({
         const msg = "Incorrect email or password"
         setLoginError(msg)
         showToast(msg, "error")
+      } else if (/invalid or expired captcha/i.test(apiMessage)) {
+        setLoginError(apiMessage)
+        showToast(apiMessage, "error")
       } else {
         setLoginError(apiMessage)
         showToast(apiMessage, "error")
       }
-      setAltchaKey(Date.now())
+      fetchCaptcha()
     } finally {
       setIsSubmitting(false)
     }
@@ -350,14 +356,45 @@ export function LoginForm({
                   </div>
                 </div>
 
-                {/* ALTCHA CAPTCHA - uses GET /captcha/generate via challengeurl */}
+                {/* SVG CAPTCHA */}
                 <div className="space-y-2">
-                  {mounted &&
-                    React.createElement("altcha-widget" as "div", {
-                      key: altchaKey,
-                      challengeurl: captchaUrl,
-                      workerurl: "/altcha-worker.js",
-                    })}
+                  <Label className="text-sm font-medium text-foreground font-montserrat">
+                    Security Verification
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="flex-1 rounded border border-border overflow-hidden bg-[#0a1628]"
+                      dangerouslySetInnerHTML={{ __html: captchaSvg }}
+                    />
+                    <button
+                      type="button"
+                      onClick={fetchCaptcha}
+                      disabled={captchaLoading || isLocked}
+                      className="shrink-0 w-10 h-10 flex items-center justify-center rounded border border-border bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Refresh CAPTCHA"
+                      aria-label="Refresh CAPTCHA"
+                    >
+                      <svg
+                        className={cn("w-5 h-5", captchaLoading && "animate-spin")}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </button>
+                  </div>
+                  <Input
+                    id="captchaCode"
+                    type="text"
+                    placeholder="Enter CAPTCHA"
+                    value={captchaCode}
+                    onChange={(e) => setCaptchaCode(e.target.value)}
+                    disabled={isLocked || captchaLoading}
+                    autoComplete="off"
+                    className="h-12 border-input focus:border-ring focus:ring-ring/20 transition-colors font-montserrat tracking-widest"
+                    data-testid="captcha-input"
+                  />
                   {captchaError && (
                     <p className="text-sm text-red-500 font-montserrat">{captchaError}</p>
                   )}

@@ -10,6 +10,18 @@ test.describe("Login rate limit (IP lock)", () => {
   }) => {
     let loginAttempts = 0;
 
+    await page.route("**/captcha/generate", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          captchaId: "e2e-captcha-id",
+          svg: '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="50"><text x="10" y="35" fill="#fff">TEST</text></svg>',
+        }),
+      });
+    });
+
     await page.route("**/auth/login", async (route) => {
       const request = route.request();
       if (request.method() !== "POST") return route.continue();
@@ -39,27 +51,13 @@ test.describe("Login rate limit (IP lock)", () => {
 
     const emailInput = page.getByLabel(/email/i);
     const passwordInput = page.getByLabel(/password/i);
+    const captchaInput = page.getByTestId("captcha-input");
     const submitButton = page.getByRole("button", { name: /^login$/i });
-
-    async function setAltchaPayload() {
-      await page.evaluate(() => {
-        const form = document.querySelector("form");
-        if (!form) return;
-        let inp = form.querySelector('input[name="altcha"]');
-        if (!inp) {
-          inp = document.createElement("input");
-          inp.setAttribute("name", "altcha");
-          inp.setAttribute("type", "hidden");
-          form.appendChild(inp);
-        }
-        inp.value = "e2e-payload";
-      });
-    }
 
     for (let i = 0; i < 5; i++) {
       await emailInput.fill("wrong@example.com");
       await passwordInput.fill("wrongpassword");
-      await setAltchaPayload();
+      await captchaInput.fill("TESTCODE");
       await submitButton.click();
 
       await expect(page.getByTestId("login-error")).toHaveText(INCORRECT_CREDENTIALS_MESSAGE, {
@@ -69,7 +67,7 @@ test.describe("Login rate limit (IP lock)", () => {
 
     await emailInput.fill("wrong@example.com");
     await passwordInput.fill("wrongpassword");
-    await setAltchaPayload();
+    await captchaInput.fill("TESTCODE");
     await submitButton.click();
 
     const lockMessage = page.getByTestId("login-lock-message");

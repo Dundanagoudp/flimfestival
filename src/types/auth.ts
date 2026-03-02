@@ -1,8 +1,8 @@
 export type LoginRequest = {
   email: string;
   password: string;
-  /** ALTCHA payload (sent as `altcha` in request body) */
-  altchaPayload?: string;
+  captchaId: string;
+  captchaCode: string;
 };
 
 /** Login returns only success and message; JWT is in HttpOnly cookie. */
