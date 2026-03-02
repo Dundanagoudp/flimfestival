@@ -5,9 +5,7 @@ import Schedulepage from "@/components/user/schedulecomponents/schedulepage";
 export default function SchedulesPage() {
   return (
     <div className="-mt-[10rem]" style={{ backgroundColor: "#ffffff" }}>
-      <Navbar />
       <Schedulepage />
-      <Footer />
     </div>
   );
 }
