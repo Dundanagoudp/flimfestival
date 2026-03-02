@@ -2,8 +2,12 @@ import { LoginRequest, LoginResponse, LogoutResponse } from "@/types/auth";
 import apiClient from "../apiClient";
 import { encryptPayload, isEncryptionAvailable } from "@/lib/encryption";
 
-/** GET /captcha/generate - returns challenge data for ALTCHA widget */
-export async function generateCaptcha() {
+/** GET /captcha/generate - returns { success, captchaId, svg } */
+export async function generateCaptcha(): Promise<{
+  success: boolean;
+  captchaId: string;
+  svg: string;
+}> {
   const response = await apiClient.get("/captcha/generate");
   return response.data;
 }
@@ -12,7 +16,8 @@ export async function loginUser(data: LoginRequest): Promise<LoginResponse> {
   const body = {
     email: data.email,
     password: data.password,
-    ...(data.altchaPayload && { altcha: data.altchaPayload }),
+    captchaId: data.captchaId,
+    captchaCode: data.captchaCode,
   };
   const useEncryption = isEncryptionAvailable();
   const requestBody = useEncryption
