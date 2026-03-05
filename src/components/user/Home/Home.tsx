@@ -66,7 +66,7 @@ export default function Home() {
       <Reveal y={32} delay={0.1} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><WorksSection/></Reveal>
       <Reveal y={32} delay={0.1}><VideoSection/></Reveal>
       <Reveal y={32} delay={0.15} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><EventSchedule/></Reveal>
-      <Reveal y={32} delay={0.15} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><Guest/></Reveal>
+      {/* <Reveal y={32} delay={0.15} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><Guest/></Reveal> */}
       {/* <Reveal y={32} delay={0.15} transition={{ type: 'spring', stiffness: 140, damping: 16 }}><AwardNomination/></Reveal> */}
       <Reveal y={32} delay={0.32}><Shortfilm/></Reveal>
       <Reveal y={32} delay={0.33}><Documentaryfilm/></Reveal>
